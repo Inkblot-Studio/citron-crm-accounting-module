@@ -1,6 +1,6 @@
 # Citron Accounting Module
 
-A **Module Federation** remote that exposes invoicing features (invoices list, deals pipeline, AI invoice wizard) as a React component for any Citron CRM host application.
+A **Module Federation** remote that exposes invoicing features (invoice list, create form with `AdvancedDropdown`s, **Invoice editor** with live preview, and a single **AssistantPanel** chat rail) as a React component for any Citron CRM host application. The local `SmartInvoiceBuilder` in `src/accounting/` is **not** the homonymous component shipped inside `@citron-systems/citron-ui`.
 
 ## Quick start
 
@@ -51,6 +51,10 @@ These packages are declared as `shared` in the federation config to avoid duplic
 - `react-router-dom` (>=7)
 - `@citron-systems/citron-ui`
 - `@citron-systems/citron-ds`
+
+## In-app routes (standalone dev)
+
+Internal routes: `/` (invoices), `/create` (form), `/editor` (after Continue — requires navigation state from create). The host should mount the remote so the browser path matches these segments, or set a `basename` on `BrowserRouter` if the module is served under a prefix.
 
 ## Notes and limitations
 

@@ -1,6 +1,6 @@
-import { importShared } from './__federation_fn_import-Co3laqTB.js';
+import { importShared } from './__federation_fn_import-9X7JX3Kk.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
-import { u as useToast, T as ToastProvider } from './ToastContext-DD-57fnn.js';
+import { u as useToast, T as ToastProvider } from './ToastContext-DU0nmke5.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -155,12 +155,40 @@ const createLucideIcon = (iconName, iconNode) => {
  */
 
 
-const __iconNode$5 = [
+const __iconNode$7 = [
+  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+  ["path", { d: "M19 12H5", key: "x3x0zl" }]
+];
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$7);
+
+/**
+ * @license lucide-react v0.575.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$6 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
   ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$5);
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$6);
+
+/**
+ * @license lucide-react v0.575.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$5 = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const CircleCheck = createLucideIcon("circle-check", __iconNode$5);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -172,9 +200,9 @@ const CircleAlert = createLucideIcon("circle-alert", __iconNode$5);
 
 const __iconNode$4 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$4);
+const Clock = createLucideIcon("clock", __iconNode$4);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -185,20 +213,6 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$4);
 
 
 const __iconNode$3 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }]
-];
-const Clock = createLucideIcon("clock", __iconNode$3);
-
-/**
- * @license lucide-react v0.575.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-
-
-const __iconNode$2 = [
   [
     "path",
     {
@@ -211,7 +225,7 @@ const __iconNode$2 = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$2);
+const FileText = createLucideIcon("file-text", __iconNode$3);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -221,8 +235,22 @@ const FileText = createLucideIcon("file-text", __iconNode$2);
  */
 
 
-const __iconNode$1 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$1);
+const __iconNode$2 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$2);
+
+/**
+ * @license lucide-react v0.575.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$1 = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
+];
+const Plus = createLucideIcon("plus", __iconNode$1);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -233,10 +261,137 @@ const LoaderCircle = createLucideIcon("loader-circle", __iconNode$1);
 
 
 const __iconNode = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
+  [
+    "path",
+    {
+      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
+      key: "1ffxy3"
+    }
+  ],
+  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode);
+const Send = createLucideIcon("send", __iconNode);
+
+const {useState: useState$3,useCallback} = await importShared('react');
+
+const {Outlet,NavLink} = await importShared('react-router-dom');
+
+const {AssistantPanel} = await importShared('@citron-systems/citron-ui');
+const CANNED_REPLIES = [
+  "For this invoice, Net 30 is a solid default payment term.",
+  "Double-check the tax rate matches your client jurisdiction.",
+  "You can attach a PO reference in the notes before sending.",
+  "Bank transfer details will appear on the PDF from your selected account."
+];
+function AccountingLayout() {
+  const [messages, setMessages] = useState$3([]);
+  const [isProcessing, setIsProcessing] = useState$3(false);
+  const handleSend = useCallback((payload) => {
+    const content = payload.text.trim();
+    if (!content) return;
+    const userMsg = { id: crypto.randomUUID(), role: "user", content };
+    setMessages((prev) => [...prev, userMsg]);
+    setIsProcessing(true);
+    setTimeout(() => {
+      const reply = CANNED_REPLIES[Math.floor(Math.random() * CANNED_REPLIES.length)];
+      const assistantMsg = { id: crypto.randomUUID(), role: "assistant", content: reply };
+      setMessages((prev) => [...prev, assistantMsg]);
+      setIsProcessing(false);
+    }, 700);
+  }, []);
+  const navClass = ({ isActive }) => `px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full flex min-h-0", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 flex flex-col min-w-0", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "px-8 py-4 border-b border-border flex items-center justify-between shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 rounded-lg bg-citrus-lemon/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "w-4 h-4 text-citrus-lemon" }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-lg font-semibold tracking-tight text-foreground", children: "Accounting" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Invoices" })
+        ] })
+      ] }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-8 py-2 border-b border-border flex gap-1 shrink-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: "/", end: true, className: navClass, children: "Invoices" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: "/create", className: navClass, children: "Create" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Outlet, {}) })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      AssistantPanel,
+      {
+        open: true,
+        title: "Accounting",
+        subtitle: "Assistant",
+        messages,
+        onSend: handleSend,
+        isProcessing,
+        placeholder: "Ask about invoicing...",
+        emptyStateMessage: "Ask anything about invoices, taxes, or payment terms.",
+        className: "h-full w-80 shrink-0 border-l border-[var(--inkblot-semantic-color-border-default)]"
+      }
+    )
+  ] });
+}
+
+const {Link: Link$1} = await importShared('react-router-dom');
+const existingInvoices = [
+  { id: "INV-2026-001", client: "Acme Corp", amount: "$12,400", status: "paid", date: "Feb 10, 2026" },
+  { id: "INV-2026-002", client: "TechVentures", amount: "$4,500", status: "pending", date: "Feb 18, 2026" },
+  { id: "INV-2026-003", client: "DataFlow Labs", amount: "$7,800", status: "overdue", date: "Jan 28, 2026" },
+  { id: "INV-2026-004", client: "GlobalTech", amount: "$22,000", status: "draft", date: "Feb 25, 2026" }
+];
+const statusConfig = {
+  paid: { label: "Paid", icon: CircleCheck, color: "text-citrus-lime" },
+  pending: { label: "Pending", icon: Clock, color: "text-citrus-lemon" },
+  overdue: { label: "Overdue", icon: CircleAlert, color: "text-destructive" },
+  draft: { label: "Draft", icon: FileText, color: "text-muted-foreground" }
+};
+function InvoicesHome() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-8 py-6 overflow-y-auto hide-scrollbar h-full", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between mb-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Recent invoices" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        Link$1,
+        {
+          to: "/create",
+          className: "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "w-3 h-3" }),
+            "New invoice"
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "glass rounded-xl overflow-hidden", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[80px_1fr_100px_80px_100px] gap-4 px-5 py-3 border-b border-border text-[10px] text-muted-foreground uppercase tracking-wider", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Invoice" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Client" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Amount" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Status" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Date" })
+      ] }),
+      existingInvoices.map((inv) => {
+        const st = statusConfig[inv.status];
+        return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "grid grid-cols-[80px_1fr_100px_80px_100px] gap-4 px-5 py-3.5 border-b border-border/50 hover:bg-secondary/30 transition-colors items-center",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-mono text-citrus-lemon", children: inv.id }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-foreground", children: inv.client }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-mono text-foreground", children: inv.amount }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `text-xs flex items-center gap-1.5 ${st.color}`, children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(st.icon, { className: "w-3 h-3" }),
+                st.label
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: inv.date })
+            ]
+          },
+          inv.id
+        );
+      })
+    ] })
+  ] });
+}
 
 const {useState: useState$2} = await importShared('react');
 
@@ -336,6 +491,8 @@ function ClientCreateDialog({ open, onOpenChange, onCreated }) {
 
 const {useState: useState$1} = await importShared('react');
 
+const {useNavigate: useNavigate$1} = await importShared('react-router-dom');
+
 const {AdvancedDropdown} = await importShared('@citron-systems/citron-ui');
 const INITIAL_CLIENTS = [
   { id: "cl-1", name: "Acme Corp", email: "billing@acme.com" },
@@ -372,6 +529,30 @@ const BANK_ACCOUNTS = [
   { value: "main", label: "Main Account", description: "****4821" },
   { value: "secondary", label: "Secondary Account", description: "****7390" }
 ];
+const PRODUCT_RATES = {
+  "web-dev": 150,
+  design: 175,
+  hosting: 500,
+  consulting: 200,
+  support: 1200
+};
+function findLabel(options, value) {
+  if (!value) return "";
+  return options.find((o) => o.value === value)?.label ?? "";
+}
+function taxRateFromId(id) {
+  switch (id) {
+    case "vat-21":
+      return 21;
+    case "vat-10":
+      return 10;
+    case "vat-0":
+    case "exempt":
+      return 0;
+    default:
+      return 0;
+  }
+}
 const labelClass = "[font:var(--inkblot-semantic-typography-body-small)] font-medium text-[var(--inkblot-semantic-color-text-secondary)]";
 const errorText = "text-xs text-[var(--inkblot-semantic-color-status-error)] mt-[var(--inkblot-spacing-1)]";
 const quantityInputClass = [
@@ -387,6 +568,7 @@ const quantityInputClass = [
 const notesClass = quantityInputClass + " resize-y";
 function SmartInvoiceBuilder() {
   const { addToast } = useToast();
+  const navigate = useNavigate$1();
   const [clients, setClients] = useState$1(INITIAL_CLIENTS);
   const [dialogOpen, setDialogOpen] = useState$1(false);
   const [clientId, setClientId] = useState$1(null);
@@ -414,27 +596,35 @@ function SmartInvoiceBuilder() {
     e.preventDefault();
     setAttempted(true);
     if (!clientId || !productId || !quantity) return;
+    const client = clients.find((c) => c.id === clientId);
+    if (!client) return;
     setSubmitting(true);
+    const draft = {
+      invoiceNumber: `INV-${Date.now().toString(36).toUpperCase()}`,
+      clientName: client.name,
+      clientEmail: client.email,
+      productLabel: findLabel(PRODUCTS, productId),
+      quantity: Number(quantity),
+      unitPrice: PRODUCT_RATES[productId] ?? 0,
+      invoiceTypeLabel: findLabel(INVOICE_TYPES, invoiceType),
+      paymentMethodLabel: findLabel(PAYMENT_METHODS, paymentMethod),
+      taxTypeLabel: findLabel(TAX_CONFIGS, taxConfig),
+      taxRatePct: taxRateFromId(taxConfig),
+      bankAccountLabel: findLabel(BANK_ACCOUNTS, bankAccount),
+      notes,
+      dueTerms: "Net 30"
+    };
     setTimeout(() => {
-      addToast({ title: "Invoice created", description: `Invoice for ${clients.find((c) => c.id === clientId)?.name} saved.`, variant: "success" });
-      setClientId(null);
-      setProductId(null);
-      setInvoiceType("standard");
-      setPaymentMethod("bank-transfer");
-      setTaxConfig("vat-21");
-      setBankAccount("main");
-      setQuantity(1);
-      setNotes("");
-      setAttempted(false);
       setSubmitting(false);
-    }, 600);
+      navigate("/editor", { state: { draft } });
+    }, 300);
   };
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full overflow-y-auto hide-scrollbar px-8 py-6", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "form",
       {
         onSubmit: handleSubmit,
-        className: "rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-6)]",
+        className: "rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-6)] max-w-4xl",
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "[font:var(--inkblot-semantic-typography-heading-4)] text-[var(--inkblot-semantic-color-text-primary)] mb-[var(--inkblot-spacing-6)]", children: "New Invoice" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-[var(--inkblot-spacing-5)] md:grid-cols-2", children: [
@@ -565,7 +755,7 @@ function SmartInvoiceBuilder() {
               className: "inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center gap-[var(--inkblot-spacing-2)] rounded-[var(--inkblot-radius-lg)] bg-[var(--inkblot-semantic-color-interactive-primary)] px-[var(--inkblot-spacing-6)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-small)] font-medium text-[var(--inkblot-semantic-color-text-inverse)] transition-colors duration-[var(--inkblot-duration-fast)] hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)] active:bg-[var(--inkblot-semantic-color-interactive-primary-active)] disabled:opacity-[var(--inkblot-opacity-disabled)] disabled:cursor-not-allowed",
               children: [
                 submitting && /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin" }),
-                "Create Invoice"
+                "Continue to editor"
               ]
             }
           ) })
@@ -576,131 +766,222 @@ function SmartInvoiceBuilder() {
   ] });
 }
 
-const {useState,useCallback} = await importShared('react');
+function computeLineTotal(qty, unit) {
+  return Math.round(qty * unit * 100) / 100;
+}
+function computeTax(subtotal, ratePct) {
+  return Math.round(subtotal * (ratePct / 100) * 100) / 100;
+}
+function computeTotal(subtotal, tax) {
+  return Math.round((subtotal + tax) * 100) / 100;
+}
 
-const {ModuleAssistantPanel} = await importShared('@citron-systems/citron-ui');
-const existingInvoices = [
-  { id: "INV-2026-001", client: "Acme Corp", amount: "$12,400", status: "paid", date: "Feb 10, 2026" },
-  { id: "INV-2026-002", client: "TechVentures", amount: "$4,500", status: "pending", date: "Feb 18, 2026" },
-  { id: "INV-2026-003", client: "DataFlow Labs", amount: "$7,800", status: "overdue", date: "Jan 28, 2026" },
-  { id: "INV-2026-004", client: "GlobalTech", amount: "$22,000", status: "draft", date: "Feb 25, 2026" }
-];
-const statusConfig = {
-  paid: { label: "Paid", icon: CircleCheck, color: "text-citrus-lime" },
-  pending: { label: "Pending", icon: Clock, color: "text-citrus-lemon" },
-  overdue: { label: "Overdue", icon: CircleAlert, color: "text-destructive" },
-  draft: { label: "Draft", icon: FileText, color: "text-muted-foreground" }
-};
-const CANNED_REPLIES = [
-  "Based on your recent invoicing data, I recommend using Net 30 payment terms for this client.",
-  "The average payment cycle for similar invoices is about 12 days. Consider offering a 2% early-payment discount.",
-  "I can help draft follow-up emails for overdue invoices — just let me know which client.",
-  "Your tax configuration looks correct. VAT 21% is the standard rate for domestic services."
-];
-function AccountingPage() {
-  const [activeTab, setActiveTab] = useState("invoices");
-  const [messages, setMessages] = useState([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const handleSend = useCallback((content) => {
-    const userMsg = { id: crypto.randomUUID(), role: "user", content };
-    setMessages((prev) => [...prev, userMsg]);
-    setIsProcessing(true);
-    setTimeout(() => {
-      const reply = CANNED_REPLIES[Math.floor(Math.random() * CANNED_REPLIES.length)];
-      const assistantMsg = { id: crypto.randomUUID(), role: "assistant", content: reply };
-      setMessages((prev) => [...prev, assistantMsg]);
-      setIsProcessing(false);
-    }, 800);
-  }, []);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full flex", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 flex flex-col min-w-0", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "px-8 py-5 border-b border-border flex items-center justify-between shrink-0", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 rounded-lg bg-citrus-lemon/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "w-4 h-4 text-citrus-lemon" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-lg font-semibold tracking-tight text-foreground", children: "Accounting" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Invoices · Smart creation" })
+const {useEffect,useMemo,useState} = await importShared('react');
+
+const {useLocation,useNavigate,Link} = await importShared('react-router-dom');
+
+const {Button,Input,Label,Textarea} = await importShared('@citron-systems/citron-ui');
+function InvoiceEditorPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { addToast } = useToast();
+  const initial = location.state?.draft;
+  const [form, setForm] = useState(initial ?? null);
+  useEffect(() => {
+    if (!initial) {
+      navigate("/create", { replace: true });
+    }
+  }, [initial, navigate]);
+  const update = (key, value) => {
+    setForm((prev) => prev ? { ...prev, [key]: value } : prev);
+  };
+  const subtotal = useMemo(() => {
+    if (!form) return 0;
+    return computeLineTotal(form.quantity, form.unitPrice);
+  }, [form]);
+  const tax = useMemo(() => {
+    if (!form) return 0;
+    return computeTax(subtotal, form.taxRatePct);
+  }, [form, subtotal]);
+  const total = useMemo(() => computeTotal(subtotal, tax), [subtotal, tax]);
+  const handleSend = () => {
+    if (!form) return;
+    addToast({
+      title: "Invoice sent",
+      description: `${form.invoiceNumber} sent to ${form.clientEmail}.`,
+      variant: "success"
+    });
+    navigate("/", { replace: true });
+  };
+  if (!form) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full flex items-center justify-center text-sm text-muted-foreground px-8", children: "Redirecting…" });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full flex flex-col min-h-0", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-8 py-3 border-b border-border flex items-center gap-4 shrink-0", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        Link,
+        {
+          to: "/create",
+          className: "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "w-3 h-3" }),
+            "Back"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-mono text-citrus-lemon", children: form.invoiceNumber })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-6 p-8 overflow-y-auto hide-scrollbar", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-4)] min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "Edit details" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "clientName", children: "Bill to" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { id: "clientName", value: form.clientName, onChange: (e) => update("clientName", e.target.value) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "clientEmail", children: "Email" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Input,
+            {
+              id: "clientEmail",
+              type: "email",
+              value: form.clientEmail,
+              onChange: (e) => update("clientEmail", e.target.value)
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "productLabel", children: "Line item" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { id: "productLabel", value: form.productLabel, onChange: (e) => update("productLabel", e.target.value) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-[var(--inkblot-spacing-3)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "qty", children: "Quantity" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Input,
+              {
+                id: "qty",
+                type: "number",
+                min: 1,
+                value: form.quantity,
+                onChange: (e) => update("quantity", Number(e.target.value) || 1)
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "unit", children: "Unit price" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Input,
+              {
+                id: "unit",
+                type: "number",
+                min: 0,
+                step: "0.01",
+                value: form.unitPrice,
+                onChange: (e) => update("unitPrice", Number(e.target.value) || 0)
+              }
+            )
           ] })
         ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "due", children: "Due" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { id: "due", value: form.dueTerms, onChange: (e) => update("dueTerms", e.target.value) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-[var(--inkblot-spacing-2)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "notes", children: "Notes" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Textarea,
+            {
+              id: "notes",
+              rows: 4,
+              value: form.notes,
+              onChange: (e) => update("notes", e.target.value),
+              resize: "vertical"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "button", variant: "primary", className: "w-full sm:w-auto", onClick: handleSend, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "w-4 h-4 mr-2" }),
+          "Send invoice"
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground mb-[var(--inkblot-spacing-3)]", children: "Preview" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
+          "div",
           {
-            onClick: () => setActiveTab("create"),
-            className: "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors",
+            className: "rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)]",
             children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "w-3 h-3" }),
-              "New Invoice"
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between gap-4 border-b border-[var(--inkblot-semantic-color-border-default)] pb-[var(--inkblot-spacing-4)]", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-wider text-[var(--inkblot-semantic-color-text-tertiary)]", children: "Invoice" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-sm text-[var(--inkblot-semantic-color-status-warning)]", children: form.invoiceNumber })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-right text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: form.invoiceTypeLabel }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: form.paymentMethodLabel })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "py-[var(--inkblot-spacing-4)] space-y-1", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-[var(--inkblot-semantic-color-text-primary)]", children: form.clientName }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: form.clientEmail })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "border-t border-[var(--inkblot-semantic-color-border-default)] pt-[var(--inkblot-spacing-3)] space-y-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between text-sm", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[var(--inkblot-semantic-color-text-secondary)]", children: form.productLabel }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-mono text-[var(--inkblot-semantic-color-text-primary)]", children: [
+                    "×",
+                    form.quantity,
+                    " @ $",
+                    form.unitPrice
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+                    "Tax (",
+                    form.taxTypeLabel,
+                    ")"
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-mono", children: [
+                    "$",
+                    tax.toLocaleString()
+                  ] })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Due" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: form.dueTerms })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Bank" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: form.bankAccountLabel })
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "border-t border-[var(--inkblot-semantic-color-border-default)] mt-[var(--inkblot-spacing-4)] pt-[var(--inkblot-spacing-4)] flex justify-between items-baseline", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-[var(--inkblot-semantic-color-text-primary)]", children: "Total" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "text-lg font-mono text-[var(--inkblot-semantic-color-status-success)]", children: [
+                  "$",
+                  total.toLocaleString()
+                ] })
+              ] }),
+              form.notes.trim() && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-[var(--inkblot-spacing-4)] text-xs text-[var(--inkblot-semantic-color-text-tertiary)] border-t border-[var(--inkblot-semantic-color-border-default)] pt-[var(--inkblot-spacing-3)]", children: form.notes })
             ]
           }
         )
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "px-8 py-3 border-b border-border flex gap-1 shrink-0", children: ["invoices", "create"].map((tab) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "button",
-        {
-          onClick: () => setActiveTab(tab),
-          className: `px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeTab === tab ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`,
-          children: tab === "create" ? "Create" : "Invoices"
-        },
-        tab
-      )) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 overflow-y-auto hide-scrollbar px-8 py-6", children: [
-        activeTab === "invoices" && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 md:grid-cols-4 gap-4 mb-8", children: [
-            { label: "Total Revenue", value: "$46.7K", sub: "This month" },
-            { label: "Outstanding", value: "$12.3K", sub: "3 invoices" },
-            { label: "Overdue", value: "$7.8K", sub: "1 invoice" },
-            { label: "Avg. Payment", value: "12d", sub: "-2d vs prior" }
-          ].map((kpi) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "glass rounded-xl p-4", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-muted-foreground uppercase tracking-wider", children: kpi.label }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-2xl font-semibold text-foreground mt-1", children: kpi.value }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-citrus-lime", children: kpi.sub })
-          ] }, kpi.label)) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "glass rounded-xl overflow-hidden", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[80px_1fr_100px_80px_100px] gap-4 px-5 py-3 border-b border-border text-[10px] text-muted-foreground uppercase tracking-wider", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Invoice" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Client" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Amount" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Status" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Date" })
-            ] }),
-            existingInvoices.map((inv) => {
-              const st = statusConfig[inv.status];
-              return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[80px_1fr_100px_80px_100px] gap-4 px-5 py-3.5 border-b border-border/50 hover:bg-secondary/30 transition-colors items-center", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-mono text-citrus-lemon", children: inv.id }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-foreground", children: inv.client }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-mono text-foreground", children: inv.amount }),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: `text-xs flex items-center gap-1.5 ${st.color}`, children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(st.icon, { className: "w-3 h-3" }),
-                  st.label
-                ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: inv.date })
-              ] }, inv.id);
-            })
-          ] })
-        ] }),
-        activeTab === "create" && /* @__PURE__ */ jsxRuntimeExports.jsx(SmartInvoiceBuilder, {})
       ] })
-    ] }),
-    activeTab === "create" && /* @__PURE__ */ jsxRuntimeExports.jsx(
-      ModuleAssistantPanel,
-      {
-        moduleId: "accounting",
-        moduleLabel: "Accounting",
-        agentLabel: "Accounting assistant",
-        messages,
-        onSend: handleSend,
-        isProcessing,
-        placeholder: "Ask about invoicing..."
-      }
-    )
+    ] })
   ] });
 }
 
+const {Routes,Route} = await importShared('react-router-dom');
 const {Toaster} = await importShared('@citron-systems/citron-ui');
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingPage, {}),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Route, { element: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingLayout, {}), children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { index: true, element: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoicesHome, {}) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "create", element: /* @__PURE__ */ jsxRuntimeExports.jsx(SmartInvoiceBuilder, {}) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "editor", element: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceEditorPage, {}) })
+    ] }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Toaster,
       {

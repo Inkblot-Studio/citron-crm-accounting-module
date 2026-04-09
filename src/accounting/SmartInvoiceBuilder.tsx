@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AdvancedDropdown, type AdvancedDropdownOption } from '@citron-systems/citron-ui'
 import { Plus, Loader2 } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
 import ClientCreateDialog, { type NewClient } from './ClientCreateDialog'
+import type { InvoiceDraft } from './invoiceDraft'
 
 interface ClientOption {
   id: string
@@ -51,6 +53,33 @@ const BANK_ACCOUNTS: AdvancedDropdownOption[] = [
   { value: 'secondary', label: 'Secondary Account', description: '****7390' },
 ]
 
+const PRODUCT_RATES: Record<string, number> = {
+  'web-dev': 150,
+  design: 175,
+  hosting: 500,
+  consulting: 200,
+  support: 1200,
+}
+
+function findLabel(options: AdvancedDropdownOption[], value: string | null): string {
+  if (!value) return ''
+  return options.find((o) => o.value === value)?.label ?? ''
+}
+
+function taxRateFromId(id: string | null): number {
+  switch (id) {
+    case 'vat-21':
+      return 21
+    case 'vat-10':
+      return 10
+    case 'vat-0':
+    case 'exempt':
+      return 0
+    default:
+      return 0
+  }
+}
+
 const labelClass = '[font:var(--inkblot-semantic-typography-body-small)] font-medium text-[var(--inkblot-semantic-color-text-secondary)]'
 const errorText = 'text-xs text-[var(--inkblot-semantic-color-status-error)] mt-[var(--inkblot-spacing-1)]'
 
@@ -69,6 +98,7 @@ const notesClass = quantityInputClass + ' resize-y'
 
 export default function SmartInvoiceBuilder() {
   const { addToast } = useToast()
+  const navigate = useNavigate()
 
   const [clients, setClients] = useState<ClientOption[]>(INITIAL_CLIENTS)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -103,27 +133,37 @@ export default function SmartInvoiceBuilder() {
     setAttempted(true)
     if (!clientId || !productId || !quantity) return
 
+    const client = clients.find((c) => c.id === clientId)
+    if (!client) return
+
     setSubmitting(true)
+    const draft: InvoiceDraft = {
+      invoiceNumber: `INV-${Date.now().toString(36).toUpperCase()}`,
+      clientName: client.name,
+      clientEmail: client.email,
+      productLabel: findLabel(PRODUCTS, productId),
+      quantity: Number(quantity),
+      unitPrice: PRODUCT_RATES[productId] ?? 0,
+      invoiceTypeLabel: findLabel(INVOICE_TYPES, invoiceType),
+      paymentMethodLabel: findLabel(PAYMENT_METHODS, paymentMethod),
+      taxTypeLabel: findLabel(TAX_CONFIGS, taxConfig),
+      taxRatePct: taxRateFromId(taxConfig),
+      bankAccountLabel: findLabel(BANK_ACCOUNTS, bankAccount),
+      notes,
+      dueTerms: 'Net 30',
+    }
+
     setTimeout(() => {
-      addToast({ title: 'Invoice created', description: `Invoice for ${clients.find((c) => c.id === clientId)?.name} saved.`, variant: 'success' })
-      setClientId(null)
-      setProductId(null)
-      setInvoiceType('standard')
-      setPaymentMethod('bank-transfer')
-      setTaxConfig('vat-21')
-      setBankAccount('main')
-      setQuantity(1)
-      setNotes('')
-      setAttempted(false)
       setSubmitting(false)
-    }, 600)
+      navigate('/editor', { state: { draft } })
+    }, 300)
   }
 
   return (
-    <>
+    <div className="h-full overflow-y-auto hide-scrollbar px-8 py-6">
       <form
         onSubmit={handleSubmit}
-        className="rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-6)]"
+        className="rounded-[var(--inkblot-radius-xl)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-6)] max-w-4xl"
       >
         <h2 className="[font:var(--inkblot-semantic-typography-heading-4)] text-[var(--inkblot-semantic-color-text-primary)] mb-[var(--inkblot-spacing-6)]">
           New Invoice
@@ -243,12 +283,12 @@ export default function SmartInvoiceBuilder() {
             className="inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center gap-[var(--inkblot-spacing-2)] rounded-[var(--inkblot-radius-lg)] bg-[var(--inkblot-semantic-color-interactive-primary)] px-[var(--inkblot-spacing-6)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-small)] font-medium text-[var(--inkblot-semantic-color-text-inverse)] transition-colors duration-[var(--inkblot-duration-fast)] hover:bg-[var(--inkblot-semantic-color-interactive-primary-hover)] active:bg-[var(--inkblot-semantic-color-interactive-primary-active)] disabled:opacity-[var(--inkblot-opacity-disabled)] disabled:cursor-not-allowed"
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Create Invoice
+            Continue to editor
           </button>
         </div>
       </form>
 
       <ClientCreateDialog open={dialogOpen} onOpenChange={setDialogOpen} onCreated={handleClientCreated} />
-    </>
+    </div>
   )
 }

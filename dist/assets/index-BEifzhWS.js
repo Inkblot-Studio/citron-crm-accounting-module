@@ -1,8 +1,8 @@
-import { importShared } from './__federation_fn_import-Co3laqTB.js';
+import { importShared } from './__federation_fn_import-9X7JX3Kk.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { r as requireReact } from './index-DhJIKhB5.js';
 import { r as requireReactDom } from './index-D35qpfyi.js';
-import { T as ToastProvider, u as useToast } from './ToastContext-DD-57fnn.js';
+import { T as ToastProvider, u as useToast } from './ToastContext-DU0nmke5.js';
 
 var client = {exports: {}};
 
@@ -16502,7 +16502,7 @@ const {Suspense,lazy} = await importShared('react');
 const {BrowserRouter,Routes,Route} = await importShared('react-router-dom');
 
 const {Toaster} = await importShared('@citron-systems/citron-ui');
-const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-COyzNxWF.js'),true              ?[]:void 0));
+const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-DD7GtRs8.js'),true              ?[]:void 0));
 function AppWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsx(

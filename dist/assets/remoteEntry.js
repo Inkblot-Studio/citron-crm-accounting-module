@@ -2,8 +2,8 @@ const currentImports = {};
       const exportSet = new Set(['Module', '__esModule', 'default', '_export_sfc']);
       let moduleMap = {
 "./Accounting":()=>{
-      dynamicLoadingCss(["style-B83emuFZ.css"], false, './Accounting');
-      return __federation_import('./__federation_expose_Accounting-COyzNxWF.js').then(module =>Object.keys(module).every(item => exportSet.has(item)) ? () => module.default : () => module)},};
+      dynamicLoadingCss(["style-Y-RtteUG.css"], false, './Accounting');
+      return __federation_import('./__federation_expose_Accounting-DD7GtRs8.js').then(module =>Object.keys(module).every(item => exportSet.has(item)) ? () => module.default : () => module)},};
       const seen = {};
       const dynamicLoadingCss = (cssFilePaths, dontAppendStylesToHead, exposeItemName) => {
         const metaUrl = import.meta.url;

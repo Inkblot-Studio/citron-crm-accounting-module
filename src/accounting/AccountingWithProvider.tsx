@@ -1,12 +1,22 @@
+import { Routes, Route } from 'react-router-dom'
 import { ToastProvider, useToast } from '@/lib/ToastContext'
 import { Toaster } from '@citron-systems/citron-ui'
-import AccountingPage from './AccountingPage'
+import AccountingLayout from './AccountingLayout'
+import InvoicesHome from './InvoicesHome'
+import SmartInvoiceBuilder from './SmartInvoiceBuilder'
+import InvoiceEditorPage from './InvoiceEditorPage'
 
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast()
   return (
     <>
-      <AccountingPage />
+      <Routes>
+        <Route element={<AccountingLayout />}>
+          <Route index element={<InvoicesHome />} />
+          <Route path="create" element={<SmartInvoiceBuilder />} />
+          <Route path="editor" element={<InvoiceEditorPage />} />
+        </Route>
+      </Routes>
       <Toaster
         toasts={toasts}
         position="bottom-right"
