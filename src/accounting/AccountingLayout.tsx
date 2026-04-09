@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
 import { AssistantPanel, type AssistantMessage } from '@citron-systems/citron-ui'
-import { FileText } from 'lucide-react'
+import { FileText, MessageSquare } from 'lucide-react'
 
 const CANNED_REPLIES = [
   'For this invoice, Net 30 is a solid default payment term.',
@@ -11,6 +11,7 @@ const CANNED_REPLIES = [
 ]
 
 export default function AccountingLayout() {
+  const [assistantOpen, setAssistantOpen] = useState(true)
   const [messages, setMessages] = useState<AssistantMessage[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -48,6 +49,17 @@ export default function AccountingLayout() {
               <p className="text-xs text-muted-foreground mt-0.5">Invoices</p>
             </div>
           </div>
+
+          {!assistantOpen && (
+            <button
+              type="button"
+              onClick={() => setAssistantOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              Assistant
+            </button>
+          )}
         </header>
 
         <div className="px-8 py-2 border-b border-border flex gap-1 shrink-0">
@@ -65,7 +77,8 @@ export default function AccountingLayout() {
       </div>
 
       <AssistantPanel
-        open
+        open={assistantOpen}
+        onOpenChange={setAssistantOpen}
         title="Accounting"
         subtitle="Assistant"
         messages={messages}
@@ -73,7 +86,6 @@ export default function AccountingLayout() {
         isProcessing={isProcessing}
         placeholder="Ask about invoicing..."
         emptyStateMessage="Ask anything about invoices, taxes, or payment terms."
-        className="h-full w-80 shrink-0 border-l border-[var(--inkblot-semantic-color-border-default)]"
       />
     </div>
   )

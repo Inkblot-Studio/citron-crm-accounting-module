@@ -1,6 +1,26 @@
-import { importShared } from './__federation_fn_import-9X7JX3Kk.js';
+import { importShared } from './__federation_fn_import-CMyVRFd-.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
-import { u as useToast, T as ToastProvider } from './ToastContext-DU0nmke5.js';
+
+const {createContext,useContext,useState: useState$4,useCallback: useCallback$1} = await importShared('react');
+
+const ToastContext = createContext(null);
+function useToast() {
+  const ctx = useContext(ToastContext);
+  if (!ctx) throw new Error("useToast must be used within ToastProvider");
+  return ctx;
+}
+function ToastProvider({ children }) {
+  const [toasts, setToasts] = useState$4([]);
+  const addToast = useCallback$1((toast) => {
+    const id = crypto.randomUUID();
+    setToasts((prev) => [...prev, { ...toast, id }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4e3);
+  }, []);
+  const dismissToast = useCallback$1((id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(ToastContext.Provider, { value: { toasts, addToast, dismissToast }, children });
+}
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -155,11 +175,26 @@ const createLucideIcon = (iconName, iconNode) => {
  */
 
 
-const __iconNode$7 = [
+const __iconNode$8 = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$7);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$8);
+
+/**
+ * @license lucide-react v0.575.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$7 = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
+  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+];
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$7);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -171,10 +206,9 @@ const ArrowLeft = createLucideIcon("arrow-left", __iconNode$7);
 
 const __iconNode$6 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
-  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$6);
+const CircleCheck = createLucideIcon("circle-check", __iconNode$6);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -186,9 +220,9 @@ const CircleAlert = createLucideIcon("circle-alert", __iconNode$6);
 
 const __iconNode$5 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$5);
+const Clock = createLucideIcon("clock", __iconNode$5);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -199,20 +233,6 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$5);
 
 
 const __iconNode$4 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }]
-];
-const Clock = createLucideIcon("clock", __iconNode$4);
-
-/**
- * @license lucide-react v0.575.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-
-
-const __iconNode$3 = [
   [
     "path",
     {
@@ -225,7 +245,7 @@ const __iconNode$3 = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$3);
+const FileText = createLucideIcon("file-text", __iconNode$4);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -235,8 +255,27 @@ const FileText = createLucideIcon("file-text", __iconNode$3);
  */
 
 
-const __iconNode$2 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$2);
+const __iconNode$3 = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$3);
+
+/**
+ * @license lucide-react v0.575.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+const __iconNode$2 = [
+  [
+    "path",
+    {
+      d: "M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z",
+      key: "18887p"
+    }
+  ]
+];
+const MessageSquare = createLucideIcon("message-square", __iconNode$2);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -284,6 +323,7 @@ const CANNED_REPLIES = [
   "Bank transfer details will appear on the PDF from your selected account."
 ];
 function AccountingLayout() {
+  const [assistantOpen, setAssistantOpen] = useState$3(true);
   const [messages, setMessages] = useState$3([]);
   const [isProcessing, setIsProcessing] = useState$3(false);
   const handleSend = useCallback((payload) => {
@@ -302,13 +342,27 @@ function AccountingLayout() {
   const navClass = ({ isActive }) => `px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full flex min-h-0", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 flex flex-col min-w-0", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "px-8 py-4 border-b border-border flex items-center justify-between shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 rounded-lg bg-citrus-lemon/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "w-4 h-4 text-citrus-lemon" }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-lg font-semibold tracking-tight text-foreground", children: "Accounting" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Invoices" })
-        ] })
-      ] }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "px-8 py-4 border-b border-border flex items-center justify-between shrink-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-8 h-8 rounded-lg bg-citrus-lemon/10 flex items-center justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "w-4 h-4 text-citrus-lemon" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-lg font-semibold tracking-tight text-foreground", children: "Accounting" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Invoices" })
+          ] })
+        ] }),
+        !assistantOpen && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            onClick: () => setAssistantOpen(true),
+            className: "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(MessageSquare, { className: "w-3.5 h-3.5" }),
+              "Assistant"
+            ]
+          }
+        )
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-8 py-2 border-b border-border flex gap-1 shrink-0", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: "/", end: true, className: navClass, children: "Invoices" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: "/create", className: navClass, children: "Create" })
@@ -318,15 +372,15 @@ function AccountingLayout() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       AssistantPanel,
       {
-        open: true,
+        open: assistantOpen,
+        onOpenChange: setAssistantOpen,
         title: "Accounting",
         subtitle: "Assistant",
         messages,
         onSend: handleSend,
         isProcessing,
         placeholder: "Ask about invoicing...",
-        emptyStateMessage: "Ask anything about invoices, taxes, or payment terms.",
-        className: "h-full w-80 shrink-0 border-l border-[var(--inkblot-semantic-color-border-default)]"
+        emptyStateMessage: "Ask anything about invoices, taxes, or payment terms."
       }
     )
   ] });

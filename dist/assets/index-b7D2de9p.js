@@ -1,8 +1,7 @@
-import { importShared } from './__federation_fn_import-9X7JX3Kk.js';
+import { importShared } from './__federation_fn_import-CMyVRFd-.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { r as requireReact } from './index-DhJIKhB5.js';
 import { r as requireReactDom } from './index-D35qpfyi.js';
-import { T as ToastProvider, u as useToast } from './ToastContext-DU0nmke5.js';
 
 var client = {exports: {}};
 
@@ -16501,31 +16500,15 @@ const {Suspense,lazy} = await importShared('react');
 
 const {BrowserRouter,Routes,Route} = await importShared('react-router-dom');
 
-const {Toaster} = await importShared('@citron-systems/citron-ui');
-const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-DD7GtRs8.js'),true              ?[]:void 0));
-function AppWithToaster() {
-  const { toasts, dismissToast } = useToast();
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    Toaster,
-    {
-      toasts,
-      position: "bottom-right",
-      onDismiss: dismissToast,
-      className: "fixed bottom-4 right-4 z-[100]"
-    }
-  );
-}
+const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-Dd71KHsi.js'),true              ?[]:void 0));
 function App() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(ToastProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(BrowserRouter, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(AppWithToaster, {}),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-      Route,
-      {
-        path: "*",
-        element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full animate-pulse bg-surface-1" }), children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingWithProvider, {}) })
-      }
-    ) })
-  ] }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Route,
+    {
+      path: "*",
+      element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full animate-pulse bg-surface-1" }), children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingWithProvider, {}) })
+    }
+  ) }) });
 }
 
 const {StrictMode} = await importShared('react');
