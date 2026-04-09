@@ -1,50 +1,50 @@
 # Citron Accounting Module
 
-Remote de **Module Federation** que expone la funcionalidad de facturación (invoices, deals pipeline, AI invoice wizard) como componente React consumible por cualquier host Citron CRM.
+A **Module Federation** remote that exposes invoicing features (invoices list, deals pipeline, AI invoice wizard) as a React component for any Citron CRM host application.
 
-## Inicio rápido
+## Quick start
 
 ```bash
 npm install
-npm run dev       # servidor local en http://localhost:5173
-npm run build     # genera dist/ con remoteEntry.js
-npm run preview   # sirve el build en http://localhost:5002
+npm run dev       # local dev server at http://localhost:5173
+npm run build     # outputs dist/ including remoteEntry.js
+npm run preview   # serves the production build at http://localhost:5002
 ```
 
-## Integración en el host
+## Host integration
 
-| Propiedad | Valor |
-|-----------|-------|
-| **Nombre del remote** | `accounting` |
-| **Módulo expuesto** | `./Accounting` |
-| **Import en el host** | `import('accounting/Accounting')` |
-| **Asset de producción** | `/assets/remoteEntry.js` |
+| Property | Value |
+|----------|-------|
+| **Remote name** | `accounting` |
+| **Exposed module** | `./Accounting` |
+| **Host import** | `import('accounting/Accounting')` |
+| **Production asset** | `/assets/remoteEntry.js` |
 
-Ejemplo de configuración en el `vite.config.ts` del host:
+Example `vite.config.ts` on the host:
 
 ```ts
 federation({
   name: 'host',
   remotes: {
-    accounting: 'https://<tu-deploy>.vercel.app/assets/remoteEntry.js',
+    accounting: 'https://<your-deployment>.vercel.app/assets/remoteEntry.js',
   },
   shared: ['react', 'react-dom', 'react-router-dom'],
 })
 ```
 
-El componente exportado (`AccountingWithProvider`) incluye su propio `ToastProvider` y `Toaster`, por lo que no requiere contexto de toasts del host.
+The exported component (`AccountingWithProvider`) ships with its own `ToastProvider` and `Toaster`, so it does not rely on the host’s toast context.
 
-## URL de despliegue
+## Deployment URL
 
-En producción (p. ej. Vercel), el `remoteEntry.js` queda disponible en:
+In production (e.g. Vercel), `remoteEntry.js` is served at:
 
 ```
-https://<tu-proyecto>.vercel.app/assets/remoteEntry.js
+https://<your-project>.vercel.app/assets/remoteEntry.js
 ```
 
-## Dependencias compartidas
+## Shared dependencies
 
-Las siguientes librerías se declaran como `shared` en la configuración de federation para evitar duplicados con el host:
+These packages are declared as `shared` in the federation config to avoid duplicate bundles with the host:
 
 - `react` (>=18)
 - `react-dom` (>=18)
@@ -52,8 +52,8 @@ Las siguientes librerías se declaran como `shared` en la configuración de fede
 - `@citron-systems/citron-ui`
 - `@citron-systems/citron-ds`
 
-## Notas y límites
+## Notes and limitations
 
-- El remote **no depende** de ningún contexto o provider del host. `ToastContext` se implementa localmente dentro del módulo.
-- Los tokens visuales (colores, radios, tipografía) provienen de `@citron-systems/citron-ds`. Si el host importa esa misma librería, los estilos serán consistentes automáticamente.
-- `lucide-react` se usa para iconografía; no está en `shared` porque su tree-shaking ya minimiza el impacto.
+- The remote **does not depend** on host context or providers. `ToastContext` is implemented inside this module.
+- Visual tokens (colors, radii, typography) come from `@citron-systems/citron-ds`. If the host loads the same package, styles stay aligned.
+- `lucide-react` is used for icons; it is not listed in `shared` because tree-shaking keeps the footprint small.

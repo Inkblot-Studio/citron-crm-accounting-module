@@ -1,5 +1,6 @@
 {
   "name": "citron-accounting-frontend",
+  "description": "Citron CRM Accounting module — Module Federation remote (invoices, deals, AI invoice wizard).",
   "private": true,
   "version": "0.1.0",
   "type": "module",
