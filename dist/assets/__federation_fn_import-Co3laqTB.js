@@ -356,7 +356,7 @@ function satisfy(version, range) {
 const currentImports = {};
 
 // eslint-disable-next-line no-undef
-const moduleMap = {'react':{get:()=>()=>__federation_import(new URL('__federation_shared_react-B50_JqeQ.js', import.meta.url).href),import:true},'react-dom':{get:()=>()=>__federation_import(new URL('__federation_shared_react-dom-BhLNPtgq.js', import.meta.url).href),import:true},'react-router-dom':{get:()=>()=>__federation_import(new URL('__federation_shared_react-router-dom-veJzeV-P.js', import.meta.url).href),import:true},'@citron-systems/citron-ui':{get:()=>()=>__federation_import(new URL('__federation_shared_@citron-systems/citron-ui-BPOWngvs.js', import.meta.url).href),import:true},'@citron-systems/citron-ds':{get:()=>()=>__federation_import(new URL('__federation_shared_@citron-systems/citron-ds-CzJyzUe8.js', import.meta.url).href),import:true}};
+const moduleMap = {'react':{get:()=>()=>__federation_import(new URL('__federation_shared_react-B50_JqeQ.js', import.meta.url).href),import:true},'react-dom':{get:()=>()=>__federation_import(new URL('__federation_shared_react-dom-BhLNPtgq.js', import.meta.url).href),import:true},'react-router-dom':{get:()=>()=>__federation_import(new URL('__federation_shared_react-router-dom-3Z2Q4QTL.js', import.meta.url).href),import:true},'@citron-systems/citron-ui':{get:()=>()=>__federation_import(new URL('__federation_shared_@citron-systems/citron-ui-CZujj4wj.js', import.meta.url).href),import:true},'@citron-systems/citron-ds':{get:()=>()=>__federation_import(new URL('__federation_shared_@citron-systems/citron-ds-CzJyzUe8.js', import.meta.url).href),import:true}};
 const moduleCache = Object.create(null);
 async function importShared(name, shareScope = 'default') {
   return moduleCache[name]
