@@ -1,4 +1,4 @@
-import { importShared } from '../__federation_fn_import-CMyVRFd-.js';
+import { importShared } from '../__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from '../jsx-runtime-XI9uIe3W.js';
 import { r as requireReact } from '../index-DhJIKhB5.js';
 

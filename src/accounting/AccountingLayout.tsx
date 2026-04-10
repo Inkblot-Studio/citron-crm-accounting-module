@@ -1,36 +1,7 @@
-import { useState, useCallback } from 'react'
-import { Outlet, NavLink } from 'react-router-dom'
-import { AssistantPanel, type AssistantMessage } from '@citron-systems/citron-ui'
-import { FileText, MessageSquare } from 'lucide-react'
-
-const CANNED_REPLIES = [
-  'For this invoice, Net 30 is a solid default payment term.',
-  'Double-check the tax rate matches your client jurisdiction.',
-  'You can attach a PO reference in the notes before sending.',
-  'Bank transfer details will appear on the PDF from your selected account.',
-]
+import { Outlet, NavLink, Link } from 'react-router-dom'
+import { FileText, Plus } from 'lucide-react'
 
 export default function AccountingLayout() {
-  const [assistantOpen, setAssistantOpen] = useState(true)
-  const [messages, setMessages] = useState<AssistantMessage[]>([])
-  const [isProcessing, setIsProcessing] = useState(false)
-
-  const handleSend = useCallback((payload: { text: string; files: File[] }) => {
-    const content = payload.text.trim()
-    if (!content) return
-
-    const userMsg: AssistantMessage = { id: crypto.randomUUID(), role: 'user', content }
-    setMessages((prev) => [...prev, userMsg])
-    setIsProcessing(true)
-
-    setTimeout(() => {
-      const reply = CANNED_REPLIES[Math.floor(Math.random() * CANNED_REPLIES.length)]!
-      const assistantMsg: AssistantMessage = { id: crypto.randomUUID(), role: 'assistant', content: reply }
-      setMessages((prev) => [...prev, assistantMsg])
-      setIsProcessing(false)
-    }, 700)
-  }, [])
-
   const navClass = ({ isActive }: { isActive: boolean }) =>
     `px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
       isActive ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
@@ -50,16 +21,13 @@ export default function AccountingLayout() {
             </div>
           </div>
 
-          {!assistantOpen && (
-            <button
-              type="button"
-              onClick={() => setAssistantOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              Assistant
-            </button>
-          )}
+          <Link
+            to="/create"
+            aria-label="New invoice"
+            className="inline-flex items-center justify-center min-h-[var(--inkblot-size-touch-target-min,2.5rem)] min-w-[var(--inkblot-size-touch-target-min,2.5rem)] rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="w-5 h-5" strokeWidth={2.25} />
+          </Link>
         </header>
 
         <div className="px-8 py-2 border-b border-border flex gap-1 shrink-0">
@@ -75,18 +43,6 @@ export default function AccountingLayout() {
           <Outlet />
         </div>
       </div>
-
-      <AssistantPanel
-        open={assistantOpen}
-        onOpenChange={setAssistantOpen}
-        title="Accounting"
-        subtitle="Assistant"
-        messages={messages}
-        onSend={handleSend}
-        isProcessing={isProcessing}
-        placeholder="Ask about invoicing..."
-        emptyStateMessage="Ask anything about invoices, taxes, or payment terms."
-      />
     </div>
   )
 }

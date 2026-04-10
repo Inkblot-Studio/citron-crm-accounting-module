@@ -1,4 +1,4 @@
-import { importShared } from './__federation_fn_import-CMyVRFd-.js';
+import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 
 /**
  * react-router v7.14.0
