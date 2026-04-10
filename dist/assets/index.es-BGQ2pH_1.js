@@ -1,5 +1,5 @@
 import { c as commonjsGlobal, g as getDefaultExportFromCjs } from './_commonjsHelpers-BFTU3MAI.js';
-import { _ as _typeof$1 } from './__federation_expose_Accounting-CPkVkUl-.js';
+import { _ as _typeof$1 } from './__federation_expose_Accounting-V3pK7bWA.js';
 
 var es_promise = {};
 
