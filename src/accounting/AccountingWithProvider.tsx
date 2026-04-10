@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { ToastProvider, useToast } from '@/lib/ToastContext'
 import { ModuleErrorBoundary, Toaster } from '@citron-systems/citron-ui'
 import AccountingLayout from './AccountingLayout'
@@ -12,6 +12,7 @@ function AccountingWithToaster() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Navigate to="/invoices" replace />} />
         <Route
           path="/invoices"
           element={
