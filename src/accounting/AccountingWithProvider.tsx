@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { ToastProvider, useToast } from '@/lib/ToastContext'
 import { ModuleErrorBoundary, Toaster } from '@citron-systems/citron-ui'
 import AccountingLayout from './AccountingLayout'
@@ -6,6 +6,7 @@ import InvoicesHome from './InvoicesHome'
 import SmartInvoiceBuilder from './SmartInvoiceBuilder'
 import InvoiceReviewPage from './InvoiceReviewPage'
 import { InvoiceStoreProvider } from './invoiceStore'
+import { ACCOUNTING_BASE_PATH } from './accountingConstants'
 
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast()
@@ -13,6 +14,7 @@ function AccountingWithToaster() {
     <>
       <Routes>
         <Route
+          path={ACCOUNTING_BASE_PATH}
           element={
             <ModuleErrorBoundary className="h-full min-h-[200px]">
               <AccountingLayout />
@@ -23,6 +25,8 @@ function AccountingWithToaster() {
           <Route path="create" element={<SmartInvoiceBuilder />} />
           <Route path="editor/:recordId" element={<InvoiceReviewPage />} />
         </Route>
+        <Route path="/" element={<Navigate to={ACCOUNTING_BASE_PATH} replace />} />
+        <Route path="*" element={<Navigate to={ACCOUNTING_BASE_PATH} replace />} />
       </Routes>
       <Toaster
         toasts={toasts}

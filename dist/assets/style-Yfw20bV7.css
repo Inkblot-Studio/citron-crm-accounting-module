@@ -1165,6 +1165,9 @@ video {
 .min-h-\[var\(--inkblot-size-touch-target-min\)\] {
   min-height: var(--inkblot-size-touch-target-min);
 }
+.min-h-\[var\(--inkblot-size-touch-target-min\2c 2\.5rem\)\] {
+  min-height: var(--inkblot-size-touch-target-min,2.5rem);
+}
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1315,6 +1318,9 @@ video {
 }
 .min-w-\[var\(--inkblot-size-touch-target-min\)\] {
   min-width: var(--inkblot-size-touch-target-min);
+}
+.min-w-\[var\(--inkblot-size-touch-target-min\2c 2\.5rem\)\] {
+  min-width: var(--inkblot-size-touch-target-min,2.5rem);
 }
 .max-w-2xl {
   max-width: 42rem;

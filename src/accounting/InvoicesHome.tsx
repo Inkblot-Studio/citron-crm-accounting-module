@@ -16,6 +16,7 @@ import type { InvoiceStatus, InvoiceRecord } from './invoiceStore'
 import { useInvoiceStore } from './invoiceStore'
 import { formatUsd, invoiceGrandTotal } from './invoiceDraft'
 import { useToast } from '@/lib/ToastContext'
+import { accountingPath } from './accountingConstants'
 
 const STATUS_TABS: { id: string; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -140,7 +141,7 @@ export default function InvoicesHome() {
 
   const openInvoice = useCallback(
     (recordId: string) => {
-      navigate(`/editor/${recordId}`)
+      navigate(accountingPath(`editor/${recordId}`))
     },
     [navigate],
   )
@@ -150,7 +151,7 @@ export default function InvoicesHome() {
       const newId = duplicateInvoice(inv.recordId)
       if (!newId) return
       addToast({ title: 'Duplicated', description: 'Draft copy created.', variant: 'success' })
-      navigate(`/editor/${newId}`)
+      navigate(accountingPath(`editor/${newId}`))
     },
     [duplicateInvoice, navigate, addToast],
   )

@@ -1,5 +1,6 @@
 import { Outlet, NavLink, Link } from 'react-router-dom'
 import { FileText, Plus } from 'lucide-react'
+import { ACCOUNTING_BASE_PATH, accountingPath } from './accountingConstants'
 
 export default function AccountingLayout() {
   const navClass = ({ isActive }: { isActive: boolean }) =>
@@ -22,7 +23,7 @@ export default function AccountingLayout() {
           </div>
 
           <Link
-            to="/create"
+            to={accountingPath('create')}
             aria-label="New invoice"
             className="inline-flex items-center justify-center min-h-[var(--inkblot-size-touch-target-min,2.5rem)] min-w-[var(--inkblot-size-touch-target-min,2.5rem)] rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
@@ -31,10 +32,10 @@ export default function AccountingLayout() {
         </header>
 
         <div className="px-8 py-2 border-b border-border flex gap-1 shrink-0">
-          <NavLink to="/" end className={navClass}>
+          <NavLink to={ACCOUNTING_BASE_PATH} end className={navClass}>
             Invoices
           </NavLink>
-          <NavLink to="/create" className={navClass}>
+          <NavLink to={accountingPath('create')} className={navClass}>
             Create
           </NavLink>
         </div>

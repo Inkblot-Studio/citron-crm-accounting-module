@@ -1,6 +1,16 @@
 import type { AdvancedDropdownOption } from '@citron-systems/citron-ui'
 import type { InvoiceClient, InvoiceProduct } from '@citron-systems/citron-ui'
 
+/** Base URL when Accounting is mounted in the CRM host (`/invoices/*`). */
+export const ACCOUNTING_BASE_PATH = '/invoices'
+
+/** Path under the host, e.g. `create` → `/invoices/create`, `editor/abc` → `/invoices/editor/abc`. */
+export function accountingPath(suffix = ''): string {
+  if (!suffix) return ACCOUNTING_BASE_PATH
+  const clean = suffix.startsWith('/') ? suffix.slice(1) : suffix
+  return `${ACCOUNTING_BASE_PATH}/${clean}`
+}
+
 export interface ClientEntry {
   id: string
   name: string

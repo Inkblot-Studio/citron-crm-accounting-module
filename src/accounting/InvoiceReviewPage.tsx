@@ -21,6 +21,7 @@ import {
 import InvoiceDocumentCard from './InvoiceDocumentCard'
 import { useToast } from '@/lib/ToastContext'
 import { NEW_RECORD_ROUTE, useInvoiceStore } from './invoiceStore'
+import { ACCOUNTING_BASE_PATH, accountingPath } from './accountingConstants'
 
 export default function InvoiceReviewPage() {
   const { recordId } = useParams<{ recordId: string }>()
@@ -42,13 +43,13 @@ export default function InvoiceReviewPage() {
 
   useEffect(() => {
     if (!recordId) {
-      navigate('/create', { replace: true })
+      navigate(accountingPath('create'), { replace: true })
       return
     }
     if (isNew) {
       const stateDraft = (location.state as { draft?: unknown } | undefined)?.draft
       if (!stateDraft) {
-        navigate('/create', { replace: true })
+        navigate(accountingPath('create'), { replace: true })
         return
       }
       setForm(normalizeInvoiceDraft(stateDraft))
@@ -62,7 +63,7 @@ export default function InvoiceReviewPage() {
         description: 'This invoice no longer exists or the link is invalid.',
         variant: 'error',
       })
-      navigate('/', { replace: true })
+      navigate(ACCOUNTING_BASE_PATH, { replace: true })
       return
     }
     setForm(normalizeInvoiceDraft(inv.draft as unknown))
@@ -108,7 +109,7 @@ export default function InvoiceReviewPage() {
     if (isNew) {
       const id = createFromDraft(form, 'draft')
       addToast({ title: 'Draft saved', description: `${form.invoiceNumber} saved.`, variant: 'success' })
-      navigate(`/editor/${id}`, { replace: true, state: {} })
+      navigate(accountingPath(`editor/${id}`), { replace: true, state: {} })
       return
     }
     updateDraft(recordId, form)
@@ -127,7 +128,7 @@ export default function InvoiceReviewPage() {
       description: `${form.invoiceNumber} sent to ${form.clientEmail}.`,
       variant: 'success',
     })
-    navigate('/', { replace: true })
+    navigate(ACCOUNTING_BASE_PATH, { replace: true })
   }, [form, recordId, isNew, createFromDraft, markSent, navigate, addToast])
 
   const handleMarkPaid = useCallback(() => {
@@ -177,7 +178,7 @@ export default function InvoiceReviewPage() {
     <div className="h-full flex flex-col min-h-0 print:h-auto">
       <div className="px-8 py-3 border-b border-border flex items-center gap-4 shrink-0 print:hidden">
         <Link
-          to="/create"
+          to={accountingPath('create')}
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-3 h-3" />

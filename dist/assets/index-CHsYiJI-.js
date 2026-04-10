@@ -16448,7 +16448,7 @@ const {Suspense,lazy} = await importShared('react');
 
 const {BrowserRouter,Routes,Route} = await importShared('react-router-dom');
 
-const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-s8rYBu_1.js').then(n => n.A),true              ?[]:void 0));
+const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-CPkVkUl-.js').then(n => n.A),true              ?[]:void 0));
 function App() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
     Route,

@@ -31,6 +31,7 @@ import {
   FORM_TAX_TYPES,
   bankLabelFromFormLabel,
   resolveTaxRate,
+  accountingPath,
 } from './accountingConstants'
 
 const ADD_CLIENT = '__citron_add_client__'
@@ -399,7 +400,7 @@ export default function SmartInvoiceBuilder() {
     setSubmitting(true)
     setTimeout(() => {
       setSubmitting(false)
-      navigate(`/editor/${NEW_RECORD_ROUTE}`, { state: { draft } })
+      navigate(accountingPath(`editor/${NEW_RECORD_ROUTE}`), { state: { draft } })
     }, 280)
   }
 

@@ -372,6 +372,80 @@ const __iconNode = [
 ];
 const Trash2 = createLucideIcon("trash-2", __iconNode);
 
+const ACCOUNTING_BASE_PATH = "/invoices";
+function accountingPath(suffix = "") {
+  if (!suffix) return ACCOUNTING_BASE_PATH;
+  const clean = suffix.startsWith("/") ? suffix.slice(1) : suffix;
+  return `${ACCOUNTING_BASE_PATH}/${clean}`;
+}
+const INITIAL_CLIENTS = [
+  { id: "cl-1", name: "Acme Corp", email: "billing@acme.com" },
+  { id: "cl-2", name: "TechVentures", email: "ap@techventures.io" },
+  { id: "cl-3", name: "DataFlow Labs", email: "finance@dataflow.dev" },
+  { id: "cl-4", name: "GlobalTech", email: "invoices@globaltech.com" }
+];
+INITIAL_CLIENTS.map((c) => ({
+  id: c.id,
+  name: c.name,
+  email: c.email
+}));
+const INVOICE_PRODUCTS = [
+  { id: "web-dev", name: "Web Development", unitPrice: 150 },
+  { id: "design", name: "UI/UX Design", unitPrice: 175 },
+  { id: "hosting", name: "Hosting & Infrastructure", unitPrice: 500 },
+  { id: "consulting", name: "Strategy Consulting", unitPrice: 200 },
+  { id: "support", name: "Support Package", unitPrice: 1200 }
+];
+const INVOICE_TYPES = [
+  { value: "standard", label: "Standard" },
+  { value: "proforma", label: "Proforma" },
+  { value: "credit-note", label: "Credit Note" },
+  { value: "debit-note", label: "Debit Note" }
+];
+const PAYMENT_METHOD_OPTIONS = [
+  { value: "bank-transfer", label: "Bank Transfer" },
+  { value: "credit-card", label: "Credit Card" },
+  { value: "cash", label: "Cash" },
+  { value: "check", label: "Check" }
+];
+const TAX_CONFIG_OPTIONS = [
+  { value: "vat-21", label: "VAT 21%" },
+  { value: "vat-10", label: "VAT 10%" },
+  { value: "vat-0", label: "VAT 0%" },
+  { value: "exempt", label: "Tax Exempt" }
+];
+const BANK_ACCOUNT_OPTIONS = [
+  { value: "main", label: "Main Account", description: "****4821" },
+  { value: "secondary", label: "Secondary Account", description: "****7390" }
+];
+const FORM_PAYMENT_METHODS = PAYMENT_METHOD_OPTIONS.map((o) => o.label);
+const FORM_TAX_TYPES = TAX_CONFIG_OPTIONS.map((o) => o.label);
+const FORM_INVOICE_TYPES = INVOICE_TYPES.map((o) => o.label);
+const FORM_BANK_ACCOUNTS = BANK_ACCOUNT_OPTIONS.map((o) => o.label);
+function taxRateFromTaxLabel(label) {
+  const id = TAX_CONFIG_OPTIONS.find((o) => o.label === label)?.value;
+  switch (id) {
+    case "vat-21":
+      return 21;
+    case "vat-10":
+      return 10;
+    case "vat-0":
+    case "exempt":
+      return 0;
+    default:
+      return 0;
+  }
+}
+function resolveTaxRate(taxLabel, extraPresets) {
+  const hit = extraPresets.find((p) => p.label === taxLabel);
+  if (hit) return Math.max(0, Math.min(100, hit.ratePct));
+  return taxRateFromTaxLabel(taxLabel);
+}
+function bankLabelFromFormLabel(label) {
+  const opt = BANK_ACCOUNT_OPTIONS.find((o) => o.label === label);
+  return opt ? `${opt.label}${opt.description ? ` (${opt.description})` : ""}` : label;
+}
+
 const {Outlet,NavLink,Link: Link$1} = await importShared('react-router-dom');
 function AccountingLayout() {
   const navClass = ({ isActive }) => `px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive ? "bg-secondary text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`;
@@ -384,21 +458,19 @@ function AccountingLayout() {
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground mt-0.5", children: "Invoices" })
         ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         Link$1,
         {
-          to: "/create",
-          className: "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors",
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "w-3 h-3" }),
-            "New invoice"
-          ]
+          to: accountingPath("create"),
+          "aria-label": "New invoice",
+          className: "inline-flex items-center justify-center min-h-[var(--inkblot-size-touch-target-min,2.5rem)] min-w-[var(--inkblot-size-touch-target-min,2.5rem)] rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "w-5 h-5", strokeWidth: 2.25 })
         }
       )
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "px-8 py-2 border-b border-border flex gap-1 shrink-0", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: "/", end: true, className: navClass, children: "Invoices" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: "/create", className: navClass, children: "Create" })
+      /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: ACCOUNTING_BASE_PATH, end: true, className: navClass, children: "Invoices" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(NavLink, { to: accountingPath("create"), className: navClass, children: "Create" })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Outlet, {}) })
   ] }) });
@@ -469,74 +541,6 @@ function normalizeInvoiceDraft(input) {
 }
 function newEmptyLineItem() {
   return { id: crypto.randomUUID(), productLabel: "", quantity: 1, unitPrice: 0 };
-}
-
-const INITIAL_CLIENTS = [
-  { id: "cl-1", name: "Acme Corp", email: "billing@acme.com" },
-  { id: "cl-2", name: "TechVentures", email: "ap@techventures.io" },
-  { id: "cl-3", name: "DataFlow Labs", email: "finance@dataflow.dev" },
-  { id: "cl-4", name: "GlobalTech", email: "invoices@globaltech.com" }
-];
-INITIAL_CLIENTS.map((c) => ({
-  id: c.id,
-  name: c.name,
-  email: c.email
-}));
-const INVOICE_PRODUCTS = [
-  { id: "web-dev", name: "Web Development", unitPrice: 150 },
-  { id: "design", name: "UI/UX Design", unitPrice: 175 },
-  { id: "hosting", name: "Hosting & Infrastructure", unitPrice: 500 },
-  { id: "consulting", name: "Strategy Consulting", unitPrice: 200 },
-  { id: "support", name: "Support Package", unitPrice: 1200 }
-];
-const INVOICE_TYPES = [
-  { value: "standard", label: "Standard" },
-  { value: "proforma", label: "Proforma" },
-  { value: "credit-note", label: "Credit Note" },
-  { value: "debit-note", label: "Debit Note" }
-];
-const PAYMENT_METHOD_OPTIONS = [
-  { value: "bank-transfer", label: "Bank Transfer" },
-  { value: "credit-card", label: "Credit Card" },
-  { value: "cash", label: "Cash" },
-  { value: "check", label: "Check" }
-];
-const TAX_CONFIG_OPTIONS = [
-  { value: "vat-21", label: "VAT 21%" },
-  { value: "vat-10", label: "VAT 10%" },
-  { value: "vat-0", label: "VAT 0%" },
-  { value: "exempt", label: "Tax Exempt" }
-];
-const BANK_ACCOUNT_OPTIONS = [
-  { value: "main", label: "Main Account", description: "****4821" },
-  { value: "secondary", label: "Secondary Account", description: "****7390" }
-];
-const FORM_PAYMENT_METHODS = PAYMENT_METHOD_OPTIONS.map((o) => o.label);
-const FORM_TAX_TYPES = TAX_CONFIG_OPTIONS.map((o) => o.label);
-const FORM_INVOICE_TYPES = INVOICE_TYPES.map((o) => o.label);
-const FORM_BANK_ACCOUNTS = BANK_ACCOUNT_OPTIONS.map((o) => o.label);
-function taxRateFromTaxLabel(label) {
-  const id = TAX_CONFIG_OPTIONS.find((o) => o.label === label)?.value;
-  switch (id) {
-    case "vat-21":
-      return 21;
-    case "vat-10":
-      return 10;
-    case "vat-0":
-    case "exempt":
-      return 0;
-    default:
-      return 0;
-  }
-}
-function resolveTaxRate(taxLabel, extraPresets) {
-  const hit = extraPresets.find((p) => p.label === taxLabel);
-  if (hit) return Math.max(0, Math.min(100, hit.ratePct));
-  return taxRateFromTaxLabel(taxLabel);
-}
-function bankLabelFromFormLabel(label) {
-  const opt = BANK_ACCOUNT_OPTIONS.find((o) => o.label === label);
-  return opt ? `${opt.label}${opt.description ? ` (${opt.description})` : ""}` : label;
 }
 
 const {createContext,useCallback: useCallback$3,useContext,useMemo: useMemo$3,useSyncExternalStore} = await importShared('react');
@@ -993,7 +997,7 @@ function InvoicesHome() {
   );
   const openInvoice = useCallback$2(
     (recordId) => {
-      navigate(`/editor/${recordId}`);
+      navigate(accountingPath(`editor/${recordId}`));
     },
     [navigate]
   );
@@ -1002,7 +1006,7 @@ function InvoicesHome() {
       const newId = duplicateInvoice(inv.recordId);
       if (!newId) return;
       addToast({ title: "Duplicated", description: "Draft copy created.", variant: "success" });
-      navigate(`/editor/${newId}`);
+      navigate(accountingPath(`editor/${newId}`));
     },
     [duplicateInvoice, navigate, addToast]
   );
@@ -7206,7 +7210,7 @@ function(t){t.processWEBP=function(e,r,n,i){var a=new ue(e),o=a.width,s=a.height
  * Licensed under the MIT License.
  * http://opensource.org/licenses/mit-license
  */
-function(t){var e=function(t){for(var e=t.length,r=new Uint8Array(e),n=0;n<e;n++)r[n]=t.charCodeAt(n);return r};t.API.events.push(["addFont",function(r){var n=void 0,i=r.font,a=r.instance;if(!i.isStandardFont){if(void 0===a)throw new Error("Font does not exist in vFS, import fonts or remove declaration doc.addFont('"+i.postScriptName+"').");if("string"!=typeof(n=false===a.existsFileInVFS(i.postScriptName)?a.loadFile(i.postScriptName):a.getFileFromVFS(i.postScriptName)))throw new Error("Font is not stored as string-data in vFS, import fonts or remove declaration doc.addFont('"+i.postScriptName+"').");!function(r,n){n=/^\x00\x01\x00\x00/.test(n)?e(n):e(f(n)),r.metadata=t.API.TTFFont.open(n),r.metadata.Unicode=r.metadata.Unicode||{encoding:{},kerning:{},widths:[]},r.metadata.glyIdsUsed=[0];}(i,n);}}]);}(E),E.API.addSvgAsImage=function(t,e,r,n,a,s,u,c){if(isNaN(e)||isNaN(r))throw o.error("jsPDF.addSvgAsImage: Invalid coordinates",arguments),new Error("Invalid coordinates passed to jsPDF.addSvgAsImage");if(isNaN(n)||isNaN(a))throw o.error("jsPDF.addSvgAsImage: Invalid measurements",arguments),new Error("Invalid measurements (width and/or height) passed to jsPDF.addSvgAsImage");var l=document.createElement("canvas");l.width=n,l.height=a;var h=l.getContext("2d");h.fillStyle="#fff",h.fillRect(0,0,l.width,l.height);var f={ignoreMouse:true,ignoreAnimation:true,ignoreDimensions:true},d=this;return (i.canvg?Promise.resolve(i.canvg):__vitePreload(() => import('./index.es-CrlDGdNB.js'),true              ?[]:void 0)).catch(function(t){return Promise.reject(new Error("Could not load canvg: "+t))}).then(function(t){return t.default?t.default:t}).then(function(e){return e.fromString(h,t,f)},function(){return Promise.reject(new Error("Could not load canvg."))}).then(function(t){return t.render(f)}).then(function(){d.addImage(l.toDataURL("image/jpeg",1),e,r,n,a,u,c);})},E.API.putTotalPages=function(t){var e,r=0;parseInt(this.internal.getFont().id.substr(1),10)<15?(e=new RegExp(t,"g"),r=this.internal.getNumberOfPages()):(e=new RegExp(this.pdfEscape16(t,this.internal.getFont()),"g"),r=this.pdfEscape16(this.internal.getNumberOfPages()+"",this.internal.getFont()));for(var n=1;n<=this.internal.getNumberOfPages();n++)for(var i=0;i<this.internal.pages[n].length;i++)this.internal.pages[n][i]=this.internal.pages[n][i].replace(e,r);return this},E.API.viewerPreferences=function(e,r){var n;e=e||{},r=r||false;var i,a,o,s={HideToolbar:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},HideMenubar:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},HideWindowUI:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},FitWindow:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},CenterWindow:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},DisplayDocTitle:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.4},NonFullScreenPageMode:{defaultValue:"UseNone",value:"UseNone",type:"name",explicitSet:false,valueSet:["UseNone","UseOutlines","UseThumbs","UseOC"],pdfVersion:1.3},Direction:{defaultValue:"L2R",value:"L2R",type:"name",explicitSet:false,valueSet:["L2R","R2L"],pdfVersion:1.3},ViewArea:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},ViewClip:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},PrintArea:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},PrintClip:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},PrintScaling:{defaultValue:"AppDefault",value:"AppDefault",type:"name",explicitSet:false,valueSet:["AppDefault","None"],pdfVersion:1.6},Duplex:{defaultValue:"",value:"none",type:"name",explicitSet:false,valueSet:["Simplex","DuplexFlipShortEdge","DuplexFlipLongEdge","none"],pdfVersion:1.7},PickTrayByPDFSize:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.7},PrintPageRange:{defaultValue:"",value:"",type:"array",explicitSet:false,valueSet:null,pdfVersion:1.7},NumCopies:{defaultValue:1,value:1,type:"integer",explicitSet:false,valueSet:null,pdfVersion:1.7}},u=Object.keys(s),c=[],l=0,h=0,f=0;function d(t,e){var r,n=false;for(r=0;r<t.length;r+=1)t[r]===e&&(n=true);return n}if(void 0===this.internal.viewerpreferences&&(this.internal.viewerpreferences={},this.internal.viewerpreferences.configuration=JSON.parse(JSON.stringify(s)),this.internal.viewerpreferences.isSubscribed=false),n=this.internal.viewerpreferences.configuration,"reset"===e||true===r){var p=u.length;for(f=0;f<p;f+=1)n[u[f]].value=n[u[f]].defaultValue,n[u[f]].explicitSet=false;}if("object"===_typeof(e))for(a in e)if(o=e[a],d(u,a)&&void 0!==o){if("boolean"===n[a].type&&"boolean"==typeof o)n[a].value=o;else if("name"===n[a].type&&d(n[a].valueSet,o))n[a].value=o;else if("integer"===n[a].type&&Number.isInteger(o))n[a].value=o;else if("array"===n[a].type){for(l=0;l<o.length;l+=1)if(i=true,1===o[l].length&&"number"==typeof o[l][0])c.push(String(o[l]-1));else if(o[l].length>1){for(h=0;h<o[l].length;h+=1)"number"!=typeof o[l][h]&&(i=false);true===i&&c.push([o[l][0]-1,o[l][1]-1].join(" "));}n[a].value="["+c.join(" ")+"]";}else n[a].value=n[a].defaultValue;n[a].explicitSet=true;}return  false===this.internal.viewerpreferences.isSubscribed&&(this.internal.events.subscribe("putCatalog",function(){var t,e=[];for(t in n) true===n[t].explicitSet&&("name"===n[t].type?e.push("/"+t+" /"+n[t].value):e.push("/"+t+" "+n[t].value));0!==e.length&&this.internal.write("/ViewerPreferences\n<<\n"+e.join("\n")+"\n>>");}),this.internal.viewerpreferences.isSubscribed=true),this.internal.viewerpreferences.configuration=n,this},E.API.addMetadata=function(t,e){return void 0===this.internal.__metadata__&&(this.internal.__metadata__={metadata:t,namespaceUri:null!=e?e:"http://jspdf.default.namespaceuri/",rawXml:"boolean"==typeof e&&e},this.internal.events.subscribe("putCatalog",le),this.internal.events.subscribe("postPutResources",ce)),this},function(t){var e=t.API,r=e.pdfEscape16=function(t,e){for(var r,n=e.metadata.Unicode.widths,i=["","0","00","000","0000"],a=[""],o=0,s=t.length;o<s;++o){if(r=e.metadata.characterToGlyph(t.charCodeAt(o)),e.metadata.glyIdsUsed.push(r),e.metadata.toUnicode[r]=t.charCodeAt(o),-1==n.indexOf(r)&&(n.push(r),n.push([parseInt(e.metadata.widthOfGlyph(r),10)])),"0"==r)return a.join("");r=r.toString(16),a.push(i[4-r.length],r);}return a.join("")},n=function(t){var e,r,n,i,a,o,s;for(a="/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n/CIDSystemInfo <<\n  /Registry (Adobe)\n  /Ordering (UCS)\n  /Supplement 0\n>> def\n/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n1 begincodespacerange\n<0000><ffff>\nendcodespacerange",n=[],o=0,s=(r=Object.keys(t).sort(function(t,e){return t-e})).length;o<s;o++)e=r[o],n.length>=100&&(a+="\n"+n.length+" beginbfchar\n"+n.join("\n")+"\nendbfchar",n=[]),void 0!==t[e]&&null!==t[e]&&"function"==typeof t[e].toString&&(i=("0000"+t[e].toString(16)).slice(-4),e=("0000"+(+e).toString(16)).slice(-4),n.push("<"+e+"><"+i+">"));return n.length&&(a+="\n"+n.length+" beginbfchar\n"+n.join("\n")+"\nendbfchar\n"),a+"endcmap\nCMapName currentdict /CMap defineresource pop\nend\nend"};e.events.push(["putFont",function(e){!function(e){var r=e.font,i=e.out,a=e.newObject,o=e.putStream;if(r.metadata instanceof t.API.TTFFont&&"Identity-H"===r.encoding){for(var s=r.metadata.Unicode.widths,u=r.metadata.subset.encode(r.metadata.glyIdsUsed,1),c="",l=0;l<u.length;l++)c+=String.fromCharCode(u[l]);var h=a();o({data:c,addLength1:true,objectId:h}),i("endobj");var f=a();o({data:n(r.metadata.toUnicode),addLength1:true,objectId:f}),i("endobj");var d=a();i("<<"),i("/Type /FontDescriptor"),i("/FontName /"+C(r.fontName)),i("/FontFile2 "+h+" 0 R"),i("/FontBBox "+t.API.PDFObject.convert(r.metadata.bbox)),i("/Flags "+r.metadata.flags),i("/StemV "+r.metadata.stemV),i("/ItalicAngle "+r.metadata.italicAngle),i("/Ascent "+r.metadata.ascender),i("/Descent "+r.metadata.decender),i("/CapHeight "+r.metadata.capHeight),i(">>"),i("endobj");var p=a();i("<<"),i("/Type /Font"),i("/BaseFont /"+C(r.fontName)),i("/FontDescriptor "+d+" 0 R"),i("/W "+t.API.PDFObject.convert(s)),i("/CIDToGIDMap /Identity"),i("/DW 1000"),i("/Subtype /CIDFontType2"),i("/CIDSystemInfo"),i("<<"),i("/Supplement 0"),i("/Registry (Adobe)"),i("/Ordering ("+r.encoding+")"),i(">>"),i(">>"),i("endobj"),r.objectNumber=a(),i("<<"),i("/Type /Font"),i("/Subtype /Type0"),i("/ToUnicode "+f+" 0 R"),i("/BaseFont /"+C(r.fontName)),i("/Encoding /"+r.encoding),i("/DescendantFonts ["+p+" 0 R]"),i(">>"),i("endobj"),r.isAlreadyPutted=true;}}(e);}]),e.events.push(["putFont",function(e){!function(e){var r=e.font,i=e.out,a=e.newObject,o=e.putStream;if(r.metadata instanceof t.API.TTFFont&&"WinAnsiEncoding"===r.encoding){for(var s=r.metadata.rawData,u="",c=0;c<s.length;c++)u+=String.fromCharCode(s[c]);var l=a();o({data:u,addLength1:true,objectId:l}),i("endobj");var h=a();o({data:n(r.metadata.toUnicode),addLength1:true,objectId:h}),i("endobj");var f=a();i("<<"),i("/Descent "+r.metadata.decender),i("/CapHeight "+r.metadata.capHeight),i("/StemV "+r.metadata.stemV),i("/Type /FontDescriptor"),i("/FontFile2 "+l+" 0 R"),i("/Flags 96"),i("/FontBBox "+t.API.PDFObject.convert(r.metadata.bbox)),i("/FontName /"+C(r.fontName)),i("/ItalicAngle "+r.metadata.italicAngle),i("/Ascent "+r.metadata.ascender),i(">>"),i("endobj"),r.objectNumber=a();for(var d=0;d<r.metadata.hmtx.widths.length;d++)r.metadata.hmtx.widths[d]=parseInt(r.metadata.hmtx.widths[d]*(1e3/r.metadata.head.unitsPerEm));i("<</Subtype/TrueType/Type/Font/ToUnicode "+h+" 0 R/BaseFont/"+C(r.fontName)+"/FontDescriptor "+f+" 0 R/Encoding/"+r.encoding+" /FirstChar 29 /LastChar 255 /Widths "+t.API.PDFObject.convert(r.metadata.hmtx.widths)+">>"),i("endobj"),r.isAlreadyPutted=true;}}(e);}]);var i=function(t){var e,n=t.text||"",i=t.x,a=t.y,o=t.options||{},s=t.mutex||{},u=s.pdfEscape,c=s.activeFontKey,l=s.fonts,h=c,f="",d=0,p="",g=l[h].encoding;if("Identity-H"!==l[h].encoding)return {text:n,x:i,y:a,options:o,mutex:s};for(p=n,h=c,Array.isArray(n)&&(p=n[0]),d=0;d<p.length;d+=1)l[h].metadata.hasOwnProperty("cmap")&&(e=l[h].metadata.cmap.unicode.codeMap[p[d].charCodeAt(0)]),e||p[d].charCodeAt(0)<256&&l[h].metadata.hasOwnProperty("Unicode")?f+=p[d]:f+="";var m="";return parseInt(h.slice(1))<14||"WinAnsiEncoding"===g?m=u(f,h).split("").map(function(t){return t.charCodeAt(0).toString(16)}).join(""):"Identity-H"===g&&(m=r(f,l[h])),s.isHex=true,{text:m,x:i,y:a,options:o,mutex:s}};e.events.push(["postProcessText",function(t){var e=t.text||"",r=[],n={text:e,x:t.x,y:t.y,options:t.options,mutex:t.mutex};if(Array.isArray(e)){var a=0;for(a=0;a<e.length;a+=1)Array.isArray(e[a])&&3===e[a].length?r.push([i(Object.assign({},n,{text:e[a][0]})).text,e[a][1],e[a][2]]):r.push(i(Object.assign({},n,{text:e[a]})).text);t.text=r;}else t.text=i(Object.assign({},n,{text:e})).text;}]);}(E),
+function(t){var e=function(t){for(var e=t.length,r=new Uint8Array(e),n=0;n<e;n++)r[n]=t.charCodeAt(n);return r};t.API.events.push(["addFont",function(r){var n=void 0,i=r.font,a=r.instance;if(!i.isStandardFont){if(void 0===a)throw new Error("Font does not exist in vFS, import fonts or remove declaration doc.addFont('"+i.postScriptName+"').");if("string"!=typeof(n=false===a.existsFileInVFS(i.postScriptName)?a.loadFile(i.postScriptName):a.getFileFromVFS(i.postScriptName)))throw new Error("Font is not stored as string-data in vFS, import fonts or remove declaration doc.addFont('"+i.postScriptName+"').");!function(r,n){n=/^\x00\x01\x00\x00/.test(n)?e(n):e(f(n)),r.metadata=t.API.TTFFont.open(n),r.metadata.Unicode=r.metadata.Unicode||{encoding:{},kerning:{},widths:[]},r.metadata.glyIdsUsed=[0];}(i,n);}}]);}(E),E.API.addSvgAsImage=function(t,e,r,n,a,s,u,c){if(isNaN(e)||isNaN(r))throw o.error("jsPDF.addSvgAsImage: Invalid coordinates",arguments),new Error("Invalid coordinates passed to jsPDF.addSvgAsImage");if(isNaN(n)||isNaN(a))throw o.error("jsPDF.addSvgAsImage: Invalid measurements",arguments),new Error("Invalid measurements (width and/or height) passed to jsPDF.addSvgAsImage");var l=document.createElement("canvas");l.width=n,l.height=a;var h=l.getContext("2d");h.fillStyle="#fff",h.fillRect(0,0,l.width,l.height);var f={ignoreMouse:true,ignoreAnimation:true,ignoreDimensions:true},d=this;return (i.canvg?Promise.resolve(i.canvg):__vitePreload(() => import('./index.es-DYLiL5jK.js'),true              ?[]:void 0)).catch(function(t){return Promise.reject(new Error("Could not load canvg: "+t))}).then(function(t){return t.default?t.default:t}).then(function(e){return e.fromString(h,t,f)},function(){return Promise.reject(new Error("Could not load canvg."))}).then(function(t){return t.render(f)}).then(function(){d.addImage(l.toDataURL("image/jpeg",1),e,r,n,a,u,c);})},E.API.putTotalPages=function(t){var e,r=0;parseInt(this.internal.getFont().id.substr(1),10)<15?(e=new RegExp(t,"g"),r=this.internal.getNumberOfPages()):(e=new RegExp(this.pdfEscape16(t,this.internal.getFont()),"g"),r=this.pdfEscape16(this.internal.getNumberOfPages()+"",this.internal.getFont()));for(var n=1;n<=this.internal.getNumberOfPages();n++)for(var i=0;i<this.internal.pages[n].length;i++)this.internal.pages[n][i]=this.internal.pages[n][i].replace(e,r);return this},E.API.viewerPreferences=function(e,r){var n;e=e||{},r=r||false;var i,a,o,s={HideToolbar:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},HideMenubar:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},HideWindowUI:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},FitWindow:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},CenterWindow:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.3},DisplayDocTitle:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.4},NonFullScreenPageMode:{defaultValue:"UseNone",value:"UseNone",type:"name",explicitSet:false,valueSet:["UseNone","UseOutlines","UseThumbs","UseOC"],pdfVersion:1.3},Direction:{defaultValue:"L2R",value:"L2R",type:"name",explicitSet:false,valueSet:["L2R","R2L"],pdfVersion:1.3},ViewArea:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},ViewClip:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},PrintArea:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},PrintClip:{defaultValue:"CropBox",value:"CropBox",type:"name",explicitSet:false,valueSet:["MediaBox","CropBox","TrimBox","BleedBox","ArtBox"],pdfVersion:1.4},PrintScaling:{defaultValue:"AppDefault",value:"AppDefault",type:"name",explicitSet:false,valueSet:["AppDefault","None"],pdfVersion:1.6},Duplex:{defaultValue:"",value:"none",type:"name",explicitSet:false,valueSet:["Simplex","DuplexFlipShortEdge","DuplexFlipLongEdge","none"],pdfVersion:1.7},PickTrayByPDFSize:{defaultValue:false,value:false,type:"boolean",explicitSet:false,valueSet:[true,false],pdfVersion:1.7},PrintPageRange:{defaultValue:"",value:"",type:"array",explicitSet:false,valueSet:null,pdfVersion:1.7},NumCopies:{defaultValue:1,value:1,type:"integer",explicitSet:false,valueSet:null,pdfVersion:1.7}},u=Object.keys(s),c=[],l=0,h=0,f=0;function d(t,e){var r,n=false;for(r=0;r<t.length;r+=1)t[r]===e&&(n=true);return n}if(void 0===this.internal.viewerpreferences&&(this.internal.viewerpreferences={},this.internal.viewerpreferences.configuration=JSON.parse(JSON.stringify(s)),this.internal.viewerpreferences.isSubscribed=false),n=this.internal.viewerpreferences.configuration,"reset"===e||true===r){var p=u.length;for(f=0;f<p;f+=1)n[u[f]].value=n[u[f]].defaultValue,n[u[f]].explicitSet=false;}if("object"===_typeof(e))for(a in e)if(o=e[a],d(u,a)&&void 0!==o){if("boolean"===n[a].type&&"boolean"==typeof o)n[a].value=o;else if("name"===n[a].type&&d(n[a].valueSet,o))n[a].value=o;else if("integer"===n[a].type&&Number.isInteger(o))n[a].value=o;else if("array"===n[a].type){for(l=0;l<o.length;l+=1)if(i=true,1===o[l].length&&"number"==typeof o[l][0])c.push(String(o[l]-1));else if(o[l].length>1){for(h=0;h<o[l].length;h+=1)"number"!=typeof o[l][h]&&(i=false);true===i&&c.push([o[l][0]-1,o[l][1]-1].join(" "));}n[a].value="["+c.join(" ")+"]";}else n[a].value=n[a].defaultValue;n[a].explicitSet=true;}return  false===this.internal.viewerpreferences.isSubscribed&&(this.internal.events.subscribe("putCatalog",function(){var t,e=[];for(t in n) true===n[t].explicitSet&&("name"===n[t].type?e.push("/"+t+" /"+n[t].value):e.push("/"+t+" "+n[t].value));0!==e.length&&this.internal.write("/ViewerPreferences\n<<\n"+e.join("\n")+"\n>>");}),this.internal.viewerpreferences.isSubscribed=true),this.internal.viewerpreferences.configuration=n,this},E.API.addMetadata=function(t,e){return void 0===this.internal.__metadata__&&(this.internal.__metadata__={metadata:t,namespaceUri:null!=e?e:"http://jspdf.default.namespaceuri/",rawXml:"boolean"==typeof e&&e},this.internal.events.subscribe("putCatalog",le),this.internal.events.subscribe("postPutResources",ce)),this},function(t){var e=t.API,r=e.pdfEscape16=function(t,e){for(var r,n=e.metadata.Unicode.widths,i=["","0","00","000","0000"],a=[""],o=0,s=t.length;o<s;++o){if(r=e.metadata.characterToGlyph(t.charCodeAt(o)),e.metadata.glyIdsUsed.push(r),e.metadata.toUnicode[r]=t.charCodeAt(o),-1==n.indexOf(r)&&(n.push(r),n.push([parseInt(e.metadata.widthOfGlyph(r),10)])),"0"==r)return a.join("");r=r.toString(16),a.push(i[4-r.length],r);}return a.join("")},n=function(t){var e,r,n,i,a,o,s;for(a="/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n/CIDSystemInfo <<\n  /Registry (Adobe)\n  /Ordering (UCS)\n  /Supplement 0\n>> def\n/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n1 begincodespacerange\n<0000><ffff>\nendcodespacerange",n=[],o=0,s=(r=Object.keys(t).sort(function(t,e){return t-e})).length;o<s;o++)e=r[o],n.length>=100&&(a+="\n"+n.length+" beginbfchar\n"+n.join("\n")+"\nendbfchar",n=[]),void 0!==t[e]&&null!==t[e]&&"function"==typeof t[e].toString&&(i=("0000"+t[e].toString(16)).slice(-4),e=("0000"+(+e).toString(16)).slice(-4),n.push("<"+e+"><"+i+">"));return n.length&&(a+="\n"+n.length+" beginbfchar\n"+n.join("\n")+"\nendbfchar\n"),a+"endcmap\nCMapName currentdict /CMap defineresource pop\nend\nend"};e.events.push(["putFont",function(e){!function(e){var r=e.font,i=e.out,a=e.newObject,o=e.putStream;if(r.metadata instanceof t.API.TTFFont&&"Identity-H"===r.encoding){for(var s=r.metadata.Unicode.widths,u=r.metadata.subset.encode(r.metadata.glyIdsUsed,1),c="",l=0;l<u.length;l++)c+=String.fromCharCode(u[l]);var h=a();o({data:c,addLength1:true,objectId:h}),i("endobj");var f=a();o({data:n(r.metadata.toUnicode),addLength1:true,objectId:f}),i("endobj");var d=a();i("<<"),i("/Type /FontDescriptor"),i("/FontName /"+C(r.fontName)),i("/FontFile2 "+h+" 0 R"),i("/FontBBox "+t.API.PDFObject.convert(r.metadata.bbox)),i("/Flags "+r.metadata.flags),i("/StemV "+r.metadata.stemV),i("/ItalicAngle "+r.metadata.italicAngle),i("/Ascent "+r.metadata.ascender),i("/Descent "+r.metadata.decender),i("/CapHeight "+r.metadata.capHeight),i(">>"),i("endobj");var p=a();i("<<"),i("/Type /Font"),i("/BaseFont /"+C(r.fontName)),i("/FontDescriptor "+d+" 0 R"),i("/W "+t.API.PDFObject.convert(s)),i("/CIDToGIDMap /Identity"),i("/DW 1000"),i("/Subtype /CIDFontType2"),i("/CIDSystemInfo"),i("<<"),i("/Supplement 0"),i("/Registry (Adobe)"),i("/Ordering ("+r.encoding+")"),i(">>"),i(">>"),i("endobj"),r.objectNumber=a(),i("<<"),i("/Type /Font"),i("/Subtype /Type0"),i("/ToUnicode "+f+" 0 R"),i("/BaseFont /"+C(r.fontName)),i("/Encoding /"+r.encoding),i("/DescendantFonts ["+p+" 0 R]"),i(">>"),i("endobj"),r.isAlreadyPutted=true;}}(e);}]),e.events.push(["putFont",function(e){!function(e){var r=e.font,i=e.out,a=e.newObject,o=e.putStream;if(r.metadata instanceof t.API.TTFFont&&"WinAnsiEncoding"===r.encoding){for(var s=r.metadata.rawData,u="",c=0;c<s.length;c++)u+=String.fromCharCode(s[c]);var l=a();o({data:u,addLength1:true,objectId:l}),i("endobj");var h=a();o({data:n(r.metadata.toUnicode),addLength1:true,objectId:h}),i("endobj");var f=a();i("<<"),i("/Descent "+r.metadata.decender),i("/CapHeight "+r.metadata.capHeight),i("/StemV "+r.metadata.stemV),i("/Type /FontDescriptor"),i("/FontFile2 "+l+" 0 R"),i("/Flags 96"),i("/FontBBox "+t.API.PDFObject.convert(r.metadata.bbox)),i("/FontName /"+C(r.fontName)),i("/ItalicAngle "+r.metadata.italicAngle),i("/Ascent "+r.metadata.ascender),i(">>"),i("endobj"),r.objectNumber=a();for(var d=0;d<r.metadata.hmtx.widths.length;d++)r.metadata.hmtx.widths[d]=parseInt(r.metadata.hmtx.widths[d]*(1e3/r.metadata.head.unitsPerEm));i("<</Subtype/TrueType/Type/Font/ToUnicode "+h+" 0 R/BaseFont/"+C(r.fontName)+"/FontDescriptor "+f+" 0 R/Encoding/"+r.encoding+" /FirstChar 29 /LastChar 255 /Widths "+t.API.PDFObject.convert(r.metadata.hmtx.widths)+">>"),i("endobj"),r.isAlreadyPutted=true;}}(e);}]);var i=function(t){var e,n=t.text||"",i=t.x,a=t.y,o=t.options||{},s=t.mutex||{},u=s.pdfEscape,c=s.activeFontKey,l=s.fonts,h=c,f="",d=0,p="",g=l[h].encoding;if("Identity-H"!==l[h].encoding)return {text:n,x:i,y:a,options:o,mutex:s};for(p=n,h=c,Array.isArray(n)&&(p=n[0]),d=0;d<p.length;d+=1)l[h].metadata.hasOwnProperty("cmap")&&(e=l[h].metadata.cmap.unicode.codeMap[p[d].charCodeAt(0)]),e||p[d].charCodeAt(0)<256&&l[h].metadata.hasOwnProperty("Unicode")?f+=p[d]:f+="";var m="";return parseInt(h.slice(1))<14||"WinAnsiEncoding"===g?m=u(f,h).split("").map(function(t){return t.charCodeAt(0).toString(16)}).join(""):"Identity-H"===g&&(m=r(f,l[h])),s.isHex=true,{text:m,x:i,y:a,options:o,mutex:s}};e.events.push(["postProcessText",function(t){var e=t.text||"",r=[],n={text:e,x:t.x,y:t.y,options:t.options,mutex:t.mutex};if(Array.isArray(e)){var a=0;for(a=0;a<e.length;a+=1)Array.isArray(e[a])&&3===e[a].length?r.push([i(Object.assign({},n,{text:e[a][0]})).text,e[a][1],e[a][2]]):r.push(i(Object.assign({},n,{text:e[a]})).text);t.text=r;}else t.text=i(Object.assign({},n,{text:e})).text;}]);}(E),
 /**
  * @license
  * jsPDF virtual FileSystem functionality
@@ -7695,7 +7699,7 @@ function SmartInvoiceBuilder() {
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
-      navigate(`/editor/${NEW_RECORD_ROUTE}`, { state: { draft } });
+      navigate(accountingPath(`editor/${NEW_RECORD_ROUTE}`), { state: { draft } });
     }, 280);
   };
   const addLine = () => setLines((prev) => [...prev, newLineRow()]);
@@ -8019,13 +8023,13 @@ function InvoiceReviewPage() {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     if (!recordId) {
-      navigate("/create", { replace: true });
+      navigate(accountingPath("create"), { replace: true });
       return;
     }
     if (isNew) {
       const stateDraft = location.state?.draft;
       if (!stateDraft) {
-        navigate("/create", { replace: true });
+        navigate(accountingPath("create"), { replace: true });
         return;
       }
       setForm(normalizeInvoiceDraft(stateDraft));
@@ -8039,7 +8043,7 @@ function InvoiceReviewPage() {
         description: "This invoice no longer exists or the link is invalid.",
         variant: "error"
       });
-      navigate("/", { replace: true });
+      navigate(ACCOUNTING_BASE_PATH, { replace: true });
       return;
     }
     setForm(normalizeInvoiceDraft(inv.draft));
@@ -8077,7 +8081,7 @@ function InvoiceReviewPage() {
     if (isNew) {
       const id = createFromDraft(form, "draft");
       addToast({ title: "Draft saved", description: `${form.invoiceNumber} saved.`, variant: "success" });
-      navigate(`/editor/${id}`, { replace: true, state: {} });
+      navigate(accountingPath(`editor/${id}`), { replace: true, state: {} });
       return;
     }
     updateDraft(recordId, form);
@@ -8095,7 +8099,7 @@ function InvoiceReviewPage() {
       description: `${form.invoiceNumber} sent to ${form.clientEmail}.`,
       variant: "success"
     });
-    navigate("/", { replace: true });
+    navigate(ACCOUNTING_BASE_PATH, { replace: true });
   }, [form, recordId, isNew, createFromDraft, markSent, navigate, addToast]);
   const handleMarkPaid = useCallback(() => {
     if (!form || !recordId || isNew) return;
@@ -8135,7 +8139,7 @@ function InvoiceReviewPage() {
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         Link,
         {
-          to: "/create",
+          to: accountingPath("create"),
           className: "inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "w-3 h-3" }),
@@ -8302,22 +8306,27 @@ function InvoiceReviewPage() {
   ] });
 }
 
-const {Routes,Route} = await importShared('react-router-dom');
+const {Routes,Route,Navigate} = await importShared('react-router-dom');
 const {ModuleErrorBoundary,Toaster} = await importShared('@citron-systems/citron-ui');
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      Route,
-      {
-        element: /* @__PURE__ */ jsxRuntimeExports.jsx(ModuleErrorBoundary, { className: "h-full min-h-[200px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingLayout, {}) }),
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { index: true, element: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoicesHome, {}) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "create", element: /* @__PURE__ */ jsxRuntimeExports.jsx(SmartInvoiceBuilder, {}) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "editor/:recordId", element: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceReviewPage, {}) })
-        ]
-      }
-    ) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(Routes, { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        Route,
+        {
+          path: ACCOUNTING_BASE_PATH,
+          element: /* @__PURE__ */ jsxRuntimeExports.jsx(ModuleErrorBoundary, { className: "h-full min-h-[200px]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingLayout, {}) }),
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { index: true, element: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoicesHome, {}) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "create", element: /* @__PURE__ */ jsxRuntimeExports.jsx(SmartInvoiceBuilder, {}) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "editor/:recordId", element: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceReviewPage, {}) })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: ACCOUNTING_BASE_PATH, replace: true }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "*", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: ACCOUNTING_BASE_PATH, replace: true }) })
+    ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       Toaster,
       {
