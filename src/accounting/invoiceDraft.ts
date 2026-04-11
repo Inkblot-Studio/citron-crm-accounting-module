@@ -51,6 +51,7 @@ export function formatUsd(amount: number): string {
 export function normalizeInvoiceDraft(input: unknown): InvoiceDraft {
   const d = input as Record<string, unknown>
   let lineItems: InvoiceLineItem[] = []
+  const hasLineItemsKey = 'lineItems' in d && Array.isArray(d.lineItems)
   if (Array.isArray(d.lineItems)) {
     lineItems = (d.lineItems as unknown[]).map((row, i) => {
       const r = row as Record<string, unknown>
@@ -73,7 +74,11 @@ export function normalizeInvoiceDraft(input: unknown): InvoiceDraft {
     ]
   }
   if (lineItems.length === 0) {
-    lineItems = [{ id: crypto.randomUUID(), productLabel: '', quantity: 1, unitPrice: 0 }]
+    if (hasLineItemsKey) {
+      lineItems = []
+    } else {
+      lineItems = [{ id: crypto.randomUUID(), productLabel: '', quantity: 1, unitPrice: 0 }]
+    }
   }
 
   return {

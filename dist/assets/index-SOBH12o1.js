@@ -3,6 +3,7 @@ import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { r as requireReact } from './index-DhJIKhB5.js';
 import { r as requireReactDom } from './index-D35qpfyi.js';
 import { _ as __vitePreload } from './preload-helper-Dea3Szod.js';
+import { A as AccountingModuleSuspenseFallback } from './AccountingSkeletons-BBpJ38wk.js';
 
 var client = {exports: {}};
 
@@ -16446,17 +16447,20 @@ var clientExports = requireClient();
 
 const {Suspense,lazy} = await importShared('react');
 
-const {BrowserRouter,Routes,Route} = await importShared('react-router-dom');
-
-const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-V3pK7bWA.js').then(n => n.A),true              ?[]:void 0));
+const {BrowserRouter,Routes,Route,Navigate} = await importShared('react-router-dom');
+const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-BuyDr_i8.js'),true              ?[]:void 0));
 function App() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(Routes, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-    Route,
-    {
-      path: "*",
-      element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full w-full animate-pulse bg-surface-1" }), children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingWithProvider, {}) })
-    }
-  ) }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Routes, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: "/invoices", replace: true }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Route,
+      {
+        path: "/invoices/*",
+        element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingModuleSuspenseFallback, {}), children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingWithProvider, {}) })
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "*", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: "/invoices", replace: true }) })
+  ] }) });
 }
 
 const {StrictMode} = await importShared('react');

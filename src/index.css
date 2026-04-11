@@ -42,6 +42,12 @@ body {
     display: none;
   }
 
+  /** Horizontal scroll regions (tables on mobile). */
+  .touch-scroll-x {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
   .animate-shimmer {
     animation: shimmer 1.5s ease-in-out infinite;
     background: linear-gradient(

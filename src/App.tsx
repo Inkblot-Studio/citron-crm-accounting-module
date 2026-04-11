@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AccountingModuleSuspenseFallback } from '@/accounting/AccountingSkeletons'
 
 const AccountingWithProvider = lazy(() => import('@/accounting/AccountingWithProvider'))
 
@@ -11,7 +12,7 @@ export default function App() {
         <Route
           path="/invoices/*"
           element={
-            <Suspense fallback={<div className="h-full w-full animate-pulse bg-surface-1" />}>
+            <Suspense fallback={<AccountingModuleSuspenseFallback />}>
               <AccountingWithProvider />
             </Suspense>
           }

@@ -25,7 +25,7 @@ const NEW_RECORD_ROUTE = 'new'
 export { NEW_RECORD_ROUTE }
 
 interface PersistedShape {
-  version: 2
+  version: 3
   invoices: InvoiceRecord[]
   clients: ClientEntry[]
   extraProducts: InvoiceProduct[]
@@ -34,13 +34,42 @@ interface PersistedShape {
   extraTaxPresets: TaxPresetEntry[]
 }
 
+/** Next free numeric id: max(existing)+1, starting at "0" when none. */
+function nextInvoiceNumber(invoices: InvoiceRecord[]): string {
+  let max = -1
+  for (const inv of invoices) {
+    const n = Number.parseInt(inv.draft.invoiceNumber, 10)
+    if (Number.isFinite(n) && n > max) max = n
+  }
+  return String(max + 1)
+}
+
+function assignSequentialInvoiceNumbers(invoices: InvoiceRecord[]): InvoiceRecord[] {
+  const entries = invoices.map((inv) => ({
+    inv,
+    sortKey: `${inv.draft.issueDate ?? '9999-99-99'}|${inv.recordId}`,
+  }))
+  entries.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
+  const numByRecordId = new Map<string, string>()
+  entries.forEach((e, index) => {
+    numByRecordId.set(e.inv.recordId, String(index))
+  })
+  return invoices.map((inv) => ({
+    ...inv,
+    draft: {
+      ...inv.draft,
+      invoiceNumber: numByRecordId.get(inv.recordId) ?? '0',
+    },
+  }))
+}
+
 function buildSeedInvoices(): InvoiceRecord[] {
   return [
     {
       recordId: 'seed-001',
       status: 'paid',
       draft: {
-        invoiceNumber: 'INV-2026-001',
+        invoiceNumber: '0',
         clientName: 'Acme Corp',
         clientEmail: 'billing@acme.com',
         lineItems: [
@@ -61,7 +90,7 @@ function buildSeedInvoices(): InvoiceRecord[] {
       recordId: 'seed-002',
       status: 'pending',
       draft: {
-        invoiceNumber: 'INV-2026-002',
+        invoiceNumber: '1',
         clientName: 'TechVentures',
         clientEmail: 'ap@techventures.io',
         lineItems: [{ id: 'seed-002-a', productLabel: 'Web Development', quantity: 30, unitPrice: 150 }],
@@ -80,7 +109,7 @@ function buildSeedInvoices(): InvoiceRecord[] {
       recordId: 'seed-003',
       status: 'overdue',
       draft: {
-        invoiceNumber: 'INV-2026-003',
+        invoiceNumber: '2',
         clientName: 'DataFlow Labs',
         clientEmail: 'finance@dataflow.dev',
         lineItems: [{ id: 'seed-003-a', productLabel: 'Hosting & Infrastructure', quantity: 12, unitPrice: 650 }],
@@ -99,7 +128,7 @@ function buildSeedInvoices(): InvoiceRecord[] {
       recordId: 'seed-004',
       status: 'draft',
       draft: {
-        invoiceNumber: 'INV-2026-004',
+        invoiceNumber: '3',
         clientName: 'GlobalTech',
         clientEmail: 'invoices@globaltech.com',
         lineItems: [{ id: 'seed-004-a', productLabel: 'Support Package', quantity: 22, unitPrice: 1000 }],
@@ -119,7 +148,7 @@ function buildSeedInvoices(): InvoiceRecord[] {
 
 function defaultPersisted(): PersistedShape {
   return {
-    version: 2,
+    version: 3,
     invoices: buildSeedInvoices(),
     clients: [...INITIAL_CLIENTS],
     extraProducts: [],
@@ -129,49 +158,34 @@ function defaultPersisted(): PersistedShape {
   }
 }
 
+function extrasFromRaw(raw: Record<string, unknown>) {
+  return {
+    extraProducts: (Array.isArray(raw.extraProducts) ? raw.extraProducts : []) as InvoiceProduct[],
+    extraBankLabels: (Array.isArray(raw.extraBankLabels) ? raw.extraBankLabels : []) as string[],
+    extraPaymentMethods: (Array.isArray(raw.extraPaymentMethods) ? raw.extraPaymentMethods : []) as string[],
+    extraTaxPresets: (Array.isArray(raw.extraTaxPresets) ? raw.extraTaxPresets : []) as TaxPresetEntry[],
+  }
+}
+
 function migratePersisted(raw: Record<string, unknown>): PersistedShape | null {
   const invoices = raw.invoices
   const clients = raw.clients
   if (!Array.isArray(invoices) || !Array.isArray(clients)) return null
 
-  if (raw.version === 1) {
-    return {
-      version: 2,
-      invoices: invoices as InvoiceRecord[],
-      clients: clients as ClientEntry[],
-      extraProducts: [],
-      extraBankLabels: [],
-      extraPaymentMethods: [],
-      extraTaxPresets: [],
-    }
+  const extras = extrasFromRaw(raw)
+  const clientList = clients as ClientEntry[]
+  let list = invoices as InvoiceRecord[]
+
+  if (raw.version !== 3) {
+    list = assignSequentialInvoiceNumbers(list)
   }
 
-  if (raw.version === 2) {
-    return {
-      version: 2,
-      invoices: invoices as InvoiceRecord[],
-      clients: clients as ClientEntry[],
-      extraProducts: (Array.isArray(raw.extraProducts) ? raw.extraProducts : []) as InvoiceProduct[],
-      extraBankLabels: (Array.isArray(raw.extraBankLabels) ? raw.extraBankLabels : []) as string[],
-      extraPaymentMethods: (Array.isArray(raw.extraPaymentMethods) ? raw.extraPaymentMethods : []) as string[],
-      extraTaxPresets: (Array.isArray(raw.extraTaxPresets) ? raw.extraTaxPresets : []) as TaxPresetEntry[],
-    }
+  return {
+    version: 3,
+    invoices: list,
+    clients: clientList,
+    ...extras,
   }
-
-  /* Legacy payloads without `version` (same shape as v1) */
-  if (raw.version === undefined) {
-    return {
-      version: 2,
-      invoices: invoices as InvoiceRecord[],
-      clients: clients as ClientEntry[],
-      extraProducts: [],
-      extraBankLabels: [],
-      extraPaymentMethods: [],
-      extraTaxPresets: [],
-    }
-  }
-
-  return null
 }
 
 function loadPersisted(): PersistedShape {
@@ -182,13 +196,17 @@ function loadPersisted(): PersistedShape {
     const parsed = JSON.parse(raw) as Record<string, unknown>
     const migrated = migratePersisted(parsed)
     if (migrated) {
-      return {
+      const next: PersistedShape = {
         ...migrated,
         invoices: migrated.invoices.map((inv) => ({
           ...inv,
           draft: normalizeInvoiceDraft(inv.draft as unknown),
         })),
       }
+      if (parsed.version !== 3) {
+        savePersisted(next)
+      }
+      return next
     }
     return defaultPersisted()
   } catch {
@@ -244,6 +262,8 @@ interface InvoiceStoreValue {
   extraPaymentMethods: string[]
   extraTaxPresets: TaxPresetEntry[]
   getInvoice: (recordId: string) => InvoiceRecord | undefined
+  /** Next numeric invoice id string (e.g. "4" after 0–3 exist). */
+  getNextInvoiceNumber: () => string
   createFromDraft: (draft: InvoiceDraft, status?: InvoiceStatus) => string
   updateDraft: (recordId: string, draft: InvoiceDraft) => void
   updateStatus: (recordId: string, status: InvoiceStatus) => void
@@ -266,6 +286,8 @@ export function InvoiceStoreProvider({ children }: { children: ReactNode }) {
   const data = useSyncExternalStore(subscribe, getSnapshot, () => defaultPersisted())
 
   const getInvoice = useCallback((recordId: string) => data.invoices.find((i) => i.recordId === recordId), [data.invoices])
+
+  const getNextInvoiceNumber = useCallback(() => nextInvoiceNumber(data.invoices), [data.invoices])
 
   const addClient = useCallback((client: ClientEntry) => {
     setMemory({
@@ -351,7 +373,7 @@ export function InvoiceStoreProvider({ children }: { children: ReactNode }) {
       status: 'draft',
       draft: {
         ...norm,
-        invoiceNumber: `INV-${Date.now().toString(36).toUpperCase()}`,
+        invoiceNumber: nextInvoiceNumber(memory.invoices),
         lineItems: norm.lineItems.map((li) => ({ ...li, id: crypto.randomUUID() })),
       },
     }
@@ -388,6 +410,7 @@ export function InvoiceStoreProvider({ children }: { children: ReactNode }) {
       extraPaymentMethods: data.extraPaymentMethods,
       extraTaxPresets: data.extraTaxPresets,
       getInvoice,
+      getNextInvoiceNumber,
       createFromDraft,
       updateDraft,
       updateStatus,
@@ -410,6 +433,7 @@ export function InvoiceStoreProvider({ children }: { children: ReactNode }) {
       data.extraPaymentMethods,
       data.extraTaxPresets,
       getInvoice,
+      getNextInvoiceNumber,
       createFromDraft,
       updateDraft,
       updateStatus,

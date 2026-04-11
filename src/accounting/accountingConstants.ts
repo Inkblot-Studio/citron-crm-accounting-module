@@ -11,6 +11,20 @@ export function accountingPath(suffix = ''): string {
   return `${ACCOUNTING_BASE_PATH}/${clean}`
 }
 
+/** Status filters for the invoice list (toolbar pills + header popover). */
+export const INVOICE_STATUS_TABS: { id: string; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'paid', label: 'Paid' },
+  { id: 'pending', label: 'Pending' },
+  { id: 'overdue', label: 'Overdue' },
+  { id: 'draft', label: 'Draft' },
+]
+
+export function normalizeInvoiceListStatusParam(param: string | null): string {
+  if (!param) return 'all'
+  return INVOICE_STATUS_TABS.some((t) => t.id === param) ? param : 'all'
+}
+
 export interface ClientEntry {
   id: string
   name: string
@@ -70,6 +84,16 @@ export const TAX_CONFIG_OPTIONS: AdvancedDropdownOption[] = [
 export const BANK_ACCOUNT_OPTIONS: AdvancedDropdownOption[] = [
   { value: 'main', label: 'Main Account', description: '****4821' },
   { value: 'secondary', label: 'Secondary Account', description: '****7390' },
+]
+
+/** Payment terms for invoice create / editor (shared). */
+export const DUE_TERMS: AdvancedDropdownOption[] = [
+  { value: 'Due on receipt', label: 'Due on receipt' },
+  { value: 'Net 7', label: 'Net 7' },
+  { value: 'Net 15', label: 'Net 15' },
+  { value: 'Net 30', label: 'Net 30' },
+  { value: 'Net 45', label: 'Net 45' },
+  { value: 'Net 60', label: 'Net 60' },
 ]
 
 /** String lists for citron-ui `InvoiceForm` / `InvoicePreview` */
