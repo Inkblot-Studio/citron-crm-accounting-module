@@ -106,14 +106,14 @@ function cloneBlock(block) {
   }
 }
 const BLOCK_KIND_LABEL = {
-  heading: "Заглавие",
-  paragraph: "Параграф",
-  feature: "Функционалност",
-  bullets: "Списък",
-  quote: "Цитат",
-  pricing: "Ценообразуване",
-  plans: "Месечна поддръжка",
-  divider: "Разделител"
+  heading: "Heading",
+  paragraph: "Paragraph",
+  feature: "Feature",
+  bullets: "Bullet list",
+  quote: "Quote",
+  pricing: "Pricing",
+  plans: "Support plans",
+  divider: "Divider"
 };
 function isoToday() {
   return (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
@@ -127,14 +127,15 @@ function emptyOfferDraft() {
   return {
     documentTypeId: "oferta",
     documentNumber: formatOfferNumber(OFFER_CONFIG.documentNumberStart),
+    brandProfileId: null,
     clientName: "",
     clientOrg: "",
     clientEmail: "",
     projectName: "",
     blocks: [createBlock("paragraph")],
-    brandName: OFFER_CONFIG.defaultBrand.name,
-    brandTagline: OFFER_CONFIG.defaultBrand.tagline,
-    brandUrl: OFFER_CONFIG.defaultBrand.url,
+    brandName: "",
+    brandTagline: "",
+    brandUrl: "",
     issueDate: isoToday(),
     validUntil: isoPlusDays(OFFER_CONFIG.defaultValidityDays)
   };
@@ -295,6 +296,7 @@ function normalizeOfferDraft(input) {
   return {
     documentTypeId,
     documentNumber: str(raw.documentNumber, empty.documentNumber),
+    brandProfileId: typeof raw.brandProfileId === "string" ? raw.brandProfileId : null,
     clientName: str(raw.clientName),
     clientOrg: str(raw.clientOrg),
     clientEmail: str(raw.clientEmail),
@@ -334,6 +336,7 @@ function seedLobbyOffer() {
   return {
     documentTypeId: "oferta",
     documentNumber: formatOfferNumber(OFFER_CONFIG.documentNumberStart),
+    brandProfileId: "inkblot-studio",
     clientName: "ЛОББИ ЕООД",
     clientOrg: "ЛОББИ ЕООД",
     clientEmail: "",
@@ -389,9 +392,9 @@ function seedLobbyOffer() {
         "Защо да се доверите на нас? Ние не просто създаваме уебсайтове — изграждаме машини за продажби. Нашата цел е платформата Ви да бъде технически безупречна, визуално зашеметяваща и оптимизирана да конвертира посетителите в реални клиенти. Спестяваме скрити разходи за AI токени и предлагаме несравнимо съотношение между цена и качество."
       )
     ],
-    brandName: OFFER_CONFIG.defaultBrand.name,
-    brandTagline: OFFER_CONFIG.defaultBrand.tagline,
-    brandUrl: OFFER_CONFIG.defaultBrand.url,
+    brandName: "",
+    brandTagline: "",
+    brandUrl: "",
     issueDate: isoToday(),
     validUntil: isoPlusDays(OFFER_CONFIG.defaultValidityDays)
   };

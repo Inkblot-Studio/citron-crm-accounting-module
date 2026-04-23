@@ -16448,7 +16448,7 @@ var clientExports = requireClient();
 const {Suspense,lazy} = await importShared('react');
 
 const {BrowserRouter,Routes,Route,Navigate} = await importShared('react-router-dom');
-const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-DSO2t-aM.js'),true              ?[]:void 0));
+const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-DZqw5u0R.js'),true              ?[]:void 0));
 function App() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Routes, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: "/invoices", replace: true }) }),

@@ -89,6 +89,9 @@ export interface OfferDraft {
   documentTypeId: string
   documentNumber: string
 
+  /** Id of the active BrandingProfile, or null/undefined to use the store default. */
+  brandProfileId?: string | null
+
   clientName: string
   clientOrg: string
   clientEmail: string
@@ -97,6 +100,11 @@ export interface OfferDraft {
 
   blocks: OfferBlock[]
 
+  /**
+   * Optional per-draft overrides of the brand footer. If left empty, the
+   * branding profile's values are used at render time. Keeping the fields
+   * allows a user to customise a specific offer without editing the profile.
+   */
   brandName: string
   brandTagline: string
   brandUrl: string

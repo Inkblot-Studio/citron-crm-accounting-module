@@ -1,10 +1,12 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, i as bgDocumentTypeById, u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
-import { c as cloneBlock, b as createBlock, B as BLOCK_KIND_LABEL, e as formatMoneyRange, o as offerVatAmount, g as offerGrandTotal, f as formatMoney, n as newSupportPlan, u as useOfferStore, N as NEW_OFFER_ROUTE, h as emptyOfferDraft } from './offerStore-CKFzdNIY.js';
+import { c as cloneBlock, b as createBlock, B as BLOCK_KIND_LABEL, e as formatMoneyRange, o as offerVatAmount, g as offerGrandTotal, f as formatMoney, n as newSupportPlan, u as useOfferStore, N as NEW_OFFER_ROUTE, h as emptyOfferDraft } from './offerStore-B7nnp6gS.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 import { C as Copy, P as Printer } from './printer-B7dMZUzk.js';
 import { T as Trash2, A as ArrowLeft } from './trash-2-BhWtp_Kn.js';
+import { u as useBrandingStore } from './brandingStore-BVRnF0-c.js';
+import { P as Palette } from './palette-W_Yxaw1i.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -65,11 +67,19 @@ const X = createLucideIcon("x", __iconNode);
 const {useCallback: useCallback$1,useEffect: useEffect$1,useLayoutEffect,useRef: useRef$1,useState: useState$1} = await importShared('react');
 function OfferDocument({
   draft,
+  brand,
   documentId = "offer-document",
   className = "",
   editable
 }) {
   const editMode = editable != null;
+  const brandName = draft.brandName || brand?.brandName || "";
+  const brandTagline = draft.brandTagline || brand?.brandTagline || "";
+  const brandUrl = draft.brandUrl || brand?.brandWebsite || "";
+  const logoUrl = brand?.logoUrl || "";
+  const brandStyle = brand ? {
+    ["--inkblot-semantic-color-status-warning"]: brand.accentColor
+  } : void 0;
   const patchDraft = useCallback$1(
     (p) => editable?.onChange({ ...draft, ...p }),
     [draft, editable]
@@ -166,13 +176,25 @@ function OfferDocument({
     {
       id: documentId,
       ref: rootRef,
+      style: brandStyle,
       className: `offer-doc relative mx-auto max-w-[720px] bg-[var(--inkblot-semantic-color-background-primary)] text-foreground shadow-[var(--inkblot-shadow-sm)] [font-feature-settings:'ss01','cv11'] ${className}`,
       children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-10 px-8 py-10 sm:gap-12 sm:px-12 sm:py-14 md:px-16 md:py-16", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex flex-col gap-8", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-10", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+              logoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "img",
+                {
+                  src: logoUrl,
+                  alt: brandName || "Brand logo",
+                  className: "mb-3 block h-10 w-auto max-w-[140px] object-contain",
+                  onError: (e) => {
+                    e.currentTarget.style.display = "none";
+                  }
+                }
+              ) : null,
               /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]", children: [
-                docType?.label ?? "Оферта",
+                docType?.label ?? "Offer",
                 docType?.legal ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-2 text-citrus-lemon", children: "· ЗДДС" }) : null
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -188,19 +210,19 @@ function OfferDocument({
               ) })
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("dl", { className: "grid min-w-0 grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 text-[11px] sm:max-w-[58%] sm:justify-self-end", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Клиент" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Client" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(MetaValue, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 EditableText,
                 {
                   value: draft.clientName,
                   editable: editMode,
                   onCommit: (v) => patchDraft({ clientName: v }),
-                  placeholder: "Име на клиента",
+                  placeholder: "Client name",
                   className: "font-medium text-foreground"
                 }
               ) }),
               editMode || draft.clientOrg && draft.clientOrg !== draft.clientName ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Организация" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Organisation" }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(MetaValue, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                   EditableText,
                   {
@@ -213,7 +235,7 @@ function OfferDocument({
                 ) })
               ] }) : null,
               editMode || draft.clientEmail ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Имейл" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Email" }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(MetaValue, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                   EditableText,
                   {
@@ -225,7 +247,7 @@ function OfferDocument({
                   }
                 ) })
               ] }) : null,
-              /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Издадена" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Issued" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(MetaValue, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 EditableDate,
                 {
@@ -234,7 +256,7 @@ function OfferDocument({
                   onCommit: (v) => patchDraft({ issueDate: v || void 0 })
                 }
               ) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Валидна до" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(MetaLabel, { children: "Valid until" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(MetaValue, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 EditableDate,
                 {
@@ -251,7 +273,7 @@ function OfferDocument({
               value: draft.projectName,
               editable: editMode,
               onCommit: (v) => patchDraft({ projectName: v }),
-              placeholder: "Име на проекта",
+              placeholder: "Project name",
               className: "text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-4xl md:text-[2.75rem]"
             }
           ),
@@ -291,36 +313,36 @@ function OfferDocument({
           );
         }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("footer", { className: "grid grid-cols-1 items-baseline gap-2 border-t border-border pt-5 text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)] sm:grid-cols-[auto_1fr_auto] sm:gap-6", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
+          editMode ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             EditableText,
             {
               value: draft.brandName,
-              editable: editMode,
+              editable: true,
               onCommit: (v) => patchDraft({ brandName: v }),
-              placeholder: "Бранд",
+              placeholder: brand?.brandName || "Brand",
               className: "font-semibold uppercase tracking-[0.18em] text-foreground"
             }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ) : brandName ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold uppercase tracking-[0.18em] text-foreground", children: brandName }) : null,
+          editMode ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             EditableText,
             {
               value: draft.brandTagline,
-              editable: editMode,
+              editable: true,
               onCommit: (v) => patchDraft({ brandTagline: v }),
-              placeholder: "Слоган",
+              placeholder: brand?.brandTagline || "Tagline",
               className: "truncate"
             }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ) : brandTagline ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate", children: brandTagline }) : null,
+          editMode ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             EditableText,
             {
               value: draft.brandUrl,
-              editable: editMode,
+              editable: true,
               onCommit: (v) => patchDraft({ brandUrl: v }),
-              placeholder: "url",
+              placeholder: brand?.brandWebsite || "url",
               className: "font-mono text-citrus-lemon"
             }
-          )
+          ) : brandUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-citrus-lemon", children: brandUrl }) : null
         ] })
       ] })
     }
@@ -420,7 +442,7 @@ function AddBlockMenu({ onPick, onClose }) {
     "div",
     {
       role: "menu",
-      "aria-label": "Тип блок",
+      "aria-label": "Block type",
       className: "absolute right-4 top-6 z-20 grid w-[min(320px,calc(100vw-3rem))] grid-cols-2 gap-1 rounded-lg border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-1.5 shadow-[var(--inkblot-shadow-md)]",
       onMouseDown: (e) => e.stopPropagation(),
       children: [
@@ -447,7 +469,7 @@ function AddBlockMenu({ onPick, onClose }) {
             className: "col-span-2 mt-1 inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-[var(--inkblot-semantic-color-background-secondary)]",
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-              " Затвори"
+              " Close"
             ]
           }
         )
@@ -479,7 +501,7 @@ function BlockBody({
             ...b,
             items
           })),
-          placeholder: "Елемент от списъка"
+          placeholder: "List item"
         }
       );
     case "quote":
@@ -490,7 +512,7 @@ function BlockBody({
             value: block.text,
             editable: editMode,
             onCommit: (v) => onPatch(block.id, (b) => ({ ...b, text: v })),
-            placeholder: "Цитат от клиент или стойностно твърдение…",
+            placeholder: "Customer quote or value statement…",
             multiline: true,
             className: "text-lg italic leading-[1.6] text-foreground sm:text-xl"
           }
@@ -501,7 +523,7 @@ function BlockBody({
             value: block.cite,
             editable: editMode,
             onCommit: (v) => onPatch(block.id, (b) => ({ ...b, cite: v })),
-            placeholder: "— източник",
+            placeholder: "— source",
             className: "mt-3 block text-[11px] uppercase tracking-[0.16em] text-[var(--inkblot-semantic-color-text-tertiary)]"
           }
         )
@@ -523,7 +545,7 @@ function HeadingBody({ block, editMode, onPatch }) {
           value: block.text,
           editable: editMode,
           onCommit: (v) => onPatch(block.id, (b) => ({ ...b, text: v })),
-          placeholder: "Заглавие H1",
+          placeholder: "Heading H1",
           className: "flex-1 text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground sm:text-[32px]"
         }
       ),
@@ -540,7 +562,7 @@ function HeadingBody({ block, editMode, onPatch }) {
             value: block.text,
             editable: editMode,
             onCommit: (v) => onPatch(block.id, (b) => ({ ...b, text: v })),
-            placeholder: "ЗАГЛАВИЕ НА СЕКЦИЯ",
+            placeholder: "SECTION HEADING",
             className: "text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground"
           }
         ),
@@ -555,7 +577,7 @@ function HeadingBody({ block, editMode, onPatch }) {
         value: block.text,
         editable: editMode,
         onCommit: (v) => onPatch(block.id, (b) => ({ ...b, text: v })),
-        placeholder: "Подзаглавие",
+        placeholder: "Subheading",
         className: "flex-1 text-base font-semibold tracking-tight text-foreground"
       }
     ),
@@ -593,7 +615,7 @@ function ParagraphBody({
       value: block.text,
       editable: editMode,
       onCommit: (v) => onPatch(block.id, (b) => ({ ...b, text: v })),
-      placeholder: "Напиши параграф…",
+      placeholder: "Write a paragraph…",
       multiline: true,
       className: "text-[15px] leading-[1.75] text-foreground [text-wrap:pretty]"
     }
@@ -621,7 +643,7 @@ function FeatureBody({
           value: block.kicker,
           editable: editMode,
           onCommit: (v) => onPatch(block.id, (b) => ({ ...b, kicker: v })),
-          placeholder: "Подзаглавие (по желание)",
+          placeholder: "Kicker (optional)",
           className: "text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]"
         }
       ) : null,
@@ -631,7 +653,7 @@ function FeatureBody({
           value: block.title,
           editable: editMode,
           onCommit: (v) => onPatch(block.id, (b) => ({ ...b, title: v })),
-          placeholder: "Име на функционалност",
+          placeholder: "Feature name",
           className: "text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-[22px]"
         }
       ),
@@ -641,7 +663,7 @@ function FeatureBody({
           value: block.description,
           editable: editMode,
           onCommit: (v) => onPatch(block.id, (b) => ({ ...b, description: v })),
-          placeholder: "Описание…",
+          placeholder: "Description…",
           multiline: true,
           className: "text-[14px] leading-[1.7] text-[var(--inkblot-semantic-color-text-secondary)]"
         }
@@ -652,19 +674,19 @@ function FeatureBody({
           items: block.bullets,
           editMode,
           onChange: (items) => onPatch(block.id, (b) => ({ ...b, bullets: items })),
-          placeholder: "Булет",
+          placeholder: "Bullet",
           compact: true
         }
       ),
       editMode || block.comparisonNote ? /* @__PURE__ */ jsxRuntimeExports.jsxs("aside", { className: "mt-3 border-t border-border pt-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-citrus-lemon", children: "Конкурентно предимство" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-citrus-lemon", children: "Competitive advantage" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           EditableText,
           {
             value: block.comparisonNote,
             editable: editMode,
             onCommit: (v) => onPatch(block.id, (b) => ({ ...b, comparisonNote: v })),
-            placeholder: "Как това ни отличава от конкуренцията…",
+            placeholder: "How this sets us apart from the competition…",
             multiline: true,
             className: "text-[13px] italic leading-[1.65] text-[var(--inkblot-semantic-color-text-secondary)]"
           }
@@ -686,7 +708,7 @@ function PricingBody({
   const editing = editMode && isSelected;
   const rows = [
     {
-      label: "Пазарна стойност",
+      label: "Market value",
       show: editing || marketRange != null,
       node: editing ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-baseline gap-1.5", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -694,7 +716,7 @@ function PricingBody({
           {
             value: block.marketValueFrom,
             onCommit: (v) => patchP((b) => ({ ...b, marketValueFrom: v })),
-            placeholder: "от"
+            placeholder: "from"
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground", children: "–" }),
@@ -703,14 +725,14 @@ function PricingBody({
           {
             value: block.marketValueTo,
             onCommit: (v) => patchP((b) => ({ ...b, marketValueTo: v })),
-            placeholder: "до"
+            placeholder: "to"
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ml-1 text-[11px] text-muted-foreground", children: block.currency })
       ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono tabular-nums", children: marketRange ?? "—" })
     },
     {
-      label: "Срок за изпълнение",
+      label: "Timeline",
       show: editMode || !!block.timeline,
       node: /* @__PURE__ */ jsxRuntimeExports.jsx(
         EditableText,
@@ -718,13 +740,13 @@ function PricingBody({
           value: block.timeline,
           editable: editMode,
           onCommit: (v) => patchP((b) => ({ ...b, timeline: v })),
-          placeholder: "напр. 1.5 месеца",
+          placeholder: "e.g. 1.5 months",
           className: "text-[14px]"
         }
       )
     },
     {
-      label: "Гаранция",
+      label: "Guarantee",
       show: editMode || !!block.guarantee,
       node: /* @__PURE__ */ jsxRuntimeExports.jsx(
         EditableText,
@@ -732,21 +754,21 @@ function PricingBody({
           value: block.guarantee,
           editable: editMode,
           onCommit: (v) => patchP((b) => ({ ...b, guarantee: v })),
-          placeholder: "напр. SEO и техническа поддръжка",
+          placeholder: "e.g. SEO + technical support",
           className: "text-[14px]"
         }
       )
     }
   ];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "flex flex-col gap-5", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionLabel, { children: "Ценообразуване" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionLabel, { children: "Pricing" }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-8 sm:grid-cols-[minmax(0,1fr)_auto]", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("dl", { className: "flex flex-col divide-y divide-border", children: rows.filter((r) => r.show).map((r) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[minmax(0,11rem)_minmax(0,1fr)] items-baseline gap-x-6 py-2.5", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--inkblot-semantic-color-text-tertiary)]", children: r.label }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "text-foreground", children: r.node })
       ] }, r.label)) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-start gap-1 sm:items-end sm:text-right", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]", children: "Предложена цена" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]", children: "Proposed price" }),
         editing ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-baseline gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "select",
@@ -791,9 +813,9 @@ function PricingBody({
             block.vatPct,
             "% VAT · ",
             formatMoney(vatAmount, block.currency)
-          ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "без VAT" }),
+          ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "VAT exempt" }),
           block.vatPct > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-medium text-foreground", children: [
-            "Общо · ",
+            "Total · ",
             formatMoney(total, block.currency)
           ] }) : null
         ] })
@@ -805,7 +827,7 @@ function PricingBody({
         value: block.note,
         editable: editMode,
         onCommit: (v) => patchP((b) => ({ ...b, note: v })),
-        placeholder: "Пояснение / сравнение с пазара…",
+        placeholder: "Context / market comparison…",
         multiline: true,
         className: "max-w-[60ch] text-[13px] italic leading-[1.7] text-[var(--inkblot-semantic-color-text-secondary)]"
       }
@@ -825,7 +847,7 @@ function PlansBody({ block, editMode, onPatch }) {
           value: block.title,
           editable: editMode,
           onCommit: (v) => patchP((b) => ({ ...b, title: v })),
-          placeholder: "ЗАГЛАВИЕ",
+          placeholder: "TITLE",
           className: "text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]"
         }
       ),
@@ -839,7 +861,7 @@ function PlansBody({ block, editMode, onPatch }) {
             value: p.title,
             editable: editMode,
             onCommit: (v) => updatePlan(p.id, { title: v }),
-            placeholder: "Заглавие",
+            placeholder: "Title",
             className: "text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--inkblot-semantic-color-text-tertiary)]"
           }
         ),
@@ -849,7 +871,7 @@ function PlansBody({ block, editMode, onPatch }) {
             value: p.subtitle ?? "",
             editable: editMode,
             onCommit: (v) => updatePlan(p.id, { subtitle: v }),
-            placeholder: "Подзаглавие",
+            placeholder: "Subtitle",
             className: "text-[13px] text-[var(--inkblot-semantic-color-text-secondary)]"
           }
         ),
@@ -859,7 +881,7 @@ function PlansBody({ block, editMode, onPatch }) {
             value: p.priceLabel,
             editable: editMode,
             onCommit: (v) => updatePlan(p.id, { priceLabel: v }),
-            placeholder: "Цена",
+            placeholder: "Price",
             className: "mt-0.5 font-mono text-lg font-semibold tabular-nums text-foreground"
           }
         ),
@@ -869,7 +891,7 @@ function PlansBody({ block, editMode, onPatch }) {
             type: "button",
             onClick: () => removePlan(p.id),
             "aria-label": "Remove plan",
-            title: "Премахни",
+            title: "Remove",
             className: "absolute top-2 right-0 hidden h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-background/70 hover:text-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] group-data-[selected]/blk:inline-flex sm:right-2",
             children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4", "aria-hidden": true })
           }
@@ -883,7 +905,7 @@ function PlansBody({ block, editMode, onPatch }) {
           className: "hidden min-h-[88px] items-center justify-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground group-data-[selected]/blk:flex",
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": true }),
-            " Добави план"
+            " Add plan"
           ]
         }
       ) : null
@@ -911,7 +933,7 @@ function BulletsList({
           value: it,
           editable: editMode,
           onCommit: (v) => patch(i, v),
-          placeholder: placeholder ?? "Булет",
+          placeholder: placeholder ?? "Bullet",
           className: "flex-1"
         }
       ),
@@ -934,7 +956,7 @@ function BulletsList({
         className: "inline-flex h-7 items-center gap-1.5 rounded-md border border-dashed border-border px-2.5 text-[11px] text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground",
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-          " Добави булет"
+          " Add bullet"
         ]
       }
     ) }) : null
@@ -1083,6 +1105,7 @@ function OfferBuilder() {
   const { recordId: routeRecordId } = useParams();
   const { addToast } = useToast();
   const { offers, getOffer, createBlank, updateDraft, updateStatus, deleteOffer, duplicateOffer } = useOfferStore();
+  const { profiles, resolveProfile } = useBrandingStore();
   const [workingId, setWorkingId] = useState(null);
   const createdOnceRef = useRef(false);
   useEffect(() => {
@@ -1101,6 +1124,10 @@ function OfferBuilder() {
     [offers, workingId]
   );
   const [draft, setDraft] = useState(() => record?.draft ?? emptyOfferDraft());
+  const activeBrand = useMemo(
+    () => resolveProfile(draft.brandProfileId),
+    [draft.brandProfileId, resolveProfile]
+  );
   const hydratedForRef = useRef(null);
   useEffect(() => {
     if (!workingId) return;
@@ -1135,21 +1162,21 @@ function OfferBuilder() {
   const handleMarkSent = useCallback(() => {
     if (!workingId) return;
     updateStatus(workingId, "pending");
-    addToast({ title: "Маркирана", description: "Офертата е маркирана като изпратена.", variant: "success" });
+    addToast({ title: "Marked as sent", description: "Offer status updated.", variant: "success" });
   }, [workingId, updateStatus, addToast]);
   const handleDuplicate = useCallback(() => {
     if (!workingId) return;
     const newId = duplicateOffer(workingId);
     if (!newId) return;
-    addToast({ title: "Duplicated", description: "Създадено е копие като чернова.", variant: "success" });
+    addToast({ title: "Duplicated", description: "A draft copy was created.", variant: "success" });
     navigate(accountingPath(`offers/${newId}`));
   }, [workingId, duplicateOffer, navigate, addToast]);
   const handleDelete = useCallback(() => {
     if (!workingId) return;
-    const ok = typeof window === "undefined" ? true : window.confirm("Изтриване на тази оферта?");
+    const ok = typeof window === "undefined" ? true : window.confirm("Delete this offer?");
     if (!ok) return;
     deleteOffer(workingId);
-    addToast({ title: "Deleted", description: "Офертата е изтрита.", variant: "success" });
+    addToast({ title: "Deleted", description: "Offer removed.", variant: "success" });
     navigate(accountingPath("offers"));
   }, [workingId, deleteOffer, navigate, addToast]);
   const handlePrint = useCallback(() => {
@@ -1159,10 +1186,10 @@ function OfferBuilder() {
     return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-full items-center justify-center text-sm text-muted-foreground", children: "Loading…" });
   }
   const statusLabelBg = {
-    draft: "чернова",
-    pending: "изпратена",
-    paid: "приета",
-    overdue: "изтекла"
+    draft: "draft",
+    pending: "sent",
+    paid: "accepted",
+    overdue: "expired"
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "offer-builder-screen flex h-full min-h-0 w-full flex-col", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2.5 sm:px-6 lg:px-8", children: [
@@ -1177,12 +1204,29 @@ function OfferBuilder() {
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "truncate text-xs text-muted-foreground", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-foreground font-semibold", children: draft.projectName || "Без заглавие" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-foreground font-semibold", children: draft.projectName || "Untitled" }),
           " · ",
           statusLabelBg[record.status]
         ] })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-1.5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/70 focus-within:ring-2 focus-within:ring-[var(--inkblot-semantic-color-border-focus)]", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Palette, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Brand" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "select",
+            {
+              value: draft.brandProfileId ?? "",
+              onChange: (e) => setDraft((d) => ({ ...d, brandProfileId: e.target.value || null })),
+              className: "bg-transparent pr-1 text-xs text-foreground focus:outline-none",
+              "aria-label": "Brand profile",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Default brand" }),
+                profiles.map((p) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: p.id, children: p.name }, p.id))
+              ]
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("button", { type: "button", className: actionBtnClass, onClick: handlePrint, title: "Print / export PDF", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Printer, { className: "h-3.5 w-3.5", "aria-hidden": true }),
           " Print"
@@ -1209,9 +1253,25 @@ function OfferBuilder() {
         ] }) : null
       ] })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-y-auto hide-scrollbar bg-[var(--inkblot-semantic-color-background-tertiary)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8", children: /* @__PURE__ */ jsxRuntimeExports.jsx(OfferDocument, { draft, documentId: "offer-document", editable: { onChange: setDraft } }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-1 min-h-0 overflow-y-auto hide-scrollbar bg-[var(--inkblot-semantic-color-background-tertiary)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      OfferDocument,
+      {
+        draft,
+        brand: activeBrand,
+        documentId: "offer-document",
+        editable: { onChange: setDraft }
+      }
+    ) }) }),
     printHost ? createPortal(
-      /* @__PURE__ */ jsxRuntimeExports.jsx(OfferDocument, { draft, documentId: "offer-print-document", className: "offer-print-doc" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        OfferDocument,
+        {
+          draft,
+          brand: activeBrand,
+          documentId: "offer-print-document",
+          className: "offer-print-doc"
+        }
+      ),
       printHost
     ) : null,
     /* @__PURE__ */ jsxRuntimeExports.jsx(RouteSafeguard, {})

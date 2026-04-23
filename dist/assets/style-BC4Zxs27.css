@@ -1200,6 +1200,9 @@ video {
 .min-h-\[28px\] {
   min-height: 28px;
 }
+.min-h-\[34px\] {
+  min-height: 34px;
+}
 .min-h-\[400px\] {
   min-height: 400px;
 }
@@ -1211,6 +1214,9 @@ video {
 }
 .min-h-\[50vh\] {
   min-height: 50vh;
+}
+.min-h-\[76px\] {
+  min-height: 76px;
 }
 .min-h-\[88px\] {
   min-height: 88px;
@@ -1229,6 +1235,9 @@ video {
 }
 .\!w-\[10ch\] {
   width: 10ch !important;
+}
+.\!w-\[160px\] {
+  width: 160px !important;
 }
 .w-0 {
   width: 0px;
@@ -1368,6 +1377,9 @@ video {
 .w-\[var\(--inkblot-spacing-4\)\] {
   width: var(--inkblot-spacing-4);
 }
+.w-auto {
+  width: auto;
+}
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
@@ -1423,8 +1435,14 @@ video {
 .max-w-5xl {
   max-width: 64rem;
 }
+.max-w-\[120px\] {
+  max-width: 120px;
+}
 .max-w-\[1280px\] {
   max-width: 1280px;
+}
+.max-w-\[140px\] {
+  max-width: 140px;
 }
 .max-w-\[240px\] {
   max-width: 240px;
@@ -1455,6 +1473,9 @@ video {
 }
 .max-w-\[720px\] {
   max-width: 720px;
+}
+.max-w-\[760px\] {
+  max-width: 760px;
 }
 .max-w-\[80\%\] {
   max-width: 80%;
@@ -2066,6 +2087,10 @@ video {
 .bg-\[length\:200\%_100\%\] {
   background-size: 200% 100%;
 }
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -2294,6 +2319,9 @@ video {
 .pl-6 {
   padding-left: 1.5rem;
 }
+.pr-1 {
+  padding-right: 0.25rem;
+}
 .pr-10 {
   padding-right: 2.5rem;
 }
@@ -2454,6 +2482,9 @@ video {
 }
 .tracking-\[-0\.02em\] {
   letter-spacing: -0.02em;
+}
+.tracking-\[0\.14em\] {
+  letter-spacing: 0.14em;
 }
 .tracking-\[0\.16em\] {
   letter-spacing: 0.16em;
@@ -2987,6 +3018,14 @@ body {
   color: var(--inkblot-semantic-color-text-tertiary);
 }
 
+.placeholder\:text-muted-foreground::-moz-placeholder {
+  color: var(--inkblot-semantic-color-text-secondary);
+}
+
+.placeholder\:text-muted-foreground::placeholder {
+  color: var(--inkblot-semantic-color-text-secondary);
+}
+
 .first\:pt-0:first-child {
   padding-top: 0px;
 }
@@ -3342,6 +3381,10 @@ body {
     min-height: 52px;
   }
 
+  .sm\:\!w-\[140px\] {
+    width: 140px !important;
+  }
+
   .sm\:w-14 {
     width: 3.5rem;
   }
@@ -3388,6 +3431,10 @@ body {
 
   .sm\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sm\:grid-cols-\[1fr_1fr_auto\] {
+    grid-template-columns: 1fr 1fr auto;
   }
 
   .sm\:grid-cols-\[4rem_minmax\(0\2c 1fr\)\] {

@@ -31,6 +31,7 @@ import {
 } from 'react'
 import { ArrowDown, ArrowUp, Copy, Plus, Trash2, X } from 'lucide-react'
 import { bgDocumentTypeById } from './accountingConstants'
+import type { BrandingProfile } from './brandingProfile.types'
 import {
   BLOCK_KIND_LABEL,
   cloneBlock,
@@ -56,6 +57,8 @@ import {
 
 export interface OfferDocumentProps {
   draft: OfferDraft
+  /** Applies colors, logo and footer identity. Optional for isolated previews. */
+  brand?: BrandingProfile
   documentId?: string
   className?: string
   /** Omit for read-only rendering. */
@@ -66,11 +69,28 @@ export interface OfferDocumentProps {
 
 export default function OfferDocument({
   draft,
+  brand,
   documentId = 'offer-document',
   className = '',
   editable,
 }: OfferDocumentProps) {
   const editMode = editable != null
+
+  // Brand identity, with per-draft override taking precedence (so a user can
+  // tweak the footer on a specific offer without editing the profile itself).
+  const brandName = draft.brandName || brand?.brandName || ''
+  const brandTagline = draft.brandTagline || brand?.brandTagline || ''
+  const brandUrl = draft.brandUrl || brand?.brandWebsite || ''
+  const logoUrl = brand?.logoUrl || ''
+
+  // Local CSS variable override: citrus-lemon is used throughout the offer as
+  // the accent token; swapping it here retints document number, section
+  // markers, and comparison labels without touching individual utility classes.
+  const brandStyle: CSSProperties | undefined = brand
+    ? ({
+        ['--inkblot-semantic-color-status-warning' as never]: brand.accentColor,
+      } as CSSProperties)
+    : undefined
 
   const patchDraft = useCallback(
     (p: Partial<OfferDraft>) => editable?.onChange({ ...draft, ...p }),
@@ -177,6 +197,7 @@ export default function OfferDocument({
     <div
       id={documentId}
       ref={rootRef}
+      style={brandStyle}
       className={`offer-doc relative mx-auto max-w-[720px] bg-[var(--inkblot-semantic-color-background-primary)] text-foreground shadow-[var(--inkblot-shadow-sm)] [font-feature-settings:'ss01','cv11'] ${className}`}
     >
       <div className="flex flex-col gap-10 px-8 py-10 sm:gap-12 sm:px-12 sm:py-14 md:px-16 md:py-16">
@@ -184,8 +205,18 @@ export default function OfferDocument({
         <header className="flex flex-col gap-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
             <div className="min-w-0">
+              {logoUrl ? (
+                <img
+                  src={logoUrl}
+                  alt={brandName || 'Brand logo'}
+                  className="mb-3 block h-10 w-auto max-w-[140px] object-contain"
+                  onError={(e) => {
+                    ;(e.currentTarget as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+              ) : null}
               <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]">
-                {docType?.label ?? 'Оферта'}
+                {docType?.label ?? 'Offer'}
                 {docType?.legal ? <span className="ml-2 text-citrus-lemon">· ЗДДС</span> : null}
               </p>
               <div className="mt-2">
@@ -201,20 +232,20 @@ export default function OfferDocument({
             </div>
 
             <dl className="grid min-w-0 grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 text-[11px] sm:max-w-[58%] sm:justify-self-end">
-              <MetaLabel>Клиент</MetaLabel>
+              <MetaLabel>Client</MetaLabel>
               <MetaValue>
                 <EditableText
                   value={draft.clientName}
                   editable={editMode}
                   onCommit={(v) => patchDraft({ clientName: v })}
-                  placeholder="Име на клиента"
+                  placeholder="Client name"
                   className="font-medium text-foreground"
                 />
               </MetaValue>
 
               {editMode || (draft.clientOrg && draft.clientOrg !== draft.clientName) ? (
                 <>
-                  <MetaLabel>Организация</MetaLabel>
+                  <MetaLabel>Organisation</MetaLabel>
                   <MetaValue>
                     <EditableText
                       value={draft.clientOrg}
@@ -229,7 +260,7 @@ export default function OfferDocument({
 
               {editMode || draft.clientEmail ? (
                 <>
-                  <MetaLabel>Имейл</MetaLabel>
+                  <MetaLabel>Email</MetaLabel>
                   <MetaValue>
                     <EditableText
                       value={draft.clientEmail}
@@ -242,7 +273,7 @@ export default function OfferDocument({
                 </>
               ) : null}
 
-              <MetaLabel>Издадена</MetaLabel>
+              <MetaLabel>Issued</MetaLabel>
               <MetaValue>
                 <EditableDate
                   value={draft.issueDate}
@@ -251,7 +282,7 @@ export default function OfferDocument({
                 />
               </MetaValue>
 
-              <MetaLabel>Валидна до</MetaLabel>
+              <MetaLabel>Valid until</MetaLabel>
               <MetaValue>
                 <EditableDate
                   value={draft.validUntil}
@@ -266,7 +297,7 @@ export default function OfferDocument({
             value={draft.projectName}
             editable={editMode}
             onCommit={(v) => patchDraft({ projectName: v })}
-            placeholder="Име на проекта"
+            placeholder="Project name"
             className="text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-4xl md:text-[2.75rem]"
           />
 
@@ -311,27 +342,41 @@ export default function OfferDocument({
 
         {/* ───────────── Footer ───────────── */}
         <footer className="grid grid-cols-1 items-baseline gap-2 border-t border-border pt-5 text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)] sm:grid-cols-[auto_1fr_auto] sm:gap-6">
-          <EditableText
-            value={draft.brandName}
-            editable={editMode}
-            onCommit={(v) => patchDraft({ brandName: v })}
-            placeholder="Бранд"
-            className="font-semibold uppercase tracking-[0.18em] text-foreground"
-          />
-          <EditableText
-            value={draft.brandTagline}
-            editable={editMode}
-            onCommit={(v) => patchDraft({ brandTagline: v })}
-            placeholder="Слоган"
-            className="truncate"
-          />
-          <EditableText
-            value={draft.brandUrl}
-            editable={editMode}
-            onCommit={(v) => patchDraft({ brandUrl: v })}
-            placeholder="url"
-            className="font-mono text-citrus-lemon"
-          />
+          {editMode ? (
+            <EditableText
+              value={draft.brandName}
+              editable
+              onCommit={(v) => patchDraft({ brandName: v })}
+              placeholder={brand?.brandName || 'Brand'}
+              className="font-semibold uppercase tracking-[0.18em] text-foreground"
+            />
+          ) : brandName ? (
+            <span className="font-semibold uppercase tracking-[0.18em] text-foreground">
+              {brandName}
+            </span>
+          ) : null}
+          {editMode ? (
+            <EditableText
+              value={draft.brandTagline}
+              editable
+              onCommit={(v) => patchDraft({ brandTagline: v })}
+              placeholder={brand?.brandTagline || 'Tagline'}
+              className="truncate"
+            />
+          ) : brandTagline ? (
+            <span className="truncate">{brandTagline}</span>
+          ) : null}
+          {editMode ? (
+            <EditableText
+              value={draft.brandUrl}
+              editable
+              onCommit={(v) => patchDraft({ brandUrl: v })}
+              placeholder={brand?.brandWebsite || 'url'}
+              className="font-mono text-citrus-lemon"
+            />
+          ) : brandUrl ? (
+            <span className="font-mono text-citrus-lemon">{brandUrl}</span>
+          ) : null}
         </footer>
       </div>
     </div>
@@ -475,7 +520,7 @@ function AddBlockMenu({ onPick, onClose }: { onPick: (k: OfferBlockKind) => void
   return (
     <div
       role="menu"
-      aria-label="Тип блок"
+      aria-label="Block type"
       className="absolute right-4 top-6 z-20 grid w-[min(320px,calc(100vw-3rem))] grid-cols-2 gap-1 rounded-lg border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-1.5 shadow-[var(--inkblot-shadow-md)]"
       onMouseDown={(e) => e.stopPropagation()}
     >
@@ -499,7 +544,7 @@ function AddBlockMenu({ onPick, onClose }: { onPick: (k: OfferBlockKind) => void
         aria-label="Close"
         className="col-span-2 mt-1 inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-[var(--inkblot-semantic-color-background-secondary)]"
       >
-        <X className="h-3.5 w-3.5" aria-hidden /> Затвори
+        <X className="h-3.5 w-3.5" aria-hidden /> Close
       </button>
     </div>
   )
@@ -540,7 +585,7 @@ function BlockBody({
               items,
             }))
           }
-          placeholder="Елемент от списъка"
+          placeholder="List item"
         />
       )
     case 'quote':
@@ -550,7 +595,7 @@ function BlockBody({
             value={block.text}
             editable={editMode}
             onCommit={(v) => onPatch(block.id, (b) => ({ ...b, text: v }))}
-            placeholder="Цитат от клиент или стойностно твърдение…"
+            placeholder="Customer quote or value statement…"
             multiline
             className="text-lg italic leading-[1.6] text-foreground sm:text-xl"
           />
@@ -558,7 +603,7 @@ function BlockBody({
             value={block.cite}
             editable={editMode}
             onCommit={(v) => onPatch(block.id, (b) => ({ ...b, cite: v }))}
-            placeholder="— източник"
+            placeholder="— source"
             className="mt-3 block text-[11px] uppercase tracking-[0.16em] text-[var(--inkblot-semantic-color-text-tertiary)]"
           />
         </blockquote>
@@ -586,7 +631,7 @@ function HeadingBody({ block, editMode, onPatch }: { block: HeadingBlock; editMo
           value={block.text}
           editable={editMode}
           onCommit={(v) => onPatch<HeadingBlock>(block.id, (b) => ({ ...b, text: v }))}
-          placeholder="Заглавие H1"
+          placeholder="Heading H1"
           className="flex-1 text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground sm:text-[32px]"
         />
         {editMode ? <HeadingLevelSelect block={block} onPatch={onPatch} /> : null}
@@ -603,7 +648,7 @@ function HeadingBody({ block, editMode, onPatch }: { block: HeadingBlock; editMo
             value={block.text}
             editable={editMode}
             onCommit={(v) => onPatch<HeadingBlock>(block.id, (b) => ({ ...b, text: v }))}
-            placeholder="ЗАГЛАВИЕ НА СЕКЦИЯ"
+            placeholder="SECTION HEADING"
             className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground"
           />
           {editMode ? <HeadingLevelSelect block={block} onPatch={onPatch} /> : null}
@@ -617,7 +662,7 @@ function HeadingBody({ block, editMode, onPatch }: { block: HeadingBlock; editMo
         value={block.text}
         editable={editMode}
         onCommit={(v) => onPatch<HeadingBlock>(block.id, (b) => ({ ...b, text: v }))}
-        placeholder="Подзаглавие"
+        placeholder="Subheading"
         className="flex-1 text-base font-semibold tracking-tight text-foreground"
       />
       {editMode ? <HeadingLevelSelect block={block} onPatch={onPatch} /> : null}
@@ -660,7 +705,7 @@ function ParagraphBody({
       value={block.text}
       editable={editMode}
       onCommit={(v) => onPatch<ParagraphBlock>(block.id, (b) => ({ ...b, text: v }))}
-      placeholder="Напиши параграф…"
+      placeholder="Write a paragraph…"
       multiline
       className="text-[15px] leading-[1.75] text-foreground [text-wrap:pretty]"
     />
@@ -692,7 +737,7 @@ function FeatureBody({
             value={block.kicker}
             editable={editMode}
             onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, kicker: v }))}
-            placeholder="Подзаглавие (по желание)"
+            placeholder="Kicker (optional)"
             className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]"
           />
         ) : null}
@@ -700,14 +745,14 @@ function FeatureBody({
           value={block.title}
           editable={editMode}
           onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, title: v }))}
-          placeholder="Име на функционалност"
+          placeholder="Feature name"
           className="text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-[22px]"
         />
         <EditableText
           value={block.description}
           editable={editMode}
           onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, description: v }))}
-          placeholder="Описание…"
+          placeholder="Description…"
           multiline
           className="text-[14px] leading-[1.7] text-[var(--inkblot-semantic-color-text-secondary)]"
         />
@@ -715,19 +760,19 @@ function FeatureBody({
           items={block.bullets}
           editMode={editMode}
           onChange={(items) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, bullets: items }))}
-          placeholder="Булет"
+          placeholder="Bullet"
           compact
         />
         {editMode || block.comparisonNote ? (
           <aside className="mt-3 border-t border-border pt-3">
             <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-citrus-lemon">
-              Конкурентно предимство
+              Competitive advantage
             </p>
             <EditableText
               value={block.comparisonNote}
               editable={editMode}
               onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, comparisonNote: v }))}
-              placeholder="Как това ни отличава от конкуренцията…"
+              placeholder="How this sets us apart from the competition…"
               multiline
               className="text-[13px] italic leading-[1.65] text-[var(--inkblot-semantic-color-text-secondary)]"
             />
@@ -760,20 +805,20 @@ function PricingBody({
 
   const rows: Array<{ label: string; node: ReactNode; show: boolean }> = [
     {
-      label: 'Пазарна стойност',
+      label: 'Market value',
       show: editing || marketRange != null,
       node: editing ? (
         <div className="flex items-baseline gap-1.5">
           <InlineNumber
             value={block.marketValueFrom}
             onCommit={(v) => patchP((b) => ({ ...b, marketValueFrom: v }))}
-            placeholder="от"
+            placeholder="from"
           />
           <span className="text-muted-foreground">–</span>
           <InlineNumber
             value={block.marketValueTo}
             onCommit={(v) => patchP((b) => ({ ...b, marketValueTo: v }))}
-            placeholder="до"
+            placeholder="to"
           />
           <span className="ml-1 text-[11px] text-muted-foreground">{block.currency}</span>
         </div>
@@ -782,27 +827,27 @@ function PricingBody({
       ),
     },
     {
-      label: 'Срок за изпълнение',
+      label: 'Timeline',
       show: editMode || !!block.timeline,
       node: (
         <EditableText
           value={block.timeline}
           editable={editMode}
           onCommit={(v) => patchP((b) => ({ ...b, timeline: v }))}
-          placeholder="напр. 1.5 месеца"
+          placeholder="e.g. 1.5 months"
           className="text-[14px]"
         />
       ),
     },
     {
-      label: 'Гаранция',
+      label: 'Guarantee',
       show: editMode || !!block.guarantee,
       node: (
         <EditableText
           value={block.guarantee}
           editable={editMode}
           onCommit={(v) => patchP((b) => ({ ...b, guarantee: v }))}
-          placeholder="напр. SEO и техническа поддръжка"
+          placeholder="e.g. SEO + technical support"
           className="text-[14px]"
         />
       ),
@@ -811,7 +856,7 @@ function PricingBody({
 
   return (
     <section className="flex flex-col gap-5">
-      <SectionLabel>Ценообразуване</SectionLabel>
+      <SectionLabel>Pricing</SectionLabel>
 
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-[minmax(0,1fr)_auto]">
         <dl className="flex flex-col divide-y divide-border">
@@ -829,7 +874,7 @@ function PricingBody({
 
         <div className="flex flex-col items-start gap-1 sm:items-end sm:text-right">
           <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]">
-            Предложена цена
+            Proposed price
           </span>
           {editing ? (
             <div className="flex items-baseline gap-1.5">
@@ -874,11 +919,11 @@ function PricingBody({
                 + {block.vatPct}% VAT · {formatMoney(vatAmount, block.currency)}
               </span>
             ) : (
-              <span>без VAT</span>
+              <span>VAT exempt</span>
             )}
             {block.vatPct > 0 ? (
               <span className="font-medium text-foreground">
-                Общо · {formatMoney(total, block.currency)}
+                Total · {formatMoney(total, block.currency)}
               </span>
             ) : null}
           </div>
@@ -890,7 +935,7 @@ function PricingBody({
           value={block.note}
           editable={editMode}
           onCommit={(v) => patchP((b) => ({ ...b, note: v }))}
-          placeholder="Пояснение / сравнение с пазара…"
+          placeholder="Context / market comparison…"
           multiline
           className="max-w-[60ch] text-[13px] italic leading-[1.7] text-[var(--inkblot-semantic-color-text-secondary)]"
         />
@@ -913,7 +958,7 @@ function PlansBody({ block, editMode, onPatch }: { block: PlansBlock; editMode: 
           value={block.title}
           editable={editMode}
           onCommit={(v) => patchP((b) => ({ ...b, title: v }))}
-          placeholder="ЗАГЛАВИЕ"
+          placeholder="TITLE"
           className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]"
         />
         <div className="h-px flex-1 bg-border" aria-hidden />
@@ -926,21 +971,21 @@ function PlansBody({ block, editMode, onPatch }: { block: PlansBlock; editMode: 
               value={p.title}
               editable={editMode}
               onCommit={(v) => updatePlan(p.id, { title: v })}
-              placeholder="Заглавие"
+              placeholder="Title"
               className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--inkblot-semantic-color-text-tertiary)]"
             />
             <EditableText
               value={p.subtitle ?? ''}
               editable={editMode}
               onCommit={(v) => updatePlan(p.id, { subtitle: v })}
-              placeholder="Подзаглавие"
+              placeholder="Subtitle"
               className="text-[13px] text-[var(--inkblot-semantic-color-text-secondary)]"
             />
             <EditableText
               value={p.priceLabel}
               editable={editMode}
               onCommit={(v) => updatePlan(p.id, { priceLabel: v })}
-              placeholder="Цена"
+              placeholder="Price"
               className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-foreground"
             />
             {editMode ? (
@@ -948,7 +993,7 @@ function PlansBody({ block, editMode, onPatch }: { block: PlansBlock; editMode: 
                 type="button"
                 onClick={() => removePlan(p.id)}
                 aria-label="Remove plan"
-                title="Премахни"
+                title="Remove"
                 className="absolute top-2 right-0 hidden h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-background/70 hover:text-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] group-data-[selected]/blk:inline-flex sm:right-2"
               >
                 <Trash2 className="h-4 w-4" aria-hidden />
@@ -962,7 +1007,7 @@ function PlansBody({ block, editMode, onPatch }: { block: PlansBlock; editMode: 
             onClick={addPlan}
             className="hidden min-h-[88px] items-center justify-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground group-data-[selected]/blk:flex"
           >
-            <Plus className="h-4 w-4" aria-hidden /> Добави план
+            <Plus className="h-4 w-4" aria-hidden /> Add plan
           </button>
         ) : null}
       </div>
@@ -1005,7 +1050,7 @@ function BulletsList({
             value={it}
             editable={editMode}
             onCommit={(v) => patch(i, v)}
-            placeholder={placeholder ?? 'Булет'}
+            placeholder={placeholder ?? 'Bullet'}
             className="flex-1"
           />
           {editMode ? (
@@ -1027,7 +1072,7 @@ function BulletsList({
             onClick={add}
             className="inline-flex h-7 items-center gap-1.5 rounded-md border border-dashed border-border px-2.5 text-[11px] text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
           >
-            <Plus className="h-3.5 w-3.5" aria-hidden /> Добави булет
+            <Plus className="h-3.5 w-3.5" aria-hidden /> Add bullet
           </button>
         </li>
       ) : null}

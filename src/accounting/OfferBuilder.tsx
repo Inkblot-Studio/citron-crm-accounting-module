@@ -14,12 +14,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, CheckCircle2, Copy, Printer, Trash2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Copy, Palette, Printer, Trash2 } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
 import OfferDocument from './OfferDocument'
 import { accountingPath } from './accountingConstants'
 import { emptyOfferDraft, type OfferDraft } from './offerDraft'
 import { NEW_OFFER_ROUTE, useOfferStore } from './offerStore'
+import { useBrandingStore } from './brandingStore'
 
 const actionBtnClass =
   'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] disabled:opacity-50'
@@ -33,6 +34,7 @@ export default function OfferBuilder() {
   const { addToast } = useToast()
   const { offers, getOffer, createBlank, updateDraft, updateStatus, deleteOffer, duplicateOffer } =
     useOfferStore()
+  const { profiles, resolveProfile } = useBrandingStore()
 
   /* ─── Resolve working record ─────────────────────────────────────────── */
 
@@ -57,6 +59,11 @@ export default function OfferBuilder() {
   )
 
   const [draft, setDraft] = useState<OfferDraft>(() => record?.draft ?? emptyOfferDraft())
+
+  const activeBrand = useMemo(
+    () => resolveProfile(draft.brandProfileId),
+    [draft.brandProfileId, resolveProfile],
+  )
 
   // Load from store when the working record changes.
   const hydratedForRef = useRef<string | null>(null)
@@ -101,23 +108,23 @@ export default function OfferBuilder() {
   const handleMarkSent = useCallback(() => {
     if (!workingId) return
     updateStatus(workingId, 'pending')
-    addToast({ title: 'Маркирана', description: 'Офертата е маркирана като изпратена.', variant: 'success' })
+    addToast({ title: 'Marked as sent', description: 'Offer status updated.', variant: 'success' })
   }, [workingId, updateStatus, addToast])
 
   const handleDuplicate = useCallback(() => {
     if (!workingId) return
     const newId = duplicateOffer(workingId)
     if (!newId) return
-    addToast({ title: 'Duplicated', description: 'Създадено е копие като чернова.', variant: 'success' })
+    addToast({ title: 'Duplicated', description: 'A draft copy was created.', variant: 'success' })
     navigate(accountingPath(`offers/${newId}`))
   }, [workingId, duplicateOffer, navigate, addToast])
 
   const handleDelete = useCallback(() => {
     if (!workingId) return
-    const ok = typeof window === 'undefined' ? true : window.confirm('Изтриване на тази оферта?')
+    const ok = typeof window === 'undefined' ? true : window.confirm('Delete this offer?')
     if (!ok) return
     deleteOffer(workingId)
-    addToast({ title: 'Deleted', description: 'Офертата е изтрита.', variant: 'success' })
+    addToast({ title: 'Deleted', description: 'Offer removed.', variant: 'success' })
     navigate(accountingPath('offers'))
   }, [workingId, deleteOffer, navigate, addToast])
 
@@ -136,10 +143,10 @@ export default function OfferBuilder() {
   }
 
   const statusLabelBg: Record<typeof record.status, string> = {
-    draft: 'чернова',
-    pending: 'изпратена',
-    paid: 'приета',
-    overdue: 'изтекла',
+    draft: 'draft',
+    pending: 'sent',
+    paid: 'accepted',
+    overdue: 'expired',
   }
 
   return (
@@ -155,7 +162,7 @@ export default function OfferBuilder() {
           </Link>
           <p className="truncate text-xs text-muted-foreground">
             <span className="text-foreground font-semibold">
-              {draft.projectName || 'Без заглавие'}
+              {draft.projectName || 'Untitled'}
             </span>
             {' · '}
             {statusLabelBg[record.status]}
@@ -163,6 +170,23 @@ export default function OfferBuilder() {
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
+          <label className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/70 focus-within:ring-2 focus-within:ring-[var(--inkblot-semantic-color-border-focus)]">
+            <Palette className="h-3.5 w-3.5" aria-hidden />
+            <span className="sr-only">Brand</span>
+            <select
+              value={draft.brandProfileId ?? ''}
+              onChange={(e) => setDraft((d) => ({ ...d, brandProfileId: e.target.value || null }))}
+              className="bg-transparent pr-1 text-xs text-foreground focus:outline-none"
+              aria-label="Brand profile"
+            >
+              <option value="">Default brand</option>
+              {profiles.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <button type="button" className={actionBtnClass} onClick={handlePrint} title="Print / export PDF">
             <Printer className="h-3.5 w-3.5" aria-hidden /> Print
           </button>
@@ -186,14 +210,24 @@ export default function OfferBuilder() {
 
       <div className="flex-1 min-h-0 overflow-y-auto hide-scrollbar bg-[var(--inkblot-semantic-color-background-tertiary)]">
         <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
-          <OfferDocument draft={draft} documentId="offer-document" editable={{ onChange: setDraft }} />
+          <OfferDocument
+            draft={draft}
+            brand={activeBrand}
+            documentId="offer-document"
+            editable={{ onChange: setDraft }}
+          />
         </div>
       </div>
 
       {/* View-only print copy — hidden on screen, unveiled by print CSS */}
       {printHost
         ? createPortal(
-            <OfferDocument draft={draft} documentId="offer-print-document" className="offer-print-doc" />,
+            <OfferDocument
+              draft={draft}
+              brand={activeBrand}
+              documentId="offer-print-document"
+              className="offer-print-doc"
+            />,
             printHost,
           )
         : null}

@@ -102,7 +102,7 @@ export default function OffersHome() {
             to={accountingPath(`offers/${NEW_OFFER_ROUTE}`)}
             className="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 active:scale-[0.98]"
           >
-            <Plus className="h-3.5 w-3.5" aria-hidden /> Нова оферта
+            <Plus className="h-3.5 w-3.5" aria-hidden /> New offer
           </Link>
         </div>
       </div>
@@ -111,11 +111,11 @@ export default function OffersHome() {
         <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--inkblot-semantic-color-background-secondary)] px-6 py-14 text-center">
           <Sparkles className="h-6 w-6 text-citrus-lemon" aria-hidden />
           <div>
-            <p className="text-sm font-medium text-foreground">Все още няма оферти</p>
+            <p className="text-sm font-medium text-foreground">No offers yet</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {search.trim()
-                ? 'Няма резултати за търсенето.'
-                : 'Започни от „Нова оферта“ — builder с жива визуализация.'}
+                ? 'No results for this search.'
+                : 'Start from "New offer" — a live-preview builder.'}
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function OffersHome() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {docType?.label ?? 'Оферта'}
+                        {docType?.label ?? 'Offer'}
                       </p>
                       {d.documentNumber ? (
                         <p className="font-mono text-[11px] text-citrus-lemon truncate">{d.documentNumber}</p>
@@ -161,10 +161,10 @@ export default function OffersHome() {
 
                 <div className="min-w-0">
                   <h3 className="text-sm font-semibold text-foreground truncate" title={d.projectName}>
-                    {d.projectName || 'Проект без име'}
+                    {d.projectName || 'Untitled project'}
                   </h3>
                   <p className="text-xs text-muted-foreground truncate" title={d.clientName}>
-                    {d.clientName || 'Клиент —'}
+                    {d.clientName || 'No client'}
                   </p>
                 </div>
 

@@ -6,12 +6,15 @@ import AccountingLayout from './AccountingLayout'
 import { InvoiceFormPageSkeleton, InvoicesHomeSkeleton } from './AccountingSkeletons'
 import { InvoiceStoreProvider } from './invoiceStore'
 import { OfferStoreProvider } from './offerStore'
+import { BrandingStoreProvider } from './brandingStore'
 
 const InvoicesHome = lazy(() => import('./InvoicesHome'))
 const SmartInvoiceBuilder = lazy(() => import('./SmartInvoiceBuilder'))
 const InvoiceReviewPage = lazy(() => import('./InvoiceReviewPage'))
 const OffersHome = lazy(() => import('./OffersHome'))
 const OfferBuilder = lazy(() => import('./OfferBuilder'))
+const BrandingProfilesHome = lazy(() => import('./BrandingProfilesHome'))
+const BrandingProfileEditor = lazy(() => import('./BrandingProfileEditor'))
 
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast()
@@ -65,6 +68,22 @@ function AccountingWithToaster() {
               </Suspense>
             }
           />
+          <Route
+            path="brands"
+            element={
+              <Suspense fallback={<InvoicesHomeSkeleton />}>
+                <BrandingProfilesHome />
+              </Suspense>
+            }
+          />
+          <Route
+            path="brands/:id"
+            element={
+              <Suspense fallback={<InvoiceFormPageSkeleton variant="edit" />}>
+                <BrandingProfileEditor />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
       <Toaster
@@ -80,11 +99,13 @@ function AccountingWithToaster() {
 export default function AccountingWithProvider() {
   return (
     <ToastProvider>
-      <InvoiceStoreProvider>
-        <OfferStoreProvider>
-          <AccountingWithToaster />
-        </OfferStoreProvider>
-      </InvoiceStoreProvider>
+      <BrandingStoreProvider>
+        <InvoiceStoreProvider>
+          <OfferStoreProvider>
+            <AccountingWithToaster />
+          </OfferStoreProvider>
+        </InvoiceStoreProvider>
+      </BrandingStoreProvider>
     </ToastProvider>
   )
 }

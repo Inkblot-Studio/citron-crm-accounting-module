@@ -147,14 +147,14 @@ export function cloneBlock(block: OfferBlock): OfferBlock {
 
 /** Human label for a block kind (used in the "+ Add block" menu). */
 export const BLOCK_KIND_LABEL: Record<OfferBlockKind, string> = {
-  heading: 'Заглавие',
-  paragraph: 'Параграф',
-  feature: 'Функционалност',
-  bullets: 'Списък',
-  quote: 'Цитат',
-  pricing: 'Ценообразуване',
-  plans: 'Месечна поддръжка',
-  divider: 'Разделител',
+  heading: 'Heading',
+  paragraph: 'Paragraph',
+  feature: 'Feature',
+  bullets: 'Bullet list',
+  quote: 'Quote',
+  pricing: 'Pricing',
+  plans: 'Support plans',
+  divider: 'Divider',
 }
 
 /* ─── Dates ──────────────────────────────────────────────────────────────── */
@@ -175,14 +175,15 @@ export function emptyOfferDraft(): OfferDraft {
   return {
     documentTypeId: 'oferta',
     documentNumber: formatOfferNumber(OFFER_CONFIG.documentNumberStart),
+    brandProfileId: null,
     clientName: '',
     clientOrg: '',
     clientEmail: '',
     projectName: '',
     blocks: [createBlock('paragraph')],
-    brandName: OFFER_CONFIG.defaultBrand.name,
-    brandTagline: OFFER_CONFIG.defaultBrand.tagline,
-    brandUrl: OFFER_CONFIG.defaultBrand.url,
+    brandName: '',
+    brandTagline: '',
+    brandUrl: '',
     issueDate: isoToday(),
     validUntil: isoPlusDays(OFFER_CONFIG.defaultValidityDays),
   }
@@ -388,6 +389,7 @@ export function normalizeOfferDraft(input: unknown): OfferDraft {
   return {
     documentTypeId,
     documentNumber: str(raw.documentNumber, empty.documentNumber),
+    brandProfileId: typeof raw.brandProfileId === 'string' ? raw.brandProfileId : null,
     clientName: str(raw.clientName),
     clientOrg: str(raw.clientOrg),
     clientEmail: str(raw.clientEmail),
@@ -436,6 +438,7 @@ export function seedLobbyOffer(): OfferDraft {
   return {
     documentTypeId: 'oferta',
     documentNumber: formatOfferNumber(OFFER_CONFIG.documentNumberStart),
+    brandProfileId: 'inkblot-studio',
     clientName: 'ЛОББИ ЕООД',
     clientOrg: 'ЛОББИ ЕООД',
     clientEmail: '',
@@ -492,9 +495,9 @@ export function seedLobbyOffer(): OfferDraft {
         'Защо да се доверите на нас? Ние не просто създаваме уебсайтове — изграждаме машини за продажби. Нашата цел е платформата Ви да бъде технически безупречна, визуално зашеметяваща и оптимизирана да конвертира посетителите в реални клиенти. Спестяваме скрити разходи за AI токени и предлагаме несравнимо съотношение между цена и качество.',
       ),
     ],
-    brandName: OFFER_CONFIG.defaultBrand.name,
-    brandTagline: OFFER_CONFIG.defaultBrand.tagline,
-    brandUrl: OFFER_CONFIG.defaultBrand.url,
+    brandName: '',
+    brandTagline: '',
+    brandUrl: '',
     issueDate: isoToday(),
     validUntil: isoPlusDays(OFFER_CONFIG.defaultValidityDays),
   }

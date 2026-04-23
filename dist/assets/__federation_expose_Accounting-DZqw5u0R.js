@@ -3,10 +3,12 @@ import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, a as accountingPath, T as ToastProvider, u as useToast } from './accountingConstants-Cfl6rq38.js';
 import { u as useInvoiceStore, I as InvoiceStoreProvider } from './invoiceStore-CH64SPmX.js';
-import { u as useOfferStore, N as NEW_OFFER_ROUTE, O as OfferStoreProvider } from './offerStore-CKFzdNIY.js';
+import { u as useOfferStore, N as NEW_OFFER_ROUTE, O as OfferStoreProvider } from './offerStore-B7nnp6gS.js';
 import { S as Sparkles, F as FileText } from './sparkles-CZyhPppu.js';
+import { P as Palette } from './palette-W_Yxaw1i.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 import { I as InvoicesHomeSkeleton, a as InvoiceFormPageSkeleton } from './AccountingSkeletons-BBpJ38wk.js';
+import { B as BrandingStoreProvider } from './brandingStore-BVRnF0-c.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -33,7 +35,7 @@ function AccountingLayout() {
   const { invoices } = useInvoiceStore();
   const { offers } = useOfferStore();
   const location = useLocation();
-  const isOffersView = location.pathname.startsWith(accountingPath("offers"));
+  const section = location.pathname.startsWith(accountingPath("offers")) ? "offers" : location.pathname.startsWith(accountingPath("brands")) ? "brands" : "invoices";
   const subtitle = useMemo(() => {
     const n = invoices.length;
     const pending = invoices.filter((i) => i.status === "pending").length;
@@ -48,6 +50,7 @@ function AccountingLayout() {
     ];
     return parts.join(" · ");
   }, [invoices, offers]);
+  const tabCls = (active) => `inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`;
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full flex min-h-0 w-full max-w-full overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 flex flex-col min-w-0 max-w-full", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex shrink-0 flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:px-6 md:py-4 lg:px-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3", children: [
@@ -68,8 +71,8 @@ function AccountingLayout() {
                 Link,
                 {
                   to: accountingPath(),
-                  className: `inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${!isOffersView ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`,
-                  "aria-current": !isOffersView ? "page" : void 0,
+                  className: tabCls(section === "invoices"),
+                  "aria-current": section === "invoices" ? "page" : void 0,
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Receipt, { className: "h-3 w-3", "aria-hidden": true }),
                     " Invoices"
@@ -80,18 +83,30 @@ function AccountingLayout() {
                 Link,
                 {
                   to: accountingPath("offers"),
-                  className: `inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${isOffersView ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`,
-                  "aria-current": isOffersView ? "page" : void 0,
+                  className: tabCls(section === "offers"),
+                  "aria-current": section === "offers" ? "page" : void 0,
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-3 w-3", "aria-hidden": true }),
                     " Offers"
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                Link,
+                {
+                  to: accountingPath("brands"),
+                  className: tabCls(section === "brands"),
+                  "aria-current": section === "brands" ? "page" : void 0,
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Palette, { className: "h-3 w-3", "aria-hidden": true }),
+                    " Branding"
                   ]
                 }
               )
             ]
           }
         ),
-        isOffersView ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        section === "offers" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Link,
           {
             to: accountingPath(`offers/${NEW_OFFER_ROUTE}`),
@@ -100,11 +115,11 @@ function AccountingLayout() {
             className: "inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent px-2.5 text-xs font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95",
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-3.5 w-3.5 shrink-0", "aria-hidden": true }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: "Нова оферта" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: "New offer" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-3.5 w-3.5 shrink-0 sm:hidden", "aria-hidden": true })
             ]
           }
-        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+        ) : section === "brands" ? null : /* @__PURE__ */ jsxRuntimeExports.jsx(
           Link,
           {
             to: accountingPath("create"),
@@ -127,8 +142,10 @@ const {ModuleErrorBoundary,Toaster} = await importShared('@citron-systems/citron
 const InvoicesHome = lazy(() => __vitePreload(() => import('./InvoicesHome-DTvCcgpP.js'),true              ?[]:void 0));
 const SmartInvoiceBuilder = lazy(() => __vitePreload(() => import('./SmartInvoiceBuilder-BCTeV0l5.js'),true              ?[]:void 0));
 const InvoiceReviewPage = lazy(() => __vitePreload(() => import('./InvoiceReviewPage-BtWi2-8t.js'),true              ?[]:void 0));
-const OffersHome = lazy(() => __vitePreload(() => import('./OffersHome-BYUtanvo.js'),true              ?[]:void 0));
-const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-dbal_axj.js'),true              ?[]:void 0));
+const OffersHome = lazy(() => __vitePreload(() => import('./OffersHome-qxSx_IaK.js'),true              ?[]:void 0));
+const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-DDd4ENSA.js'),true              ?[]:void 0));
+const BrandingProfilesHome = lazy(() => __vitePreload(() => import('./BrandingProfilesHome-CCyu2wML.js'),true              ?[]:void 0));
+const BrandingProfileEditor = lazy(() => __vitePreload(() => import('./BrandingProfileEditor-CoOLf3iM.js'),true              ?[]:void 0));
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
@@ -171,6 +188,20 @@ function AccountingWithToaster() {
               path: "offers/:recordId",
               element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceFormPageSkeleton, { variant: "edit" }), children: /* @__PURE__ */ jsxRuntimeExports.jsx(OfferBuilder, {}) })
             }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Route,
+            {
+              path: "brands",
+              element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoicesHomeSkeleton, {}), children: /* @__PURE__ */ jsxRuntimeExports.jsx(BrandingProfilesHome, {}) })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Route,
+            {
+              path: "brands/:id",
+              element: /* @__PURE__ */ jsxRuntimeExports.jsx(Suspense, { fallback: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceFormPageSkeleton, { variant: "edit" }), children: /* @__PURE__ */ jsxRuntimeExports.jsx(BrandingProfileEditor, {}) })
+            }
           )
         ]
       }
@@ -187,7 +218,7 @@ function AccountingWithToaster() {
   ] });
 }
 function AccountingWithProvider() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(ToastProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceStoreProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(OfferStoreProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingWithToaster, {}) }) }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(ToastProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(BrandingStoreProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(InvoiceStoreProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(OfferStoreProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AccountingWithToaster, {}) }) }) }) });
 }
 
 export { AccountingWithProvider as default };

@@ -1,15 +1,22 @@
 import { useMemo } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { FileText, Plus, Receipt, Sparkles } from 'lucide-react'
+import { FileText, Palette, Plus, Receipt, Sparkles } from 'lucide-react'
 import { accountingPath } from './accountingConstants'
 import { useInvoiceStore } from './invoiceStore'
 import { NEW_OFFER_ROUTE, useOfferStore } from './offerStore'
+
+type Section = 'invoices' | 'offers' | 'brands'
 
 export default function AccountingLayout() {
   const { invoices } = useInvoiceStore()
   const { offers } = useOfferStore()
   const location = useLocation()
-  const isOffersView = location.pathname.startsWith(accountingPath('offers'))
+
+  const section: Section = location.pathname.startsWith(accountingPath('offers'))
+    ? 'offers'
+    : location.pathname.startsWith(accountingPath('brands'))
+    ? 'brands'
+    : 'invoices'
 
   const subtitle = useMemo(() => {
     const n = invoices.length
@@ -25,6 +32,13 @@ export default function AccountingLayout() {
     ]
     return parts.join(' · ')
   }, [invoices, offers])
+
+  const tabCls = (active: boolean) =>
+    `inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${
+      active
+        ? 'bg-background text-foreground shadow-sm'
+        : 'text-muted-foreground hover:text-foreground'
+    }`
 
   return (
     <div className="h-full flex min-h-0 w-full max-w-full overflow-hidden">
@@ -49,29 +63,28 @@ export default function AccountingLayout() {
             >
               <Link
                 to={accountingPath()}
-                className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${
-                  !isOffersView
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-                aria-current={!isOffersView ? 'page' : undefined}
+                className={tabCls(section === 'invoices')}
+                aria-current={section === 'invoices' ? 'page' : undefined}
               >
                 <Receipt className="h-3 w-3" aria-hidden /> Invoices
               </Link>
               <Link
                 to={accountingPath('offers')}
-                className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${
-                  isOffersView
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-                aria-current={isOffersView ? 'page' : undefined}
+                className={tabCls(section === 'offers')}
+                aria-current={section === 'offers' ? 'page' : undefined}
               >
                 <Sparkles className="h-3 w-3" aria-hidden /> Offers
               </Link>
+              <Link
+                to={accountingPath('brands')}
+                className={tabCls(section === 'brands')}
+                aria-current={section === 'brands' ? 'page' : undefined}
+              >
+                <Palette className="h-3 w-3" aria-hidden /> Branding
+              </Link>
             </nav>
 
-            {isOffersView ? (
+            {section === 'offers' ? (
               <Link
                 to={accountingPath(`offers/${NEW_OFFER_ROUTE}`)}
                 title="New offer"
@@ -79,10 +92,10 @@ export default function AccountingLayout() {
                 className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent px-2.5 text-xs font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95"
               >
                 <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                <span className="hidden sm:inline">Нова оферта</span>
+                <span className="hidden sm:inline">New offer</span>
                 <Plus className="h-3.5 w-3.5 shrink-0 sm:hidden" aria-hidden />
               </Link>
-            ) : (
+            ) : section === 'brands' ? null : (
               <Link
                 to={accountingPath('create')}
                 title="New invoice"
