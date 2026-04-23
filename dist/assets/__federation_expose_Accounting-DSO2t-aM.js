@@ -128,7 +128,7 @@ const InvoicesHome = lazy(() => __vitePreload(() => import('./InvoicesHome-DTvCc
 const SmartInvoiceBuilder = lazy(() => __vitePreload(() => import('./SmartInvoiceBuilder-BCTeV0l5.js'),true              ?[]:void 0));
 const InvoiceReviewPage = lazy(() => __vitePreload(() => import('./InvoiceReviewPage-BtWi2-8t.js'),true              ?[]:void 0));
 const OffersHome = lazy(() => __vitePreload(() => import('./OffersHome-BYUtanvo.js'),true              ?[]:void 0));
-const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-Rl1d2pEQ.js'),true              ?[]:void 0));
+const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-dbal_axj.js'),true              ?[]:void 0));
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [

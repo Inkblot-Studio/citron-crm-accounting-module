@@ -1,15 +1,34 @@
 /**
- * OfferDocument — the single source of truth for how an offer looks AND how
- * it's edited. Pass `editable` to get a full WYSIWYG canvas; omit it for a
- * read-only preview (PDF / list thumbnails).
+ * OfferDocument — the single renderer for offers.
  *
- * Why one component? Because WYSIWYG offers literally guarantee the preview
- * matches the result: you're editing the preview. No separate "form pane".
+ * Pass `editable` for a WYSIWYG canvas; omit it for a read-only preview
+ * (used by the PDF/print portal in OfferBuilder and by list thumbnails).
  *
- * Block model lives in offerDraft.ts. This file is the renderer.
+ * ─── Design notes ──────────────────────────────────────────────────────
+ *
+ * Layout is intentionally editorial rather than dashboard-ish: features are
+ * numbered like magazine chapters, sections use small-caps labels with a
+ * top hairline rule, pricing is a label/value ledger with a tabular total
+ * aligned to the right, plans are a three-column ledger divided by vertical
+ * hairlines. No block has a tinted card background — hierarchy comes from
+ * typography, spacing, and hairline rules alone.
+ *
+ * ─── Interaction ───────────────────────────────────────────────────────
+ *
+ * Controls (block toolbar, bullet/plan remove buttons, add menus) only
+ * appear when a block is *selected* (clicked). Nothing reveals on hover.
+ * Click outside any block, or press Escape, to deselect.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
 import { ArrowDown, ArrowUp, Copy, Plus, Trash2, X } from 'lucide-react'
 import { bgDocumentTypeById } from './accountingConstants'
 import {
@@ -39,7 +58,7 @@ export interface OfferDocumentProps {
   draft: OfferDraft
   documentId?: string
   className?: string
-  /** Omit for read-only rendering (list cards, PDF export). */
+  /** Omit for read-only rendering. */
   editable?: {
     onChange: (draft: OfferDraft) => void
   }
@@ -85,6 +104,9 @@ export default function OfferDocument({
     [draft, editable],
   )
 
+  const [selectedId, setSelected] = useState<string | null>(null)
+  const [addMenuForId, setAddMenuForId] = useState<string | null>(null)
+
   const duplicateBlock = useCallback(
     (id: string) => {
       if (!editable) return
@@ -105,35 +127,48 @@ export default function OfferDocument({
       if (!editable) return
       const next = draft.blocks.filter((b) => b.id !== id)
       editable.onChange({ ...draft, blocks: next.length > 0 ? next : [createBlock('paragraph')] })
+      setSelected(null)
     },
     [draft, editable],
   )
 
-  const insertBlockAt = useCallback(
-    (index: number, kind: OfferBlockKind) => {
+  const insertAfter = useCallback(
+    (afterId: string, kind: OfferBlockKind) => {
       if (!editable) return
+      const i = draft.blocks.findIndex((b) => b.id === afterId)
       const block = createBlock(kind)
       const next = [...draft.blocks]
-      next.splice(index, 0, block)
+      next.splice(i + 1, 0, block)
       editable.onChange({ ...draft, blocks: next })
       setSelected(block.id)
+      setAddMenuForId(null)
     },
     [draft, editable],
   )
 
-  const [selectedId, setSelected] = useState<string | null>(null)
-  const [addMenuIndex, setAddMenuIndex] = useState<number | null>(null)
-
-  // Click outside any block deselects.
+  // Click outside any block deselects; Escape deselects too.
   const rootRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!editMode) return
     function onDocClick(e: MouseEvent) {
       if (!rootRef.current) return
-      if (!rootRef.current.contains(e.target as Node)) setSelected(null)
+      const t = e.target as Node
+      if (rootRef.current.contains(t)) return
+      setSelected(null)
+      setAddMenuForId(null)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setSelected(null)
+        setAddMenuForId(null)
+      }
     }
     document.addEventListener('mousedown', onDocClick)
-    return () => document.removeEventListener('mousedown', onDocClick)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDocClick)
+      document.removeEventListener('keydown', onKey)
+    }
   }, [editMode])
 
   const docType = bgDocumentTypeById(draft.documentTypeId)
@@ -142,166 +177,168 @@ export default function OfferDocument({
     <div
       id={documentId}
       ref={rootRef}
-      className={`offer-doc flex flex-col gap-6 rounded-[var(--inkblot-radius-2xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-5 sm:p-7 md:p-9 shadow-[var(--inkblot-shadow-md)] ${className}`}
+      className={`offer-doc relative mx-auto max-w-[720px] bg-[var(--inkblot-semantic-color-background-primary)] text-foreground shadow-[var(--inkblot-shadow-sm)] [font-feature-settings:'ss01','cv11'] ${className}`}
     >
-      {/* Header */}
-      <header className="flex flex-col gap-4 border-b border-[var(--inkblot-semantic-color-border-default)] pb-5 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.18em] text-[var(--inkblot-semantic-color-text-tertiary)]">
-            {docType?.label ?? 'Оферта'}
-            {docType?.legal ? <span className="ml-2 text-citrus-lemon">· ЗДДС</span> : null}
-          </p>
-          {editMode ? (
-            <EditableText
-              as="p"
-              value={draft.documentNumber}
-              onCommit={(v) => patchDraft({ documentNumber: v })}
-              placeholder="№"
-              className="mt-1 font-mono text-xs text-citrus-lemon break-all"
-            />
-          ) : draft.documentNumber ? (
-            <p className="mt-1 font-mono text-xs text-citrus-lemon break-all">{draft.documentNumber}</p>
-          ) : null}
+      <div className="flex flex-col gap-10 px-8 py-10 sm:gap-12 sm:px-12 sm:py-14 md:px-16 md:py-16">
+        {/* ───────────── Masthead ───────────── */}
+        <header className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
+            <div className="min-w-0">
+              <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]">
+                {docType?.label ?? 'Оферта'}
+                {docType?.legal ? <span className="ml-2 text-citrus-lemon">· ЗДДС</span> : null}
+              </p>
+              <div className="mt-2">
+                <EditableText
+                  as="span"
+                  value={draft.documentNumber}
+                  editable={editMode}
+                  onCommit={(v) => patchDraft({ documentNumber: v })}
+                  placeholder="№"
+                  className="font-mono text-[13px] text-citrus-lemon"
+                />
+              </div>
+            </div>
+
+            <dl className="grid min-w-0 grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 text-[11px] sm:max-w-[58%] sm:justify-self-end">
+              <MetaLabel>Клиент</MetaLabel>
+              <MetaValue>
+                <EditableText
+                  value={draft.clientName}
+                  editable={editMode}
+                  onCommit={(v) => patchDraft({ clientName: v })}
+                  placeholder="Име на клиента"
+                  className="font-medium text-foreground"
+                />
+              </MetaValue>
+
+              {editMode || (draft.clientOrg && draft.clientOrg !== draft.clientName) ? (
+                <>
+                  <MetaLabel>Организация</MetaLabel>
+                  <MetaValue>
+                    <EditableText
+                      value={draft.clientOrg}
+                      editable={editMode}
+                      onCommit={(v) => patchDraft({ clientOrg: v })}
+                      placeholder="—"
+                      className="text-[var(--inkblot-semantic-color-text-secondary)]"
+                    />
+                  </MetaValue>
+                </>
+              ) : null}
+
+              {editMode || draft.clientEmail ? (
+                <>
+                  <MetaLabel>Имейл</MetaLabel>
+                  <MetaValue>
+                    <EditableText
+                      value={draft.clientEmail}
+                      editable={editMode}
+                      onCommit={(v) => patchDraft({ clientEmail: v })}
+                      placeholder="—"
+                      className="break-all text-[var(--inkblot-semantic-color-text-secondary)]"
+                    />
+                  </MetaValue>
+                </>
+              ) : null}
+
+              <MetaLabel>Издадена</MetaLabel>
+              <MetaValue>
+                <EditableDate
+                  value={draft.issueDate}
+                  editable={editMode}
+                  onCommit={(v) => patchDraft({ issueDate: v || undefined })}
+                />
+              </MetaValue>
+
+              <MetaLabel>Валидна до</MetaLabel>
+              <MetaValue>
+                <EditableDate
+                  value={draft.validUntil}
+                  editable={editMode}
+                  onCommit={(v) => patchDraft({ validUntil: v || undefined })}
+                />
+              </MetaValue>
+            </dl>
+          </div>
+
           <EditableHeading
             value={draft.projectName}
             editable={editMode}
             onCommit={(v) => patchDraft({ projectName: v })}
             placeholder="Име на проекта"
-            className="mt-3 text-xl sm:text-2xl font-semibold tracking-tight text-foreground break-words"
+            className="text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-4xl md:text-[2.75rem]"
           />
+
+          <div className="h-px w-16 bg-foreground" aria-hidden />
+        </header>
+
+        {/* ───────────── Blocks ───────────── */}
+        <div className="flex flex-col gap-10 sm:gap-12">
+          {draft.blocks.map((block, idx) => {
+            const featureIdx = draft.blocks
+              .slice(0, idx + 1)
+              .filter((b) => b.kind === 'feature').length
+            return (
+              <BlockFrame
+                key={block.id}
+                block={block}
+                editMode={editMode}
+                isFirst={idx === 0}
+                isLast={idx === draft.blocks.length - 1}
+                isSelected={selectedId === block.id}
+                isAddMenuOpen={addMenuForId === block.id}
+                onSelect={() => setSelected(block.id)}
+                onMoveUp={() => moveBlock(block.id, -1)}
+                onMoveDown={() => moveBlock(block.id, 1)}
+                onDuplicate={() => duplicateBlock(block.id)}
+                onDelete={() => deleteBlock(block.id)}
+                onToggleAddMenu={() => setAddMenuForId((cur) => (cur === block.id ? null : block.id))}
+                onCloseAddMenu={() => setAddMenuForId(null)}
+                onPickAdd={(k) => insertAfter(block.id, k)}
+              >
+                <BlockBody
+                  block={block}
+                  editMode={editMode}
+                  isSelected={selectedId === block.id}
+                  featureNumber={block.kind === 'feature' ? featureIdx : 0}
+                  onPatch={patchBlock}
+                />
+              </BlockFrame>
+            )
+          })}
         </div>
 
-        <dl className="grid min-w-0 grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)] sm:min-w-[240px] sm:max-w-[55%] sm:justify-self-end">
-          <dt className="uppercase tracking-wider">Клиент</dt>
-          <dd>
-            <EditableText
-              value={draft.clientName}
-              editable={editMode}
-              onCommit={(v) => patchDraft({ clientName: v })}
-              placeholder="Име на клиента"
-              className="font-medium text-foreground break-words"
-            />
-          </dd>
-          {editMode || (draft.clientOrg && draft.clientOrg !== draft.clientName) ? (
-            <>
-              <dt className="uppercase tracking-wider">Орг.</dt>
-              <dd>
-                <EditableText
-                  value={draft.clientOrg}
-                  editable={editMode}
-                  onCommit={(v) => patchDraft({ clientOrg: v })}
-                  placeholder="—"
-                  className="break-words"
-                />
-              </dd>
-            </>
-          ) : null}
-          {editMode || draft.clientEmail ? (
-            <>
-              <dt className="uppercase tracking-wider">Имейл</dt>
-              <dd>
-                <EditableText
-                  value={draft.clientEmail}
-                  editable={editMode}
-                  onCommit={(v) => patchDraft({ clientEmail: v })}
-                  placeholder="—"
-                  className="break-all"
-                />
-              </dd>
-            </>
-          ) : null}
-          <dt className="uppercase tracking-wider">Издадена</dt>
-          <dd>
-            <EditableDate
-              value={draft.issueDate}
-              editable={editMode}
-              onCommit={(v) => patchDraft({ issueDate: v || undefined })}
-            />
-          </dd>
-          <dt className="uppercase tracking-wider">Валидна до</dt>
-          <dd>
-            <EditableDate
-              value={draft.validUntil}
-              editable={editMode}
-              onCommit={(v) => patchDraft({ validUntil: v || undefined })}
-            />
-          </dd>
-        </dl>
-      </header>
-
-      {/* Blocks */}
-      <div className="flex flex-col gap-2">
-        {editMode ? (
-          <AddBlockGap
-            open={addMenuIndex === 0}
-            onOpen={(open) => setAddMenuIndex(open ? 0 : null)}
-            onPick={(kind) => {
-              insertBlockAt(0, kind)
-              setAddMenuIndex(null)
-            }}
+        {/* ───────────── Footer ───────────── */}
+        <footer className="grid grid-cols-1 items-baseline gap-2 border-t border-border pt-5 text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)] sm:grid-cols-[auto_1fr_auto] sm:gap-6">
+          <EditableText
+            value={draft.brandName}
+            editable={editMode}
+            onCommit={(v) => patchDraft({ brandName: v })}
+            placeholder="Бранд"
+            className="font-semibold uppercase tracking-[0.18em] text-foreground"
           />
-        ) : null}
-
-        {draft.blocks.map((block, idx) => (
-          <div key={block.id}>
-            <BlockFrame
-              block={block}
-              editMode={editMode}
-              isFirst={idx === 0}
-              isLast={idx === draft.blocks.length - 1}
-              isSelected={selectedId === block.id}
-              onSelect={() => setSelected(block.id)}
-              onMoveUp={() => moveBlock(block.id, -1)}
-              onMoveDown={() => moveBlock(block.id, 1)}
-              onDuplicate={() => duplicateBlock(block.id)}
-              onDelete={() => deleteBlock(block.id)}
-            >
-              <BlockBody block={block} editMode={editMode} onPatch={patchBlock} />
-            </BlockFrame>
-
-            {editMode ? (
-              <AddBlockGap
-                open={addMenuIndex === idx + 1}
-                onOpen={(open) => setAddMenuIndex(open ? idx + 1 : null)}
-                onPick={(kind) => {
-                  insertBlockAt(idx + 1, kind)
-                  setAddMenuIndex(null)
-                }}
-              />
-            ) : null}
-          </div>
-        ))}
+          <EditableText
+            value={draft.brandTagline}
+            editable={editMode}
+            onCommit={(v) => patchDraft({ brandTagline: v })}
+            placeholder="Слоган"
+            className="truncate"
+          />
+          <EditableText
+            value={draft.brandUrl}
+            editable={editMode}
+            onCommit={(v) => patchDraft({ brandUrl: v })}
+            placeholder="url"
+            className="font-mono text-citrus-lemon"
+          />
+        </footer>
       </div>
-
-      {/* Brand footer */}
-      <footer className="flex flex-col gap-1 border-t border-[var(--inkblot-semantic-color-border-default)] pt-4 text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)] sm:flex-row sm:items-center sm:justify-between">
-        <EditableText
-          value={draft.brandName}
-          editable={editMode}
-          onCommit={(v) => patchDraft({ brandName: v })}
-          placeholder="Бранд"
-          className="font-semibold tracking-wide text-foreground"
-        />
-        <EditableText
-          value={draft.brandTagline}
-          editable={editMode}
-          onCommit={(v) => patchDraft({ brandTagline: v })}
-          placeholder="Слоган"
-          className="truncate"
-        />
-        <EditableText
-          value={draft.brandUrl}
-          editable={editMode}
-          onCommit={(v) => patchDraft({ brandUrl: v })}
-          placeholder="url"
-          className="font-mono text-citrus-lemon"
-        />
-      </footer>
     </div>
   )
 }
 
-/* ─── Block frame (selection chrome) ─────────────────────────────────────── */
+/* ─── Block frame + toolbar ──────────────────────────────────────────────── */
 
 interface BlockFrameProps {
   block: OfferBlock
@@ -309,73 +346,89 @@ interface BlockFrameProps {
   isFirst: boolean
   isLast: boolean
   isSelected: boolean
+  isAddMenuOpen: boolean
   onSelect: () => void
   onMoveUp: () => void
   onMoveDown: () => void
   onDuplicate: () => void
   onDelete: () => void
+  onToggleAddMenu: () => void
+  onCloseAddMenu: () => void
+  onPickAdd: (kind: OfferBlockKind) => void
   children: ReactNode
 }
 
 function BlockFrame({
-  block,
   editMode,
   isFirst,
   isLast,
   isSelected,
+  isAddMenuOpen,
   onSelect,
   onMoveUp,
   onMoveDown,
   onDuplicate,
   onDelete,
+  onToggleAddMenu,
+  onCloseAddMenu,
+  onPickAdd,
   children,
 }: BlockFrameProps) {
   if (!editMode) return <>{children}</>
 
   return (
-    <div
-      data-block-id={block.id}
+    <section
       data-selected={isSelected || undefined}
       onMouseDown={(e) => {
         if ((e.target as HTMLElement).closest('[data-block-toolbar]')) return
         onSelect()
       }}
-      className="group relative rounded-[var(--inkblot-radius-lg)] transition-colors data-[selected]:ring-2 data-[selected]:ring-accent/40"
+      className="group/blk relative -mx-4 rounded-md px-4 py-1 transition-colors data-[selected]:bg-[var(--inkblot-semantic-color-background-secondary)]"
     >
-      <div
-        data-block-toolbar
-        className="pointer-events-none absolute -top-3 right-2 z-10 flex items-center gap-0.5 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-0.5 opacity-0 shadow-[var(--inkblot-shadow-sm)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 data-[selected]:opacity-100"
-      >
-        <BlockToolbarBtn label="Move up" disabled={isFirst} onClick={onMoveUp}>
-          <ArrowUp className="h-3.5 w-3.5" aria-hidden />
-        </BlockToolbarBtn>
-        <BlockToolbarBtn label="Move down" disabled={isLast} onClick={onMoveDown}>
-          <ArrowDown className="h-3.5 w-3.5" aria-hidden />
-        </BlockToolbarBtn>
-        <BlockToolbarBtn label="Duplicate" onClick={onDuplicate}>
-          <Copy className="h-3.5 w-3.5" aria-hidden />
-        </BlockToolbarBtn>
-        <BlockToolbarBtn label="Delete" onClick={onDelete} destructive>
-          <Trash2 className="h-3.5 w-3.5" aria-hidden />
-        </BlockToolbarBtn>
-      </div>
+      {isSelected ? (
+        <div
+          data-block-toolbar
+          className="absolute right-4 -top-4 z-10 flex items-center gap-0.5 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-0.5 shadow-[var(--inkblot-shadow-sm)]"
+        >
+          <ToolbarBtn label="Move up" disabled={isFirst} onClick={onMoveUp}>
+            <ArrowUp className="h-4 w-4" aria-hidden />
+          </ToolbarBtn>
+          <ToolbarBtn label="Move down" disabled={isLast} onClick={onMoveDown}>
+            <ArrowDown className="h-4 w-4" aria-hidden />
+          </ToolbarBtn>
+          <ToolbarBtn label="Add below" onClick={onToggleAddMenu} active={isAddMenuOpen}>
+            <Plus className="h-4 w-4" aria-hidden />
+          </ToolbarBtn>
+          <ToolbarBtn label="Duplicate" onClick={onDuplicate}>
+            <Copy className="h-4 w-4" aria-hidden />
+          </ToolbarBtn>
+          <ToolbarBtn label="Delete" onClick={onDelete} destructive>
+            <Trash2 className="h-4 w-4" aria-hidden />
+          </ToolbarBtn>
+        </div>
+      ) : null}
+
+      {isSelected && isAddMenuOpen ? <AddBlockMenu onPick={onPickAdd} onClose={onCloseAddMenu} /> : null}
+
       {children}
-    </div>
+    </section>
   )
 }
 
-function BlockToolbarBtn({
+function ToolbarBtn({
   label,
   onClick,
   children,
   disabled,
   destructive,
+  active,
 }: {
   label: string
   onClick: () => void
   children: ReactNode
   disabled?: boolean
   destructive?: boolean
+  active?: boolean
 }) {
   return (
     <button
@@ -384,16 +437,17 @@ function BlockToolbarBtn({
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className={`pointer-events-auto inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-background/70 disabled:opacity-40 disabled:hover:bg-transparent ${
+      aria-pressed={active}
+      className={`inline-flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-background/80 disabled:opacity-40 disabled:hover:bg-transparent ${
         destructive ? 'hover:text-destructive' : 'hover:text-foreground'
-      }`}
+      } ${active ? 'bg-background text-foreground' : ''}`}
     >
       {children}
     </button>
   )
 }
 
-/* ─── Add-block gap + menu ───────────────────────────────────────────────── */
+/* ─── Add-block menu (anchored below toolbar) ────────────────────────────── */
 
 const ADD_BLOCK_KINDS: OfferBlockKind[] = [
   'paragraph',
@@ -406,65 +460,6 @@ const ADD_BLOCK_KINDS: OfferBlockKind[] = [
   'divider',
 ]
 
-function AddBlockGap({
-  open,
-  onOpen,
-  onPick,
-}: {
-  open: boolean
-  onOpen: (open: boolean) => void
-  onPick: (kind: OfferBlockKind) => void
-}) {
-  return (
-    <div
-      className={`group relative flex items-center justify-center transition-all ${
-        open ? 'my-2' : 'my-0.5 h-4 hover:my-2'
-      }`}
-    >
-      <button
-        type="button"
-        onClick={() => onOpen(!open)}
-        aria-expanded={open}
-        className={`inline-flex h-5 items-center gap-1 rounded-full border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-2 text-[10px] font-medium text-muted-foreground transition-opacity hover:text-foreground ${
-          open ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-        }`}
-      >
-        <Plus className="h-3 w-3" aria-hidden /> Добави блок
-      </button>
-
-      {open ? (
-        <div
-          role="menu"
-          className="absolute top-6 z-20 grid w-[240px] grid-cols-2 gap-1 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-1 shadow-[var(--inkblot-shadow-md)]"
-        >
-          {ADD_BLOCK_KINDS.map((k) => (
-            <button
-              key={k}
-              type="button"
-              role="menuitem"
-              onClick={() => onPick(k)}
-              className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-[11px] text-foreground hover:bg-background/70"
-            >
-              <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-accent/15 font-mono text-[10px] text-citrus-lemon">
-                {BLOCK_GLYPH[k]}
-              </span>
-              {BLOCK_KIND_LABEL[k]}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => onOpen(false)}
-            aria-label="Close"
-            className="col-span-2 mt-0.5 inline-flex items-center justify-center gap-1 rounded px-2 py-1 text-[10px] text-muted-foreground hover:bg-background/70"
-          >
-            <X className="h-3 w-3" aria-hidden /> Затвори
-          </button>
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
 const BLOCK_GLYPH: Record<OfferBlockKind, string> = {
   heading: 'H',
   paragraph: '¶',
@@ -476,16 +471,56 @@ const BLOCK_GLYPH: Record<OfferBlockKind, string> = {
   divider: '—',
 }
 
-/* ─── Block body renderer (dispatches by kind) ───────────────────────────── */
+function AddBlockMenu({ onPick, onClose }: { onPick: (k: OfferBlockKind) => void; onClose: () => void }) {
+  return (
+    <div
+      role="menu"
+      aria-label="Тип блок"
+      className="absolute right-4 top-6 z-20 grid w-[min(320px,calc(100vw-3rem))] grid-cols-2 gap-1 rounded-lg border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-1.5 shadow-[var(--inkblot-shadow-md)]"
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      {ADD_BLOCK_KINDS.map((k) => (
+        <button
+          key={k}
+          type="button"
+          role="menuitem"
+          onClick={() => onPick(k)}
+          className="flex items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs text-foreground transition-colors hover:bg-[var(--inkblot-semantic-color-background-secondary)]"
+        >
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-[var(--inkblot-semantic-color-background-secondary)] font-mono text-[11px] text-citrus-lemon">
+            {BLOCK_GLYPH[k]}
+          </span>
+          {BLOCK_KIND_LABEL[k]}
+        </button>
+      ))}
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close"
+        className="col-span-2 mt-1 inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-[var(--inkblot-semantic-color-background-secondary)]"
+      >
+        <X className="h-3.5 w-3.5" aria-hidden /> Затвори
+      </button>
+    </div>
+  )
+}
+
+/* ─── Block body dispatch ────────────────────────────────────────────────── */
+
+type BlockPatch = <B extends OfferBlock>(id: string, updater: (b: B) => B) => void
 
 function BlockBody({
   block,
   editMode,
+  isSelected,
+  featureNumber,
   onPatch,
 }: {
   block: OfferBlock
   editMode: boolean
-  onPatch: <B extends OfferBlock>(id: string, updater: (b: B) => B) => void
+  isSelected: boolean
+  featureNumber: number
+  onPatch: BlockPatch
 }) {
   switch (block.kind) {
     case 'heading':
@@ -493,77 +528,121 @@ function BlockBody({
     case 'paragraph':
       return <ParagraphBody block={block} editMode={editMode} onPatch={onPatch} />
     case 'feature':
-      return <FeatureBody block={block} editMode={editMode} onPatch={onPatch} />
+      return <FeatureBody block={block} editMode={editMode} index={featureNumber} onPatch={onPatch} />
     case 'bullets':
-      return <BulletsBody block={block} editMode={editMode} onPatch={onPatch} />
+      return (
+        <BulletsList
+          items={block.items}
+          editMode={editMode}
+          onChange={(items) =>
+            onPatch<{ id: string; kind: 'bullets'; items: string[] } & OfferBlock>(block.id, (b) => ({
+              ...b,
+              items,
+            }))
+          }
+          placeholder="Елемент от списъка"
+        />
+      )
     case 'quote':
       return (
-        <blockquote className="rounded-[var(--inkblot-radius-lg)] border-l-2 border-accent bg-[var(--inkblot-semantic-color-background-secondary)] px-4 py-3">
+        <blockquote className="border-l-[2px] border-citrus-lemon pl-6 [font-feature-settings:'ss01']">
           <EditableText
             value={block.text}
             editable={editMode}
             onCommit={(v) => onPatch(block.id, (b) => ({ ...b, text: v }))}
             placeholder="Цитат от клиент или стойностно твърдение…"
             multiline
-            className="text-sm italic leading-relaxed text-[var(--inkblot-semantic-color-text-secondary)]"
+            className="text-lg italic leading-[1.6] text-foreground sm:text-xl"
           />
           <EditableText
             value={block.cite}
             editable={editMode}
             onCommit={(v) => onPatch(block.id, (b) => ({ ...b, cite: v }))}
             placeholder="— източник"
-            className="mt-2 block text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)]"
+            className="mt-3 block text-[11px] uppercase tracking-[0.16em] text-[var(--inkblot-semantic-color-text-tertiary)]"
           />
         </blockquote>
       )
     case 'pricing':
-      return <PricingBody block={block} editMode={editMode} onPatch={onPatch} />
+      return <PricingBody block={block} editMode={editMode} isSelected={isSelected} onPatch={onPatch} />
     case 'plans':
       return <PlansBody block={block} editMode={editMode} onPatch={onPatch} />
     case 'divider':
-      return <hr className="my-2 border-t border-[var(--inkblot-semantic-color-border-default)]" />
+      return (
+        <div className="flex items-center justify-center text-muted-foreground" aria-hidden>
+          <span className="text-lg tracking-[0.6em]">·   ·   ·</span>
+        </div>
+      )
   }
 }
 
 /* ─── Block bodies ───────────────────────────────────────────────────────── */
 
-type BlockPatch = <B extends OfferBlock>(id: string, updater: (b: B) => B) => void
-
 function HeadingBody({ block, editMode, onPatch }: { block: HeadingBlock; editMode: boolean; onPatch: BlockPatch }) {
-  const size =
-    block.level === 1
-      ? 'text-2xl sm:text-3xl font-semibold tracking-tight'
-      : block.level === 2
-      ? 'text-lg sm:text-xl font-semibold'
-      : 'text-sm font-semibold uppercase tracking-wider'
+  if (block.level === 1) {
+    return (
+      <div className="flex items-start gap-3">
+        <EditableHeading
+          value={block.text}
+          editable={editMode}
+          onCommit={(v) => onPatch<HeadingBlock>(block.id, (b) => ({ ...b, text: v }))}
+          placeholder="Заглавие H1"
+          className="flex-1 text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground sm:text-[32px]"
+        />
+        {editMode ? <HeadingLevelSelect block={block} onPatch={onPatch} /> : null}
+      </div>
+    )
+  }
+  if (block.level === 2) {
+    // Section divider style: hairline rule + tracked small caps
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="h-px bg-border" aria-hidden />
+        <div className="flex items-center justify-between gap-3">
+          <EditableHeading
+            value={block.text}
+            editable={editMode}
+            onCommit={(v) => onPatch<HeadingBlock>(block.id, (b) => ({ ...b, text: v }))}
+            placeholder="ЗАГЛАВИЕ НА СЕКЦИЯ"
+            className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground"
+          />
+          {editMode ? <HeadingLevelSelect block={block} onPatch={onPatch} /> : null}
+        </div>
+      </div>
+    )
+  }
   return (
-    <div className="flex items-start gap-2">
+    <div className="flex items-start gap-3">
       <EditableHeading
         value={block.text}
         editable={editMode}
         onCommit={(v) => onPatch<HeadingBlock>(block.id, (b) => ({ ...b, text: v }))}
-        placeholder={`Заглавие H${block.level}`}
-        className={`${size} text-foreground break-words flex-1`}
+        placeholder="Подзаглавие"
+        className="flex-1 text-base font-semibold tracking-tight text-foreground"
       />
-      {editMode ? (
-        <select
-          value={block.level}
-          onChange={(e) =>
-            onPatch<HeadingBlock>(block.id, (b) => ({
-              ...b,
-              level: Number(e.target.value) === 1 ? 1 : Number(e.target.value) === 3 ? 3 : 2,
-            }))
-          }
-          className="mt-1 shrink-0 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 py-0.5 text-[10px] text-muted-foreground"
-          title="Heading level"
-          aria-label="Heading level"
-        >
-          <option value={1}>H1</option>
-          <option value={2}>H2</option>
-          <option value={3}>H3</option>
-        </select>
-      ) : null}
+      {editMode ? <HeadingLevelSelect block={block} onPatch={onPatch} /> : null}
     </div>
+  )
+}
+
+function HeadingLevelSelect({ block, onPatch }: { block: HeadingBlock; onPatch: BlockPatch }) {
+  return (
+    <select
+      value={block.level}
+      onChange={(e) =>
+        onPatch<HeadingBlock>(block.id, (b) => ({
+          ...b,
+          level: Number(e.target.value) === 1 ? 1 : Number(e.target.value) === 3 ? 3 : 2,
+        }))
+      }
+      className="mt-1 hidden h-6 shrink-0 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 text-[10px] text-muted-foreground group-data-[selected]/blk:inline-block"
+      title="Heading level"
+      aria-label="Heading level"
+    >
+      <option value={1}>H1</option>
+      <option value={2}>H2</option>
+      <option value={3}>H3</option>
+    </select>
   )
 }
 
@@ -583,28 +662,46 @@ function ParagraphBody({
       onCommit={(v) => onPatch<ParagraphBlock>(block.id, (b) => ({ ...b, text: v }))}
       placeholder="Напиши параграф…"
       multiline
-      className="text-sm leading-relaxed text-[var(--inkblot-semantic-color-text-secondary)] sm:text-base"
+      className="text-[15px] leading-[1.75] text-foreground [text-wrap:pretty]"
     />
   )
 }
 
-function FeatureBody({ block, editMode, onPatch }: { block: FeatureBlock; editMode: boolean; onPatch: BlockPatch }) {
+function FeatureBody({
+  block,
+  editMode,
+  index,
+  onPatch,
+}: {
+  block: FeatureBlock
+  editMode: boolean
+  index: number
+  onPatch: BlockPatch
+}) {
   return (
-    <article className="grid grid-cols-1 gap-4 rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-4 sm:p-5 md:grid-cols-[1fr_minmax(0,0.9fr)] md:gap-5">
-      <div className="min-w-0 flex flex-col gap-2">
-        <EditableText
-          value={block.kicker}
-          editable={editMode}
-          onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, kicker: v }))}
-          placeholder="Подзаглавие (по желание)"
-          className="text-[10px] uppercase tracking-[0.16em] text-[var(--inkblot-semantic-color-text-tertiary)]"
-        />
+    <article className="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-6 gap-y-2 sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-x-8">
+      <span
+        className="text-[40px] font-light leading-none text-muted-foreground tabular-nums sm:text-[52px]"
+        aria-hidden
+      >
+        {String(index).padStart(2, '0')}
+      </span>
+      <div className="flex flex-col gap-2">
+        {editMode || block.kicker ? (
+          <EditableText
+            value={block.kicker}
+            editable={editMode}
+            onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, kicker: v }))}
+            placeholder="Подзаглавие (по желание)"
+            className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]"
+          />
+        ) : null}
         <EditableHeading
           value={block.title}
           editable={editMode}
           onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, title: v }))}
           placeholder="Име на функционалност"
-          className="text-base font-semibold text-foreground sm:text-lg leading-snug"
+          className="text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-[22px]"
         />
         <EditableText
           value={block.description}
@@ -612,210 +709,193 @@ function FeatureBody({ block, editMode, onPatch }: { block: FeatureBlock; editMo
           onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, description: v }))}
           placeholder="Описание…"
           multiline
-          className="text-sm leading-relaxed text-[var(--inkblot-semantic-color-text-secondary)]"
+          className="text-[14px] leading-[1.7] text-[var(--inkblot-semantic-color-text-secondary)]"
         />
         <BulletsList
           items={block.bullets}
           editMode={editMode}
           onChange={(items) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, bullets: items }))}
           placeholder="Булет"
+          compact
         />
+        {editMode || block.comparisonNote ? (
+          <aside className="mt-3 border-t border-border pt-3">
+            <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-citrus-lemon">
+              Конкурентно предимство
+            </p>
+            <EditableText
+              value={block.comparisonNote}
+              editable={editMode}
+              onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, comparisonNote: v }))}
+              placeholder="Как това ни отличава от конкуренцията…"
+              multiline
+              className="text-[13px] italic leading-[1.65] text-[var(--inkblot-semantic-color-text-secondary)]"
+            />
+          </aside>
+        ) : null}
       </div>
-
-      {editMode || block.comparisonNote ? (
-        <aside className="rounded-[var(--inkblot-radius-lg)] border border-accent/20 bg-accent/5 p-3 text-xs leading-relaxed text-[var(--inkblot-semantic-color-text-secondary)] md:max-w-full">
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-citrus-lemon">
-            Конкурентно предимство
-          </p>
-          <EditableText
-            value={block.comparisonNote}
-            editable={editMode}
-            onCommit={(v) => onPatch<FeatureBlock>(block.id, (b) => ({ ...b, comparisonNote: v }))}
-            placeholder="Как това ни отличава от конкуренцията…"
-            multiline
-          />
-        </aside>
-      ) : null}
     </article>
   )
 }
 
-function BulletsBody({
+function PricingBody({
   block,
   editMode,
+  isSelected,
   onPatch,
 }: {
-  block: { id: string; kind: 'bullets'; items: string[] }
+  block: PricingBlock
   editMode: boolean
+  isSelected: boolean
   onPatch: BlockPatch
 }) {
-  return (
-    <BulletsList
-      items={block.items}
-      editMode={editMode}
-      onChange={(items) =>
-        onPatch<{ id: string; kind: 'bullets'; items: string[] } & OfferBlock>(block.id, (b) => ({
-          ...b,
-          items,
-        }))
-      }
-      placeholder="Елемент от списъка"
-    />
-  )
-}
-
-function PricingBody({ block, editMode, onPatch }: { block: PricingBlock; editMode: boolean; onPatch: BlockPatch }) {
   const marketRange = formatMoneyRange(block.marketValueFrom, block.marketValueTo, block.currency)
   const vatAmount = offerVatAmount(block)
   const total = offerGrandTotal(block)
   const patchP = (u: (b: PricingBlock) => PricingBlock) => onPatch<PricingBlock>(block.id, u)
 
-  return (
-    <section className="grid grid-cols-1 gap-4 rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-4 sm:p-5 md:grid-cols-[1fr_auto]">
-      <div className="flex flex-col gap-2 min-w-0 text-sm">
-        {editMode ? (
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-[10px] uppercase tracking-wider text-[var(--inkblot-semantic-color-text-tertiary)]">
-              Пазарна стойност
-            </span>
-            <InlineNumber
-              value={block.marketValueFrom}
-              onCommit={(v) => patchP((b) => ({ ...b, marketValueFrom: v }))}
-              placeholder="от"
-            />
-            <span className="text-muted-foreground">–</span>
-            <InlineNumber
-              value={block.marketValueTo}
-              onCommit={(v) => patchP((b) => ({ ...b, marketValueTo: v }))}
-              placeholder="до"
-            />
-            <span className="text-[10px] text-muted-foreground">{block.currency}</span>
-          </div>
-        ) : marketRange ? (
-          <div className="flex flex-wrap items-baseline gap-2">
-            <span className="text-[10px] uppercase tracking-wider text-[var(--inkblot-semantic-color-text-tertiary)]">
-              Пазарна стойност
-            </span>
-            <span className="font-mono text-sm text-[var(--inkblot-semantic-color-text-secondary)]">
-              {marketRange}
-            </span>
-          </div>
-        ) : null}
+  // Numeric fields only become inputs once the pricing block is selected.
+  // Until then the document reads as flat text, matching the read-only output.
+  const editing = editMode && isSelected
 
-        <PricingRow
-          label="Срок за изпълнение"
+  const rows: Array<{ label: string; node: ReactNode; show: boolean }> = [
+    {
+      label: 'Пазарна стойност',
+      show: editing || marketRange != null,
+      node: editing ? (
+        <div className="flex items-baseline gap-1.5">
+          <InlineNumber
+            value={block.marketValueFrom}
+            onCommit={(v) => patchP((b) => ({ ...b, marketValueFrom: v }))}
+            placeholder="от"
+          />
+          <span className="text-muted-foreground">–</span>
+          <InlineNumber
+            value={block.marketValueTo}
+            onCommit={(v) => patchP((b) => ({ ...b, marketValueTo: v }))}
+            placeholder="до"
+          />
+          <span className="ml-1 text-[11px] text-muted-foreground">{block.currency}</span>
+        </div>
+      ) : (
+        <span className="font-mono tabular-nums">{marketRange ?? '—'}</span>
+      ),
+    },
+    {
+      label: 'Срок за изпълнение',
+      show: editMode || !!block.timeline,
+      node: (
+        <EditableText
           value={block.timeline}
-          editMode={editMode}
+          editable={editMode}
           onCommit={(v) => patchP((b) => ({ ...b, timeline: v }))}
           placeholder="напр. 1.5 месеца"
+          className="text-[14px]"
         />
-        <PricingRow
-          label="Гаранция"
+      ),
+    },
+    {
+      label: 'Гаранция',
+      show: editMode || !!block.guarantee,
+      node: (
+        <EditableText
           value={block.guarantee}
-          editMode={editMode}
+          editable={editMode}
           onCommit={(v) => patchP((b) => ({ ...b, guarantee: v }))}
           placeholder="напр. SEO и техническа поддръжка"
+          className="text-[14px]"
         />
+      ),
+    },
+  ]
 
-        {editMode || block.note ? (
-          <EditableText
-            value={block.note}
-            editable={editMode}
-            onCommit={(v) => patchP((b) => ({ ...b, note: v }))}
-            placeholder="Пояснение / сравнение с пазара…"
-            multiline
-            className="mt-2 text-xs leading-relaxed text-[var(--inkblot-semantic-color-text-tertiary)]"
-          />
-        ) : null}
-      </div>
-
-      <div className="flex flex-col items-start gap-1 rounded-[var(--inkblot-radius-lg)] border border-accent/25 bg-accent/10 p-4 md:items-end md:min-w-[180px]">
-        <span className="text-[10px] uppercase tracking-wider text-[var(--inkblot-semantic-color-text-tertiary)]">
-          Предложена цена
-        </span>
-
-        {editMode ? (
-          <div className="flex items-baseline gap-1.5">
-            <select
-              value={block.currency}
-              onChange={(e) => patchP((b) => ({ ...b, currency: e.target.value as OfferCurrency }))}
-              aria-label="Currency"
-              className="rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1 py-0.5 text-[10px] text-muted-foreground"
-            >
-              <option value="EUR">EUR</option>
-              <option value="BGN">BGN</option>
-              <option value="USD">USD</option>
-            </select>
-            <InlineNumber
-              value={block.price}
-              onCommit={(v) => patchP((b) => ({ ...b, price: v ?? 0 }))}
-              placeholder="0"
-              className="font-mono text-2xl font-semibold text-foreground tabular-nums min-w-[5ch]"
-              allowZero
-            />
-          </div>
-        ) : (
-          <span className="font-mono text-2xl font-semibold text-foreground tabular-nums">
-            {formatMoney(block.price, block.currency)}
-          </span>
-        )}
-
-        {editMode ? (
-          <div className="flex items-baseline gap-1 text-[11px] text-muted-foreground">
-            <span>+</span>
-            <InlineNumber
-              value={block.vatPct}
-              onCommit={(v) => patchP((b) => ({ ...b, vatPct: Math.max(0, Math.min(100, v ?? 0)) }))}
-              placeholder="0"
-              allowZero
-            />
-            <span>% VAT</span>
-          </div>
-        ) : block.vatPct > 0 ? (
-          <span className="text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)]">
-            + {block.vatPct}% VAT ({formatMoney(vatAmount, block.currency)})
-          </span>
-        ) : (
-          <span className="text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)]">без VAT</span>
-        )}
-
-        {block.vatPct > 0 ? (
-          <span className="mt-1 text-[11px] font-medium text-citrus-lemon">
-            Общо: {formatMoney(total, block.currency)}
-          </span>
-        ) : null}
-      </div>
-    </section>
-  )
-}
-
-function PricingRow({
-  label,
-  value,
-  editMode,
-  onCommit,
-  placeholder,
-}: {
-  label: string
-  value: string
-  editMode: boolean
-  onCommit: (v: string) => void
-  placeholder?: string
-}) {
-  if (!editMode && !value) return null
   return (
-    <div className="flex flex-wrap items-baseline gap-2">
-      <span className="text-[10px] uppercase tracking-wider text-[var(--inkblot-semantic-color-text-tertiary)]">
-        {label}
-      </span>
-      <EditableText
-        value={value}
-        editable={editMode}
-        onCommit={onCommit}
-        placeholder={placeholder}
-        className="text-sm text-foreground"
-      />
-    </div>
+    <section className="flex flex-col gap-5">
+      <SectionLabel>Ценообразуване</SectionLabel>
+
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <dl className="flex flex-col divide-y divide-border">
+          {rows
+            .filter((r) => r.show)
+            .map((r) => (
+              <div key={r.label} className="grid grid-cols-[minmax(0,11rem)_minmax(0,1fr)] items-baseline gap-x-6 py-2.5">
+                <dt className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--inkblot-semantic-color-text-tertiary)]">
+                  {r.label}
+                </dt>
+                <dd className="text-foreground">{r.node}</dd>
+              </div>
+            ))}
+        </dl>
+
+        <div className="flex flex-col items-start gap-1 sm:items-end sm:text-right">
+          <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]">
+            Предложена цена
+          </span>
+          {editing ? (
+            <div className="flex items-baseline gap-1.5">
+              <select
+                value={block.currency}
+                onChange={(e) => patchP((b) => ({ ...b, currency: e.target.value as OfferCurrency }))}
+                aria-label="Currency"
+                className="rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1 py-0.5 text-[10px] text-muted-foreground"
+              >
+                <option value="EUR">EUR</option>
+                <option value="BGN">BGN</option>
+                <option value="USD">USD</option>
+              </select>
+              <InlineNumber
+                value={block.price}
+                onCommit={(v) => patchP((b) => ({ ...b, price: v ?? 0 }))}
+                placeholder="0"
+                allowZero
+                className="!w-[10ch] font-mono text-[32px] font-semibold tabular-nums sm:text-[40px]"
+              />
+            </div>
+          ) : (
+            <span className="font-mono text-[32px] font-semibold leading-none tabular-nums text-foreground sm:text-[40px]">
+              {formatMoney(block.price, block.currency)}
+            </span>
+          )}
+
+          <div className="mt-1 flex flex-col items-start gap-0.5 text-[11px] text-[var(--inkblot-semantic-color-text-tertiary)] sm:items-end">
+            {editing ? (
+              <div className="flex items-baseline gap-1">
+                <span>+</span>
+                <InlineNumber
+                  value={block.vatPct}
+                  onCommit={(v) => patchP((b) => ({ ...b, vatPct: Math.max(0, Math.min(100, v ?? 0)) }))}
+                  placeholder="0"
+                  allowZero
+                />
+                <span>% VAT</span>
+              </div>
+            ) : block.vatPct > 0 ? (
+              <span>
+                + {block.vatPct}% VAT · {formatMoney(vatAmount, block.currency)}
+              </span>
+            ) : (
+              <span>без VAT</span>
+            )}
+            {block.vatPct > 0 ? (
+              <span className="font-medium text-foreground">
+                Общо · {formatMoney(total, block.currency)}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      {editMode || block.note ? (
+        <EditableText
+          value={block.note}
+          editable={editMode}
+          onCommit={(v) => patchP((b) => ({ ...b, note: v }))}
+          placeholder="Пояснение / сравнение с пазара…"
+          multiline
+          className="max-w-[60ch] text-[13px] italic leading-[1.7] text-[var(--inkblot-semantic-color-text-secondary)]"
+        />
+      ) : null}
+    </section>
   )
 }
 
@@ -827,49 +907,51 @@ function PlansBody({ block, editMode, onPatch }: { block: PlansBlock; editMode: 
   const addPlan = () => patchP((b) => ({ ...b, plans: [...b.plans, newSupportPlan()] }))
 
   return (
-    <section className="flex flex-col gap-2">
-      <EditableText
-        value={block.title}
-        editable={editMode}
-        onCommit={(v) => patchP((b) => ({ ...b, title: v }))}
-        placeholder="Заглавие на секцията"
-        className="text-[10px] uppercase tracking-[0.14em] text-[var(--inkblot-semantic-color-text-tertiary)]"
-      />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+    <section className="flex flex-col gap-5">
+      <div className="flex items-center justify-between gap-3">
+        <EditableText
+          value={block.title}
+          editable={editMode}
+          onCommit={(v) => patchP((b) => ({ ...b, title: v }))}
+          placeholder="ЗАГЛАВИЕ"
+          className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]"
+        />
+        <div className="h-px flex-1 bg-border" aria-hidden />
+      </div>
+
+      <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0 md:grid-cols-3">
         {block.plans.map((p) => (
-          <div
-            key={p.id}
-            className="group/plan relative flex flex-col gap-1 rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-3"
-          >
+          <div key={p.id} className="group/plan relative flex flex-col gap-1.5 px-0 py-3 sm:px-5 sm:py-1">
             <EditableText
               value={p.title}
               editable={editMode}
               onCommit={(v) => updatePlan(p.id, { title: v })}
               placeholder="Заглавие"
-              className="text-[10px] uppercase tracking-wider text-[var(--inkblot-semantic-color-text-tertiary)]"
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--inkblot-semantic-color-text-tertiary)]"
             />
             <EditableText
               value={p.subtitle ?? ''}
               editable={editMode}
               onCommit={(v) => updatePlan(p.id, { subtitle: v })}
               placeholder="Подзаглавие"
-              className="text-xs text-[var(--inkblot-semantic-color-text-secondary)]"
+              className="text-[13px] text-[var(--inkblot-semantic-color-text-secondary)]"
             />
             <EditableText
               value={p.priceLabel}
               editable={editMode}
               onCommit={(v) => updatePlan(p.id, { priceLabel: v })}
               placeholder="Цена"
-              className="font-mono text-sm font-medium text-foreground mt-1"
+              className="mt-0.5 font-mono text-lg font-semibold tabular-nums text-foreground"
             />
             {editMode ? (
               <button
                 type="button"
                 onClick={() => removePlan(p.id)}
                 aria-label="Remove plan"
-                className="absolute top-1.5 right-1.5 inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover/plan:opacity-100"
+                title="Премахни"
+                className="absolute top-2 right-0 hidden h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-background/70 hover:text-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] group-data-[selected]/blk:inline-flex sm:right-2"
               >
-                <Trash2 className="h-3 w-3" aria-hidden />
+                <Trash2 className="h-4 w-4" aria-hidden />
               </button>
             ) : null}
           </div>
@@ -878,9 +960,9 @@ function PlansBody({ block, editMode, onPatch }: { block: PlansBlock; editMode: 
           <button
             type="button"
             onClick={addPlan}
-            className="inline-flex min-h-[68px] items-center justify-center gap-1.5 rounded-[var(--inkblot-radius-lg)] border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-foreground/40"
+            className="hidden min-h-[88px] items-center justify-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground group-data-[selected]/blk:flex"
           >
-            <Plus className="h-3.5 w-3.5" aria-hidden /> Добави план
+            <Plus className="h-4 w-4" aria-hidden /> Добави план
           </button>
         ) : null}
       </div>
@@ -895,11 +977,14 @@ function BulletsList({
   editMode,
   onChange,
   placeholder,
+  compact,
 }: {
   items: string[]
   editMode: boolean
   onChange: (items: string[]) => void
   placeholder?: string
+  /** When true, tighter leading — for bullets nested inside a feature block. */
+  compact?: boolean
 }) {
   const patch = (i: number, v: string) => onChange(items.map((it, idx) => (idx === i ? v : it)))
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i))
@@ -907,11 +992,15 @@ function BulletsList({
 
   if (!editMode && items.every((it) => !it)) return null
 
+  const liCls = compact
+    ? 'relative flex items-start gap-2 pl-5 text-[14px] leading-[1.65] text-[var(--inkblot-semantic-color-text-secondary)]'
+    : 'relative flex items-start gap-2 pl-5 text-[15px] leading-[1.75] text-[var(--inkblot-semantic-color-text-secondary)]'
+
   return (
-    <ul className="mt-1 flex flex-col gap-1">
+    <ul className="mt-1 flex flex-col gap-1.5">
       {items.map((it, i) => (
-        <li key={i} className="relative flex items-start gap-2 pl-4 text-xs text-[var(--inkblot-semantic-color-text-secondary)] sm:text-sm">
-          <span aria-hidden className="absolute left-0 top-[0.55rem] h-1 w-1 rounded-full bg-accent" />
+        <li key={i} className={liCls}>
+          <span aria-hidden className="absolute left-0 top-[0.65em] h-[3px] w-[3px] rounded-full bg-foreground" />
           <EditableText
             value={it}
             editable={editMode}
@@ -924,26 +1013,51 @@ function BulletsList({
               type="button"
               onClick={() => remove(i)}
               aria-label="Remove bullet"
-              className="shrink-0 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+              className="hidden h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-background/70 hover:text-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] group-data-[selected]/blk:inline-flex"
             >
-              <Trash2 className="h-3 w-3" aria-hidden />
+              <Trash2 className="h-3.5 w-3.5" aria-hidden />
             </button>
           ) : null}
         </li>
       ))}
       {editMode ? (
-        <li>
+        <li className="mt-0.5 hidden group-data-[selected]/blk:block">
           <button
             type="button"
             onClick={add}
-            className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
+            className="inline-flex h-7 items-center gap-1.5 rounded-md border border-dashed border-border px-2.5 text-[11px] text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
           >
-            <Plus className="h-3 w-3" aria-hidden /> Добави булет
+            <Plus className="h-3.5 w-3.5" aria-hidden /> Добави булет
           </button>
         </li>
       ) : null}
     </ul>
   )
+}
+
+/* ─── Small display helpers ──────────────────────────────────────────────── */
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]">
+        {children}
+      </span>
+      <div className="h-px flex-1 bg-border" aria-hidden />
+    </div>
+  )
+}
+
+function MetaLabel({ children }: { children: ReactNode }) {
+  return (
+    <dt className="text-[9px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]">
+      {children}
+    </dt>
+  )
+}
+
+function MetaValue({ children }: { children: ReactNode }) {
+  return <dd className="text-[12px]">{children}</dd>
 }
 
 /* ─── Editable primitives ────────────────────────────────────────────────── */
@@ -959,12 +1073,6 @@ interface EditableTextProps {
   style?: CSSProperties
 }
 
-/**
- * EditableText — a contentEditable primitive that stays out of React's way.
- * The DOM is the source of truth while editing; we only commit on blur.
- * Using `useLayoutEffect` to sync text when the external `value` changes
- * (without overwriting during an active edit).
- */
 function EditableText({
   value,
   onCommit,
@@ -1049,7 +1157,7 @@ function EditableDate({
       type="date"
       value={value ?? ''}
       onChange={(e) => onCommit(e.target.value)}
-      className="rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 py-0.5 text-[11px] text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]"
+      className="min-h-[28px] rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-2 py-1 text-[11px] text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]"
     />
   )
 }
@@ -1098,7 +1206,7 @@ function InlineNumber({
         }
         onCommit(n)
       }}
-      className={`rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 py-0.5 font-mono text-sm tabular-nums text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] w-[6ch] ${
+      className={`min-h-[28px] w-[7ch] rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-2 py-1 font-mono text-sm tabular-nums text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] ${
         className ?? ''
       }`}
     />

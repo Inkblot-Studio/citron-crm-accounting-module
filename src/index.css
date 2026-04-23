@@ -62,42 +62,52 @@ body {
 
 /**
  * Offer builder — inline contentEditable primitives.
- * Placeholder behavior + subtle focus ring; empty single-line fields stay the
- * same height as filled ones so layout doesn't jump while typing.
+ * Placeholder shows only while editing; editable areas get a soft focus ring.
+ * No hover tint, no background paint — the canvas stays clean and document-like.
  */
 .offer-editable {
   outline: none;
-  min-height: 1em;
-  border-radius: 4px;
-  padding: 0 2px;
-  transition: box-shadow 120ms ease, background-color 120ms ease;
+  min-height: 1.15em;
+  border-radius: 3px;
+  padding: 1px 2px;
+  transition: box-shadow 120ms ease;
+  cursor: text;
 }
 
 .offer-editable[data-multiline]:empty,
 .offer-editable[data-multiline]:has(> br:only-child) {
-  min-height: 1.4em;
+  min-height: 1.5em;
 }
 
 .offer-editable:empty::before {
   content: attr(data-placeholder);
   color: var(--inkblot-semantic-color-text-tertiary);
-  opacity: 0.75;
+  opacity: 0.55;
   pointer-events: none;
-}
-
-.offer-editable:hover {
-  background-color: color-mix(in srgb, var(--inkblot-semantic-color-background-tertiary) 50%, transparent);
+  font-style: italic;
 }
 
 .offer-editable:focus {
-  background-color: var(--inkblot-semantic-color-background-primary);
   box-shadow: 0 0 0 2px var(--inkblot-semantic-color-border-focus);
 }
 
+/* The portalled print copy is invisible on screen. */
+.offer-print-host {
+  display: none;
+}
+
 /**
- * Print — when the user hits Print inside the Offer Builder, hide the entire
- * app and render only the offer document. Works for Cmd/Ctrl+P → Save as PDF.
+ * Print — render only the portalled view-only copy (#offer-print-document).
+ * A dedicated portal sibling of #root means we can `display: none` everything
+ * else (instead of visibility:hidden) so hidden nodes don't reserve layout
+ * space and produce blank pages. The editorial layout stays intact; we only
+ * tighten the type scale and force blocks to stay together across page breaks.
  */
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
 @media print {
   html,
   body,
@@ -105,26 +115,139 @@ body {
     overflow: visible !important;
     height: auto !important;
     background: #fff !important;
-    color: #000 !important;
+    color: #0a0b0e !important;
   }
-  body * {
-    visibility: hidden !important;
+
+  body > *:not(.offer-print-host) {
+    display: none !important;
   }
-  #offer-document,
-  #offer-document * {
-    visibility: visible !important;
+  .offer-print-host {
+    display: block !important;
   }
-  #offer-document {
-    position: absolute !important;
-    inset: 0 !important;
+
+  #offer-print-document {
+    position: static !important;
+    display: block !important;
+    max-width: none !important;
+    width: 100% !important;
     margin: 0 !important;
-    padding: 16mm !important;
-    box-shadow: none !important;
+    padding: 0 !important;
     border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
     background: #fff !important;
-    color: #000 !important;
+    color: #0a0b0e !important;
+    font-size: 10.5pt;
+    line-height: 1.55;
   }
-  .offer-editable::before {
+
+  /* Inner container — the `flex flex-col gap-10 px-8 py-10` — we reset. */
+  #offer-print-document > div {
+    gap: 18pt !important;
+    padding: 0 !important;
+  }
+  #offer-print-document header {
+    gap: 16pt !important;
+  }
+
+  /* Flatten chrome — no shadows, no tinted backgrounds. */
+  #offer-print-document *,
+  #offer-print-document {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  #offer-print-document [class*="bg-"] {
+    background: transparent !important;
+  }
+  #offer-print-document [data-selected] {
+    background: transparent !important;
+  }
+
+  /* Color palette for paper: black / grey / accent becomes soft olive. */
+  #offer-print-document .text-citrus-lemon,
+  #offer-print-document [class*="text-citrus"] {
+    color: #766200 !important;
+  }
+  #offer-print-document [class*="text-[var(--inkblot-semantic-color-text-tertiary"] {
+    color: #6b6f76 !important;
+  }
+  #offer-print-document [class*="text-[var(--inkblot-semantic-color-text-secondary"] {
+    color: #24262a !important;
+  }
+  #offer-print-document [class*="border-citrus"],
+  #offer-print-document [class*="border-accent"],
+  #offer-print-document [class*="border-border"] {
+    border-color: #d0d2d7 !important;
+  }
+
+  /* Typographic tightening for paper. */
+  #offer-print-document h1,
+  #offer-print-document h2,
+  #offer-print-document h3,
+  #offer-print-document [class*="text-3xl"],
+  #offer-print-document [class*="text-4xl"] {
+    font-size: 20pt !important;
+    line-height: 1.15 !important;
+  }
+  #offer-print-document article [aria-hidden][class*="text-[40px]"],
+  #offer-print-document article [aria-hidden][class*="text-[52px]"] {
+    font-size: 30pt !important;
+  }
+  #offer-print-document [class*="text-[40px]"],
+  #offer-print-document [class*="text-[32px]"] {
+    font-size: 22pt !important;
+  }
+  #offer-print-document [class*="text-xl"] {
+    font-size: 13pt !important;
+  }
+  #offer-print-document [class*="text-lg"] {
+    font-size: 12pt !important;
+  }
+  #offer-print-document [class*="text-[15px]"],
+  #offer-print-document [class*="text-[14px]"],
+  #offer-print-document [class*="text-[13px]"] {
+    font-size: 10.5pt !important;
+  }
+
+  /* Vertical rhythm between blocks. */
+  #offer-print-document > div > div > * + * {
+    margin-top: 16pt !important;
+  }
+  #offer-print-document article {
+    margin-top: 18pt !important;
+  }
+
+  /* Keep each block together across page breaks. */
+  #offer-print-document header,
+  #offer-print-document article,
+  #offer-print-document section,
+  #offer-print-document blockquote {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  #offer-print-document h1,
+  #offer-print-document h2,
+  #offer-print-document h3,
+  #offer-print-document [class*="uppercase"] {
+    break-after: avoid-page;
+    page-break-after: avoid;
+  }
+
+  /* Interactive chrome must never show up in print. */
+  #offer-print-document [data-block-toolbar],
+  #offer-print-document button,
+  #offer-print-document [role="menu"],
+  #offer-print-document input,
+  #offer-print-document select {
+    display: none !important;
+  }
+  #offer-print-document .offer-editable {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    cursor: auto;
+  }
+  #offer-print-document .offer-editable:empty::before {
     content: none !important;
   }
 }

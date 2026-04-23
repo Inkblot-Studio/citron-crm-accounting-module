@@ -1,12 +1,18 @@
 /**
  * OfferBuilder — a thin host around OfferDocument.
  *
- * Layout: toolbar (status + actions) on top, the document-as-editor filling the
- * rest of the viewport. No split pane, no separate "form" — the preview IS the
- * form. Edits debounce-commit into the offer store so nothing can be lost.
+ * Layout: a slim action bar at the top, then the document-as-editor filling the
+ * rest of the viewport. The preview IS the form — no split pane. Edits are
+ * debounce-committed to the offer store so nothing can be lost.
+ *
+ * Print: a view-only clone of the document is portalled to <body> so that
+ * `window.print()` can hide everything else via CSS (`body > *:not(...)`)
+ * without breaking document layout or producing blank pages. The screen UI
+ * itself is never repositioned during print.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, Copy, Printer, Trash2 } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
@@ -15,11 +21,11 @@ import { accountingPath } from './accountingConstants'
 import { emptyOfferDraft, type OfferDraft } from './offerDraft'
 import { NEW_OFFER_ROUTE, useOfferStore } from './offerStore'
 
-const toolbarBtnClass =
-  'inline-flex items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] disabled:opacity-50'
+const actionBtnClass =
+  'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] disabled:opacity-50'
 
-const primaryBtnClass =
-  'inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]'
+const primaryActionBtnClass =
+  'inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]'
 
 export default function OfferBuilder() {
   const navigate = useNavigate()
@@ -75,6 +81,21 @@ export default function OfferBuilder() {
     }
   }, [draft, workingId, updateDraft])
 
+  /* ─── Print portal ───────────────────────────────────────────────────── */
+
+  const [printHost, setPrintHost] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const el = document.createElement('div')
+    el.className = 'offer-print-host'
+    el.setAttribute('aria-hidden', 'true')
+    document.body.appendChild(el)
+    setPrintHost(el)
+    return () => {
+      if (el.parentNode) el.parentNode.removeChild(el)
+    }
+  }, [])
+
   /* ─── Actions ────────────────────────────────────────────────────────── */
 
   const handleMarkSent = useCallback(() => {
@@ -114,14 +135,21 @@ export default function OfferBuilder() {
     )
   }
 
+  const statusLabelBg: Record<typeof record.status, string> = {
+    draft: 'чернова',
+    pending: 'изпратена',
+    paid: 'приета',
+    overdue: 'изтекла',
+  }
+
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2.5 sm:px-6 lg:px-8 print:hidden">
+    <div className="offer-builder-screen flex h-full min-h-0 w-full flex-col">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2.5 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-2">
           <Link
             to={accountingPath('offers')}
             aria-label="Back to offers"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-background/70"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden />
           </Link>
@@ -130,26 +158,26 @@ export default function OfferBuilder() {
               {draft.projectName || 'Без заглавие'}
             </span>
             {' · '}
-            {record.status === 'draft' ? 'чернова' : record.status === 'pending' ? 'изпратена' : record.status === 'paid' ? 'приета' : 'изтекла'}
+            {statusLabelBg[record.status]}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <button type="button" className={toolbarBtnClass} onClick={handlePrint} title="Print / export PDF">
+          <button type="button" className={actionBtnClass} onClick={handlePrint} title="Print / export PDF">
             <Printer className="h-3.5 w-3.5" aria-hidden /> Print
           </button>
-          <button type="button" className={toolbarBtnClass} onClick={handleDuplicate}>
+          <button type="button" className={actionBtnClass} onClick={handleDuplicate}>
             <Copy className="h-3.5 w-3.5" aria-hidden /> Duplicate
           </button>
           <button
             type="button"
-            className={`${toolbarBtnClass} text-destructive hover:text-destructive hover:border-destructive/40`}
+            className={`${actionBtnClass} text-destructive hover:text-destructive hover:border-destructive/40`}
             onClick={handleDelete}
           >
             <Trash2 className="h-3.5 w-3.5" aria-hidden /> Delete
           </button>
           {record.status === 'draft' ? (
-            <button type="button" className={primaryBtnClass} onClick={handleMarkSent}>
+            <button type="button" className={primaryActionBtnClass} onClick={handleMarkSent}>
               <CheckCircle2 className="h-3.5 w-3.5" aria-hidden /> Mark as sent
             </button>
           ) : null}
@@ -161,6 +189,14 @@ export default function OfferBuilder() {
           <OfferDocument draft={draft} documentId="offer-document" editable={{ onChange: setDraft }} />
         </div>
       </div>
+
+      {/* View-only print copy — hidden on screen, unveiled by print CSS */}
+      {printHost
+        ? createPortal(
+            <OfferDocument draft={draft} documentId="offer-print-document" className="offer-print-doc" />,
+            printHost,
+          )
+        : null}
 
       <RouteSafeguard />
     </div>
