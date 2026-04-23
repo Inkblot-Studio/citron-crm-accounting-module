@@ -67,6 +67,48 @@ export const INVOICE_TYPES: AdvancedDropdownOption[] = [
   { value: 'debit-note', label: 'Debit Note' },
 ]
 
+/**
+ * Bulgarian document types recognized by the module.
+ *
+ * Legal basis (Закон за ДДС / ЗДДС):
+ *   - `Фактура`             — чл. 113 ЗДДС (tax invoice)
+ *   - `Кредитно известие`   — чл. 115 ЗДДС (credit note)
+ *   - `Дебитно известие`    — чл. 115 ЗДДС (debit note)
+ *   - `Стокова разписка`    — Търговски закон (goods receipt; commercial)
+ *   - `Проформа фактура`    — commercial document, not regulated by ЗДДС
+ *   - `Оферта`              — commercial proposal, not a tax document
+ *
+ * `legal: false` → informational/commercial only (no tax effect).
+ * `legal: true`  → VAT document under ЗДДС.
+ * `offerCapable` → can be authored in the Offer Builder (rich layout).
+ */
+export interface BgDocumentType {
+  id: string
+  label: string
+  labelEn: string
+  legal: boolean
+  offerCapable: boolean
+}
+
+export const BG_DOCUMENT_TYPES: BgDocumentType[] = [
+  { id: 'oferta', label: 'Оферта', labelEn: 'Offer', legal: false, offerCapable: true },
+  { id: 'proforma', label: 'Проформа фактура', labelEn: 'Pro-forma invoice', legal: false, offerCapable: true },
+  { id: 'faktura', label: 'Фактура', labelEn: 'Invoice', legal: true, offerCapable: false },
+  { id: 'kreditno-izvestie', label: 'Кредитно известие', labelEn: 'Credit note', legal: true, offerCapable: false },
+  { id: 'debitno-izvestie', label: 'Дебитно известие', labelEn: 'Debit note', legal: true, offerCapable: false },
+  { id: 'stokova-razpiska', label: 'Стокова разписка', labelEn: 'Goods receipt', legal: false, offerCapable: false },
+]
+
+export function bgDocumentTypeById(id: string): BgDocumentType | undefined {
+  return BG_DOCUMENT_TYPES.find((t) => t.id === id)
+}
+
+export const BG_DOCUMENT_TYPE_OPTIONS: AdvancedDropdownOption[] = BG_DOCUMENT_TYPES.map((t) => ({
+  value: t.id,
+  label: t.label,
+  description: t.labelEn + (t.legal ? ' · ЗДДС' : ''),
+}))
+
 export const PAYMENT_METHOD_OPTIONS: AdvancedDropdownOption[] = [
   { value: 'bank-transfer', label: 'Bank Transfer' },
   { value: 'credit-card', label: 'Credit Card' },

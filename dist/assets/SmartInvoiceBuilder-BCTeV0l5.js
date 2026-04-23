@@ -1,8 +1,10 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
-import { b as useToast, u as useInvoiceStore, e as INVOICE_PRODUCTS, F as FORM_BANK_ACCOUNTS, g as FORM_PAYMENT_METHODS, h as FORM_TAX_TYPES, j as FORM_INVOICE_TYPES, k as bankLabelFromFormLabel, r as resolveTaxRate, A as ACCOUNTING_BASE_PATH, D as DUE_TERMS, a as accountingPath, N as NEW_RECORD_ROUTE } from './invoiceStore-CtTjEtf0.js';
-import { L as LoaderCircle, e as exportInvoiceDraftToPdf, A as ArrowLeft, T as Trash2, a as AutoGrowTextarea, F as FileDown, I as InvoiceDocumentCard } from './exportInvoicePdf-B1sek7u4.js';
-import { P as Plus } from './plus-_C8-xjua.js';
+import { u as useToast, b as INVOICE_PRODUCTS, F as FORM_BANK_ACCOUNTS, d as FORM_PAYMENT_METHODS, e as FORM_TAX_TYPES, f as FORM_INVOICE_TYPES, g as bankLabelFromFormLabel, r as resolveTaxRate, A as ACCOUNTING_BASE_PATH, D as DUE_TERMS, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
+import { L as LoaderCircle, e as exportInvoiceDraftToPdf, A as AutoGrowTextarea, F as FileDown, I as InvoiceDocumentCard } from './exportInvoicePdf-D9x8QC29.js';
+import { u as useInvoiceStore, N as NEW_RECORD_ROUTE } from './invoiceStore-CH64SPmX.js';
+import { A as ArrowLeft, T as Trash2 } from './trash-2-BhWtp_Kn.js';
+import { P as Plus } from './plus-CRsttFmX.js';
 
 const {useState: useState$2} = await importShared('react');
 

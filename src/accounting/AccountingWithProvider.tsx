@@ -5,10 +5,13 @@ import { ModuleErrorBoundary, Toaster } from '@citron-systems/citron-ui'
 import AccountingLayout from './AccountingLayout'
 import { InvoiceFormPageSkeleton, InvoicesHomeSkeleton } from './AccountingSkeletons'
 import { InvoiceStoreProvider } from './invoiceStore'
+import { OfferStoreProvider } from './offerStore'
 
 const InvoicesHome = lazy(() => import('./InvoicesHome'))
 const SmartInvoiceBuilder = lazy(() => import('./SmartInvoiceBuilder'))
 const InvoiceReviewPage = lazy(() => import('./InvoiceReviewPage'))
+const OffersHome = lazy(() => import('./OffersHome'))
+const OfferBuilder = lazy(() => import('./OfferBuilder'))
 
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast()
@@ -46,6 +49,22 @@ function AccountingWithToaster() {
               </Suspense>
             }
           />
+          <Route
+            path="offers"
+            element={
+              <Suspense fallback={<InvoicesHomeSkeleton />}>
+                <OffersHome />
+              </Suspense>
+            }
+          />
+          <Route
+            path="offers/:recordId"
+            element={
+              <Suspense fallback={<InvoiceFormPageSkeleton variant="edit" />}>
+                <OfferBuilder />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
       <Toaster
@@ -62,7 +81,9 @@ export default function AccountingWithProvider() {
   return (
     <ToastProvider>
       <InvoiceStoreProvider>
-        <AccountingWithToaster />
+        <OfferStoreProvider>
+          <AccountingWithToaster />
+        </OfferStoreProvider>
       </InvoiceStoreProvider>
     </ToastProvider>
   )

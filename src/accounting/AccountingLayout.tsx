@@ -1,11 +1,15 @@
 import { useMemo } from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import { Plus, Receipt } from 'lucide-react'
+import { Link, Outlet, useLocation } from 'react-router-dom'
+import { FileText, Plus, Receipt, Sparkles } from 'lucide-react'
 import { accountingPath } from './accountingConstants'
 import { useInvoiceStore } from './invoiceStore'
+import { NEW_OFFER_ROUTE, useOfferStore } from './offerStore'
 
 export default function AccountingLayout() {
   const { invoices } = useInvoiceStore()
+  const { offers } = useOfferStore()
+  const location = useLocation()
+  const isOffersView = location.pathname.startsWith(accountingPath('offers'))
 
   const subtitle = useMemo(() => {
     const n = invoices.length
@@ -17,9 +21,10 @@ export default function AccountingLayout() {
       `${paid} paid`,
       `${pending} pending`,
       `${overdue} overdue`,
+      `${offers.length} offer${offers.length === 1 ? '' : 's'}`,
     ]
     return parts.join(' · ')
-  }, [invoices])
+  }, [invoices, offers])
 
   return (
     <div className="h-full flex min-h-0 w-full max-w-full overflow-hidden">
@@ -37,15 +42,56 @@ export default function AccountingLayout() {
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
-            <Link
-              to={accountingPath('create')}
-              title="New invoice"
-              aria-label="New invoice"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95"
+          <div className="flex min-w-0 flex-wrap items-center justify-start gap-1.5 sm:justify-end">
+            <nav
+              className="inline-flex items-center gap-0.5 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-0.5"
+              aria-label="Accounting sections"
             >
-              <Plus className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-            </Link>
+              <Link
+                to={accountingPath()}
+                className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${
+                  !isOffersView
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                aria-current={!isOffersView ? 'page' : undefined}
+              >
+                <Receipt className="h-3 w-3" aria-hidden /> Invoices
+              </Link>
+              <Link
+                to={accountingPath('offers')}
+                className={`inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${
+                  isOffersView
+                    ? 'bg-background text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                aria-current={isOffersView ? 'page' : undefined}
+              >
+                <Sparkles className="h-3 w-3" aria-hidden /> Offers
+              </Link>
+            </nav>
+
+            {isOffersView ? (
+              <Link
+                to={accountingPath(`offers/${NEW_OFFER_ROUTE}`)}
+                title="New offer"
+                aria-label="New offer"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent px-2.5 text-xs font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95"
+              >
+                <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="hidden sm:inline">Нова оферта</span>
+                <Plus className="h-3.5 w-3.5 shrink-0 sm:hidden" aria-hidden />
+              </Link>
+            ) : (
+              <Link
+                to={accountingPath('create')}
+                title="New invoice"
+                aria-label="New invoice"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95"
+              >
+                <Plus className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+              </Link>
+            )}
           </div>
         </header>
 

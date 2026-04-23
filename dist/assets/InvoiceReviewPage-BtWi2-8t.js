@@ -1,44 +1,12 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
-import { c as createLucideIcon, b as useToast, u as useInvoiceStore, a as accountingPath, l as normalizeInvoiceDraft, A as ACCOUNTING_BASE_PATH, m as newEmptyLineItem, F as FORM_BANK_ACCOUNTS, g as FORM_PAYMENT_METHODS, h as FORM_TAX_TYPES, k as bankLabelFromFormLabel, j as FORM_INVOICE_TYPES, o as draftSubtotal, p as computeTax, q as computeTotal, f as formatUsd, s as computeLineTotal, r as resolveTaxRate, D as DUE_TERMS, N as NEW_RECORD_ROUTE } from './invoiceStore-CtTjEtf0.js';
-import { e as exportInvoiceDraftToPdf, A as ArrowLeft, T as Trash2, a as AutoGrowTextarea, L as LoaderCircle, F as FileDown, I as InvoiceDocumentCard } from './exportInvoicePdf-B1sek7u4.js';
+import { u as useInvoiceStore, n as normalizeInvoiceDraft, a as newEmptyLineItem, d as draftSubtotal, c as computeTax, b as computeTotal, f as formatUsd, e as computeLineTotal, N as NEW_RECORD_ROUTE } from './invoiceStore-CH64SPmX.js';
+import { e as exportInvoiceDraftToPdf, A as AutoGrowTextarea, L as LoaderCircle, F as FileDown, I as InvoiceDocumentCard } from './exportInvoicePdf-D9x8QC29.js';
+import { c as createLucideIcon, u as useToast, a as accountingPath, A as ACCOUNTING_BASE_PATH, F as FORM_BANK_ACCOUNTS, d as FORM_PAYMENT_METHODS, e as FORM_TAX_TYPES, g as bankLabelFromFormLabel, f as FORM_INVOICE_TYPES, r as resolveTaxRate, D as DUE_TERMS } from './accountingConstants-Cfl6rq38.js';
 import { a as InvoiceFormPageSkeleton } from './AccountingSkeletons-BBpJ38wk.js';
-import { P as Plus } from './plus-_C8-xjua.js';
-
-/**
- * @license lucide-react v0.575.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-
-
-const __iconNode$2 = [
-  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
-  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
-];
-const Copy = createLucideIcon("copy", __iconNode$2);
-
-/**
- * @license lucide-react v0.575.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-
-
-const __iconNode$1 = [
-  [
-    "path",
-    {
-      d: "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2",
-      key: "143wyd"
-    }
-  ],
-  ["path", { d: "M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6", key: "1itne7" }],
-  ["rect", { x: "6", y: "14", width: "12", height: "8", rx: "1", key: "1ue0tg" }]
-];
-const Printer = createLucideIcon("printer", __iconNode$1);
+import { A as ArrowLeft, T as Trash2 } from './trash-2-BhWtp_Kn.js';
+import { P as Plus } from './plus-CRsttFmX.js';
+import { P as Printer, C as Copy } from './printer-B7dMZUzk.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC

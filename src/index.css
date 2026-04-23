@@ -59,3 +59,72 @@ body {
     background-size: 200% 100%;
   }
 }
+
+/**
+ * Offer builder — inline contentEditable primitives.
+ * Placeholder behavior + subtle focus ring; empty single-line fields stay the
+ * same height as filled ones so layout doesn't jump while typing.
+ */
+.offer-editable {
+  outline: none;
+  min-height: 1em;
+  border-radius: 4px;
+  padding: 0 2px;
+  transition: box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.offer-editable[data-multiline]:empty,
+.offer-editable[data-multiline]:has(> br:only-child) {
+  min-height: 1.4em;
+}
+
+.offer-editable:empty::before {
+  content: attr(data-placeholder);
+  color: var(--inkblot-semantic-color-text-tertiary);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.offer-editable:hover {
+  background-color: color-mix(in srgb, var(--inkblot-semantic-color-background-tertiary) 50%, transparent);
+}
+
+.offer-editable:focus {
+  background-color: var(--inkblot-semantic-color-background-primary);
+  box-shadow: 0 0 0 2px var(--inkblot-semantic-color-border-focus);
+}
+
+/**
+ * Print — when the user hits Print inside the Offer Builder, hide the entire
+ * app and render only the offer document. Works for Cmd/Ctrl+P → Save as PDF.
+ */
+@media print {
+  html,
+  body,
+  #root {
+    overflow: visible !important;
+    height: auto !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  #offer-document,
+  #offer-document * {
+    visibility: visible !important;
+  }
+  #offer-document {
+    position: absolute !important;
+    inset: 0 !important;
+    margin: 0 !important;
+    padding: 16mm !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .offer-editable::before {
+    content: none !important;
+  }
+}

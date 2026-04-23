@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Build Citron CRM Accounting: web | android | ios. Client: citron | demo
+set -euo pipefail
+
+CLIENT="${2:-citron}"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+case "$CLIENT" in
+  citron|demo) ;;
+  *)
+    echo "Unknown client: $CLIENT" >&2
+    echo "Usage: ./build web|android|ios [citron|demo]" >&2
+    exit 1
+    ;;
+esac
+
+case "$1" in
+  web)
+    bash scripts/inject_client_config.sh "$CLIENT"
+    VITE_CLIENT="$CLIENT" npm run build
+    echo "→ dist/"
+    ;;
+  android)
+    echo "This repo is a web-only Module Federation remote; there is no Android native target." >&2
+    echo "Use: ./build web $CLIENT" >&2
+    exit 1
+    ;;
+  ios)
+    echo "This repo is a web-only Module Federation remote; there is no iOS native target." >&2
+    echo "Use: ./build web $CLIENT" >&2
+    exit 1
+    ;;
+  *)
+    echo "Usage: ./build web|android|ios [citron|demo]" >&2
+    exit 1
+    ;;
+esac
