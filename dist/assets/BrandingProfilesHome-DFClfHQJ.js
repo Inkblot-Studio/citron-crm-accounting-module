@@ -1,7 +1,7 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
-import { u as useBrandingStore } from './brandingStore-BVRnF0-c.js';
+import { u as useBrandingStore } from './brandingStore-DiVKw_lr.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 
 /**

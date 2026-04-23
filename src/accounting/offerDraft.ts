@@ -175,7 +175,7 @@ export function emptyOfferDraft(): OfferDraft {
   return {
     documentTypeId: 'oferta',
     documentNumber: formatOfferNumber(OFFER_CONFIG.documentNumberStart),
-    brandProfileId: null,
+    brandProfileId: OFFER_CONFIG.defaultBrandProfileId,
     clientName: '',
     clientOrg: '',
     clientEmail: '',

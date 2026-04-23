@@ -5,6 +5,7 @@ const seedProfiles = [
 	{
 		id: "default",
 		name: "Default",
+		logoAssetPath: "",
 		logoUrl: "",
 		brandName: "YOUR BRAND",
 		brandTagline: "Short tagline about what you do",
@@ -22,26 +23,35 @@ const seedProfiles = [
 	{
 		id: "inkblot-studio",
 		name: "Inkblot Studio",
+		logoAssetPath: "/svg/inkblotstudio_logo.svg",
 		logoUrl: "",
 		brandName: "INKBLOT STUDIO",
 		brandTagline: "Accelerating Every Industry through AI",
 		brandWebsite: "inkblotstudio.eu",
-		accentColor: "#C9A227",
+		accentColor: "#2563EB",
 		senderLegalName: "Inkblot Studio Ltd.",
-		senderAddress: "ul. Shipka 12\n1000 Sofia, Bulgaria",
-		senderVatId: "BG205123456",
-		senderPhone: "+359 2 123 4567",
-		senderEmail: "hello@inkblotstudio.eu",
-		bankName: "UniCredit Bulbank",
-		bankIban: "BG80UNCR70001523456789",
-		bankBic: "UNCRBGSF"
+		senderAddress: "Bulgaria, Burgas (8000), “Maragidik”, 19, 2nd floor, office apartment 1",
+		senderVatId: "BG208715250",
+		senderPhone: "+359882797806",
+		senderEmail: "ai.support@inkblotstudio.eu",
+		bankName: "DSK BANK",
+		bankIban: "BG12STSA93000032516602",
+		bankBic: "STSABGSF"
 	}
 ];
 
+function resolveBrandingLogoSrc(p) {
+  if (!p) return "";
+  const asset = typeof p.logoAssetPath === "string" ? p.logoAssetPath.trim() : "";
+  if (asset.startsWith("/")) return asset;
+  const url = typeof p.logoUrl === "string" ? p.logoUrl.trim() : "";
+  return url;
+}
 function emptyBrandingProfile() {
   return {
     id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `profile-${Date.now()}`,
     name: "Untitled brand",
+    logoAssetPath: "",
     logoUrl: "",
     brandName: "",
     brandTagline: "",
@@ -73,6 +83,7 @@ function normalizeProfile(raw, fallbackId) {
   return {
     id: str(r.id, fallbackId),
     name: str(r.name, empty.name),
+    logoAssetPath: str(r.logoAssetPath),
     logoUrl: str(r.logoUrl),
     brandName: str(r.brandName),
     brandTagline: str(r.brandTagline),
@@ -215,4 +226,4 @@ function useBrandingStore() {
   return ctx;
 }
 
-export { BrandingStoreProvider as B, emptyBrandingProfile as e, normalizeHex as n, useBrandingStore as u };
+export { BrandingStoreProvider as B, emptyBrandingProfile as e, normalizeHex as n, resolveBrandingLogoSrc as r, useBrandingStore as u };

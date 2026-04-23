@@ -1,7 +1,7 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
-import { u as useBrandingStore, e as emptyBrandingProfile, n as normalizeHex } from './brandingStore-BVRnF0-c.js';
+import { u as useBrandingStore, e as emptyBrandingProfile, r as resolveBrandingLogoSrc, n as normalizeHex } from './brandingStore-DiVKw_lr.js';
 import { A as ArrowLeft, T as Trash2 } from './trash-2-BhWtp_Kn.js';
 
 const {useCallback,useEffect,useMemo,useRef,useState} = await importShared('react');
@@ -60,6 +60,7 @@ function BrandingProfileEditor() {
   if (!profile) {
     return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-full items-center justify-center text-sm text-muted-foreground", children: "Loading…" });
   }
+  const logoPreviewSrc = resolveBrandingLogoSrc(draft);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full min-h-0 w-full flex-col", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2.5 sm:px-6 lg:px-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 items-center gap-2", children: [
@@ -124,6 +125,22 @@ function BrandingProfileEditor() {
                 }
               ) })
             ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Field,
+              {
+                label: "Logo file",
+                hint: "Path from the site root to a file in public/, e.g. /svg/inkblotstudio_logo.svg. Preferred over a remote URL.",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "input",
+                  {
+                    className: `${inputCls} font-mono text-[13px]`,
+                    value: draft.logoAssetPath ?? "",
+                    onChange: (e) => patch({ logoAssetPath: e.target.value }),
+                    placeholder: "/svg/your_logo.svg"
+                  }
+                )
+              }
+            ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-3 sm:grid-cols-2", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Website", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "input",
@@ -134,22 +151,31 @@ function BrandingProfileEditor() {
                   placeholder: "inkblotstudio.eu"
                 }
               ) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Logo URL", hint: "https:// or data: URI. Shown in the document masthead.", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "input",
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Field,
                 {
-                  className: inputCls,
-                  type: "url",
-                  value: draft.logoUrl ?? "",
-                  onChange: (e) => patch({ logoUrl: e.target.value }),
-                  placeholder: "https://…"
+                  label: "Logo URL (optional)",
+                  hint: "https:// or data: URI if you are not using a file under public/.",
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      className: inputCls,
+                      type: "text",
+                      inputMode: "url",
+                      autoComplete: "off",
+                      value: draft.logoUrl ?? "",
+                      onChange: (e) => patch({ logoUrl: e.target.value }),
+                      placeholder: "https://…"
+                    }
+                  )
                 }
-              ) })
+              )
             ] }),
-            draft.logoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-3", children: [
+            logoPreviewSrc ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-3", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "img",
                 {
-                  src: draft.logoUrl,
+                  src: logoPreviewSrc,
                   alt: "Logo preview",
                   className: "h-10 w-auto max-w-[120px] object-contain",
                   onError: (e) => {

@@ -31,7 +31,8 @@ import {
 } from 'react'
 import { ArrowDown, ArrowUp, Copy, Plus, Trash2, X } from 'lucide-react'
 import { bgDocumentTypeById } from './accountingConstants'
-import { resolveBrandingLogoSrc, type BrandingProfile } from './brandingProfile.types'
+import { resolveBrandingLogoSrc } from './brandingResolvedLogos'
+import type { BrandingProfile } from './brandingProfile.types'
 import {
   BLOCK_KIND_LABEL,
   cloneBlock,
@@ -210,9 +211,6 @@ export default function OfferDocument({
                   src={logoSrc}
                   alt={brandName || 'Brand logo'}
                   className="mb-3 block h-10 w-auto max-w-[140px] object-contain"
-                  onError={(e) => {
-                    ;(e.currentTarget as HTMLImageElement).style.display = 'none'
-                  }}
                 />
               ) : null}
               <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]">

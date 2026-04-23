@@ -14,6 +14,11 @@ export interface OfferBrand {
 }
 
 export interface OfferModuleConfig {
+  /**
+   * Branding profile id for new offers (must exist in branding profiles).
+   * Set to `null` to rely on Branding → default profile instead.
+   */
+  defaultBrandProfileId: string | null
   /** First offer number auto-assigned when creating a blank offer. */
   documentNumberStart: number
   /** Optional prefix prepended to the numeric part (e.g. "INK-2026-"). */
@@ -31,6 +36,7 @@ export interface OfferModuleConfig {
 }
 
 export const OFFER_CONFIG: OfferModuleConfig = {
+  defaultBrandProfileId: 'inkblot-studio',
   documentNumberStart: 41,
   documentNumberPrefix: '',
   documentNumberPad: 0,

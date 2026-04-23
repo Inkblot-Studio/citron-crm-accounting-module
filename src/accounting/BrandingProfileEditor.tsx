@@ -16,12 +16,8 @@ import { ArrowLeft, Trash2 } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
 import { accountingPath } from './accountingConstants'
 import { useBrandingStore } from './brandingStore'
-import {
-  emptyBrandingProfile,
-  normalizeHex,
-  resolveBrandingLogoSrc,
-  type BrandingProfile,
-} from './brandingProfile.types'
+import { resolveBrandingLogoSrc } from './brandingResolvedLogos'
+import { emptyBrandingProfile, normalizeHex, type BrandingProfile } from './brandingProfile.types'
 
 const labelCls = 'text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground'
 const inputCls =
@@ -161,7 +157,7 @@ export default function BrandingProfileEditor() {
 
             <Field
               label="Logo file"
-              hint="Path from the site root to a file in public/, e.g. /svg/inkblotstudio_logo.svg. Preferred over a remote URL."
+              hint="Path from the site root to a file in public/, e.g. /svg/inkblotstudio_logo.svg. Built-in paths for this module are bundled (Module Federation–safe). Others need the host to serve the same file or set VITE_ACCOUNTING_PUBLIC_ORIGIN."
             >
               <input
                 className={`${inputCls} font-mono text-[13px]`}

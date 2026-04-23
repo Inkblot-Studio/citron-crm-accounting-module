@@ -1,11 +1,11 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, i as bgDocumentTypeById, u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
+import { r as resolveBrandingLogoSrc, u as useBrandingStore } from './brandingStore-DiVKw_lr.js';
 import { c as cloneBlock, b as createBlock, B as BLOCK_KIND_LABEL, e as formatMoneyRange, o as offerVatAmount, g as offerGrandTotal, f as formatMoney, n as newSupportPlan, u as useOfferStore, N as NEW_OFFER_ROUTE, h as emptyOfferDraft } from './offerStore-B7nnp6gS.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 import { C as Copy, P as Printer } from './printer-B7dMZUzk.js';
 import { T as Trash2, A as ArrowLeft } from './trash-2-BhWtp_Kn.js';
-import { u as useBrandingStore } from './brandingStore-BVRnF0-c.js';
 import { P as Palette } from './palette-W_Yxaw1i.js';
 
 /**
@@ -76,7 +76,7 @@ function OfferDocument({
   const brandName = draft.brandName || brand?.brandName || "";
   const brandTagline = draft.brandTagline || brand?.brandTagline || "";
   const brandUrl = draft.brandUrl || brand?.brandWebsite || "";
-  const logoUrl = brand?.logoUrl || "";
+  const logoSrc = resolveBrandingLogoSrc(brand);
   const brandStyle = brand ? {
     ["--inkblot-semantic-color-status-warning"]: brand.accentColor
   } : void 0;
@@ -182,10 +182,10 @@ function OfferDocument({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex flex-col gap-8", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-10", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-              logoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+              logoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "img",
                 {
-                  src: logoUrl,
+                  src: logoSrc,
                   alt: brandName || "Brand logo",
                   className: "mb-3 block h-10 w-auto max-w-[140px] object-contain",
                   onError: (e) => {

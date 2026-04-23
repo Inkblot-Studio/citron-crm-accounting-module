@@ -3,7 +3,7 @@ const currentImports = {};
       let moduleMap = {
 "./Accounting":()=>{
       dynamicLoadingCss(["style-BC4Zxs27.css"], false, './Accounting');
-      return __federation_import('./__federation_expose_Accounting-DZqw5u0R.js').then(module =>Object.keys(module).every(item => exportSet.has(item)) ? () => module.default : () => module)},};
+      return __federation_import('./__federation_expose_Accounting-BQIlIV1m.js').then(module =>Object.keys(module).every(item => exportSet.has(item)) ? () => module.default : () => module)},};
       const seen = {};
       const dynamicLoadingCss = (cssFilePaths, dontAppendStylesToHead, exposeItemName) => {
         const metaUrl = import.meta.url;

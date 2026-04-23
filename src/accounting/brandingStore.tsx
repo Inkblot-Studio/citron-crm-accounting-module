@@ -62,12 +62,32 @@ function seedFromJson(): BrandingProfile[] {
   return (seedProfiles as unknown[]).map((p, i) => normalizeProfile(p, `seed-${i}`))
 }
 
+/** Prefer Inkblot as the app default when that seed profile exists. */
+function pickDefaultProfileId(profiles: BrandingProfile[]): string | null {
+  const ink = profiles.find((p) => p.id === 'inkblot-studio')
+  if (ink) return ink.id
+  return profiles[0]?.id ?? null
+}
+
+/** Fill logo fields from seed when localStorage predates new keys (e.g. logoAssetPath). */
+function mergeProfilesWithSeed(persisted: BrandingProfile[]): BrandingProfile[] {
+  const seeds = seedFromJson()
+  const seedMap = new Map(seeds.map((s) => [s.id, s]))
+  return persisted.map((p) => {
+    const s = seedMap.get(p.id)
+    if (!s) return p
+    const logoAssetPath = p.logoAssetPath?.trim() ? p.logoAssetPath : s.logoAssetPath
+    const logoUrl = p.logoUrl?.trim() ? p.logoUrl : s.logoUrl
+    return { ...p, logoAssetPath, logoUrl }
+  })
+}
+
 function defaultPersisted(): PersistedShape {
   const profiles = seedFromJson()
   return {
     version: 1,
     profiles,
-    defaultProfileId: profiles[0]?.id ?? null,
+    defaultProfileId: pickDefaultProfileId(profiles),
   }
 }
 
@@ -78,12 +98,15 @@ function loadPersisted(): PersistedShape {
     if (!raw) return defaultPersisted()
     const parsed = JSON.parse(raw) as Record<string, unknown>
     const profilesRaw = Array.isArray(parsed.profiles) ? parsed.profiles : []
-    const profiles = profilesRaw.map((p, i) => normalizeProfile(p, `rec-${i}`))
+    const profiles = mergeProfilesWithSeed(profilesRaw.map((p, i) => normalizeProfile(p, `rec-${i}`)))
     if (profiles.length === 0) return defaultPersisted()
-    const defaultProfileId =
+    let defaultProfileId =
       typeof parsed.defaultProfileId === 'string' && profiles.some((p) => p.id === parsed.defaultProfileId)
         ? parsed.defaultProfileId
         : profiles[0]?.id ?? null
+    if (defaultProfileId === 'default' && profiles.some((p) => p.id === 'inkblot-studio')) {
+      defaultProfileId = 'inkblot-studio'
+    }
     return { version: 1, profiles, defaultProfileId }
   } catch {
     return defaultPersisted()

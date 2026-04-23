@@ -58,17 +58,6 @@ export function cloneProfile(p: BrandingProfile): BrandingProfile {
   return { ...p }
 }
 
-/** Resolved `<img src>` for the profile masthead: bundled asset first, then URL. */
-export function resolveBrandingLogoSrc(
-  p: Pick<BrandingProfile, 'logoAssetPath' | 'logoUrl'> | undefined,
-): string {
-  if (!p) return ''
-  const asset = typeof p.logoAssetPath === 'string' ? p.logoAssetPath.trim() : ''
-  if (asset.startsWith('/')) return asset
-  const url = typeof p.logoUrl === 'string' ? p.logoUrl.trim() : ''
-  return url
-}
-
 /** Empty profile used when creating a new one in the editor. */
 export function emptyBrandingProfile(): BrandingProfile {
   return {

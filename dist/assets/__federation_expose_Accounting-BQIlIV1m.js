@@ -8,7 +8,7 @@ import { S as Sparkles, F as FileText } from './sparkles-CZyhPppu.js';
 import { P as Palette } from './palette-W_Yxaw1i.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 import { I as InvoicesHomeSkeleton, a as InvoiceFormPageSkeleton } from './AccountingSkeletons-BBpJ38wk.js';
-import { B as BrandingStoreProvider } from './brandingStore-BVRnF0-c.js';
+import { B as BrandingStoreProvider } from './brandingStore-DiVKw_lr.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -143,9 +143,9 @@ const InvoicesHome = lazy(() => __vitePreload(() => import('./InvoicesHome-DTvCc
 const SmartInvoiceBuilder = lazy(() => __vitePreload(() => import('./SmartInvoiceBuilder-BCTeV0l5.js'),true              ?[]:void 0));
 const InvoiceReviewPage = lazy(() => __vitePreload(() => import('./InvoiceReviewPage-BtWi2-8t.js'),true              ?[]:void 0));
 const OffersHome = lazy(() => __vitePreload(() => import('./OffersHome-qxSx_IaK.js'),true              ?[]:void 0));
-const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-DDd4ENSA.js'),true              ?[]:void 0));
-const BrandingProfilesHome = lazy(() => __vitePreload(() => import('./BrandingProfilesHome-CCyu2wML.js'),true              ?[]:void 0));
-const BrandingProfileEditor = lazy(() => __vitePreload(() => import('./BrandingProfileEditor-CoOLf3iM.js'),true              ?[]:void 0));
+const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-CjsQ0eI3.js'),true              ?[]:void 0));
+const BrandingProfilesHome = lazy(() => __vitePreload(() => import('./BrandingProfilesHome-DFClfHQJ.js'),true              ?[]:void 0));
+const BrandingProfileEditor = lazy(() => __vitePreload(() => import('./BrandingProfileEditor-d4JJrptV.js'),true              ?[]:void 0));
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
