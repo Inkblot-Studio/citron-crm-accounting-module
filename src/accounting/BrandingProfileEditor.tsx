@@ -2,7 +2,7 @@
  * BrandingProfileEditor — single-profile form.
  *
  * Sections:
- *   1. Identity      — profile name, logo URL, brand name, tagline, website
+ *   1. Identity      — profile name, logo (public file or URL), brand mark, tagline, website
  *   2. Accent color  — HTML5 color picker + hex input (synced)
  *   3. Sender        — legal name, address, VAT, phone, email
  *   4. Banking       — bank name, IBAN, BIC
@@ -16,7 +16,12 @@ import { ArrowLeft, Trash2 } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
 import { accountingPath } from './accountingConstants'
 import { useBrandingStore } from './brandingStore'
-import { emptyBrandingProfile, normalizeHex, type BrandingProfile } from './brandingProfile.types'
+import {
+  emptyBrandingProfile,
+  normalizeHex,
+  resolveBrandingLogoSrc,
+  type BrandingProfile,
+} from './brandingProfile.types'
 
 const labelCls = 'text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground'
 const inputCls =
@@ -91,6 +96,8 @@ export default function BrandingProfileEditor() {
     )
   }
 
+  const logoPreviewSrc = resolveBrandingLogoSrc(draft)
+
   return (
     <div className="flex h-full min-h-0 w-full flex-col">
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-2.5 sm:px-6 lg:px-8">
@@ -152,6 +159,18 @@ export default function BrandingProfileEditor() {
               </Field>
             </div>
 
+            <Field
+              label="Logo file"
+              hint="Path from the site root to a file in public/, e.g. /svg/inkblotstudio_logo.svg. Preferred over a remote URL."
+            >
+              <input
+                className={`${inputCls} font-mono text-[13px]`}
+                value={draft.logoAssetPath ?? ''}
+                onChange={(e) => patch({ logoAssetPath: e.target.value })}
+                placeholder="/svg/your_logo.svg"
+              />
+            </Field>
+
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Website">
                 <input
@@ -161,10 +180,15 @@ export default function BrandingProfileEditor() {
                   placeholder="inkblotstudio.eu"
                 />
               </Field>
-              <Field label="Logo URL" hint="https:// or data: URI. Shown in the document masthead.">
+              <Field
+                label="Logo URL (optional)"
+                hint="https:// or data: URI if you are not using a file under public/."
+              >
                 <input
                   className={inputCls}
-                  type="url"
+                  type="text"
+                  inputMode="url"
+                  autoComplete="off"
                   value={draft.logoUrl ?? ''}
                   onChange={(e) => patch({ logoUrl: e.target.value })}
                   placeholder="https://…"
@@ -172,10 +196,10 @@ export default function BrandingProfileEditor() {
               </Field>
             </div>
 
-            {draft.logoUrl ? (
+            {logoPreviewSrc ? (
               <div className="flex items-center gap-3 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-primary)] p-3">
                 <img
-                  src={draft.logoUrl}
+                  src={logoPreviewSrc}
                   alt="Logo preview"
                   className="h-10 w-auto max-w-[120px] object-contain"
                   onError={(e) => {

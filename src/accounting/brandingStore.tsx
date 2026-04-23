@@ -41,6 +41,7 @@ function normalizeProfile(raw: unknown, fallbackId: string): BrandingProfile {
   return {
     id: str(r.id, fallbackId),
     name: str(r.name, empty.name),
+    logoAssetPath: str(r.logoAssetPath),
     logoUrl: str(r.logoUrl),
     brandName: str(r.brandName),
     brandTagline: str(r.brandTagline),

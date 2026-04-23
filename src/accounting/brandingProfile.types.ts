@@ -15,7 +15,13 @@ export interface BrandingProfile {
 
   /* ─── Brand identity (rendered in document footer + masthead) ─────────── */
 
-  /** Optional logo URL (https:// or data: URI). Shown in the offer masthead. */
+  /**
+   * Logo served from the host app's `public/` folder, as an absolute path from
+   * the site root (e.g. `/svg/inkblotstudio_logo.svg`). Preferred over `logoUrl`
+   * when both are set — no hotlinking, works offline, and survives deploys.
+   */
+  logoAssetPath?: string
+  /** Optional remote or data: URI logo. Used when `logoAssetPath` is empty. */
   logoUrl?: string
   /** Brand mark text (e.g. "INKBLOT STUDIO"). */
   brandName: string
@@ -52,11 +58,23 @@ export function cloneProfile(p: BrandingProfile): BrandingProfile {
   return { ...p }
 }
 
+/** Resolved `<img src>` for the profile masthead: bundled asset first, then URL. */
+export function resolveBrandingLogoSrc(
+  p: Pick<BrandingProfile, 'logoAssetPath' | 'logoUrl'> | undefined,
+): string {
+  if (!p) return ''
+  const asset = typeof p.logoAssetPath === 'string' ? p.logoAssetPath.trim() : ''
+  if (asset.startsWith('/')) return asset
+  const url = typeof p.logoUrl === 'string' ? p.logoUrl.trim() : ''
+  return url
+}
+
 /** Empty profile used when creating a new one in the editor. */
 export function emptyBrandingProfile(): BrandingProfile {
   return {
     id: typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `profile-${Date.now()}`,
     name: 'Untitled brand',
+    logoAssetPath: '',
     logoUrl: '',
     brandName: '',
     brandTagline: '',

@@ -2,6 +2,7 @@
   {
     "id": "default",
     "name": "Default",
+    "logoAssetPath": "",
     "logoUrl": "",
     "brandName": "YOUR BRAND",
     "brandTagline": "Short tagline about what you do",
@@ -19,18 +20,19 @@
   {
     "id": "inkblot-studio",
     "name": "Inkblot Studio",
+    "logoAssetPath": "/svg/inkblotstudio_logo.svg",
     "logoUrl": "",
     "brandName": "INKBLOT STUDIO",
     "brandTagline": "Accelerating Every Industry through AI",
     "brandWebsite": "inkblotstudio.eu",
-    "accentColor": "#C9A227",
+    "accentColor": "#2563EB",
     "senderLegalName": "Inkblot Studio Ltd.",
-    "senderAddress": "ul. Shipka 12\n1000 Sofia, Bulgaria",
-    "senderVatId": "BG205123456",
-    "senderPhone": "+359 2 123 4567",
-    "senderEmail": "hello@inkblotstudio.eu",
-    "bankName": "UniCredit Bulbank",
-    "bankIban": "BG80UNCR70001523456789",
-    "bankBic": "UNCRBGSF"
+    "senderAddress": "Bulgaria, Burgas (8000), “Maragidik”, 19, 2nd floor, office apartment 1",
+    "senderVatId": "BG208715250",
+    "senderPhone": "+359882797806",
+    "senderEmail": "ai.support@inkblotstudio.eu",
+    "bankName": "DSK BANK",
+    "bankIban": "BG12STSA93000032516602",
+    "bankBic": "STSABGSF"
   }
 ]

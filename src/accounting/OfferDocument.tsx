@@ -31,7 +31,7 @@ import {
 } from 'react'
 import { ArrowDown, ArrowUp, Copy, Plus, Trash2, X } from 'lucide-react'
 import { bgDocumentTypeById } from './accountingConstants'
-import type { BrandingProfile } from './brandingProfile.types'
+import { resolveBrandingLogoSrc, type BrandingProfile } from './brandingProfile.types'
 import {
   BLOCK_KIND_LABEL,
   cloneBlock,
@@ -81,7 +81,7 @@ export default function OfferDocument({
   const brandName = draft.brandName || brand?.brandName || ''
   const brandTagline = draft.brandTagline || brand?.brandTagline || ''
   const brandUrl = draft.brandUrl || brand?.brandWebsite || ''
-  const logoUrl = brand?.logoUrl || ''
+  const logoSrc = resolveBrandingLogoSrc(brand)
 
   // Local CSS variable override: citrus-lemon is used throughout the offer as
   // the accent token; swapping it here retints document number, section
@@ -205,9 +205,9 @@ export default function OfferDocument({
         <header className="flex flex-col gap-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
             <div className="min-w-0">
-              {logoUrl ? (
+              {logoSrc ? (
                 <img
-                  src={logoUrl}
+                  src={logoSrc}
                   alt={brandName || 'Brand logo'}
                   className="mb-3 block h-10 w-auto max-w-[140px] object-contain"
                   onError={(e) => {
