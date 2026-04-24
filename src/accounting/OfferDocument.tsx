@@ -402,6 +402,7 @@ interface BlockFrameProps {
 }
 
 function BlockFrame({
+  block,
   editMode,
   isFirst,
   isLast,
@@ -417,7 +418,15 @@ function BlockFrame({
   onPickAdd,
   children,
 }: BlockFrameProps) {
-  if (!editMode) return <>{children}</>
+  const flowPrint =
+    block.kind === 'paragraph' || block.kind === 'bullets' || block.kind === 'quote'
+  const wrapped = (
+    <div className={flowPrint ? 'offer-doc-block offer-doc-block--flow' : 'offer-doc-block'}>
+      {children}
+    </div>
+  )
+
+  if (!editMode) return wrapped
 
   return (
     <section
@@ -453,7 +462,7 @@ function BlockFrame({
 
       {isSelected && isAddMenuOpen ? <AddBlockMenu onPick={onPickAdd} onClose={onCloseAddMenu} /> : null}
 
-      {children}
+      {wrapped}
     </section>
   )
 }

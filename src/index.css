@@ -105,7 +105,7 @@ body {
  */
 @page {
   size: A4;
-  margin: 14mm;
+  margin: 12mm 14mm;
 }
 
 @media print {
@@ -138,70 +138,106 @@ body {
     background: #fff !important;
     color: #0a0b0e !important;
     font-size: 10.5pt;
-    line-height: 1.55;
+    line-height: 1.58;
+    -webkit-print-color-adjust: economy;
+    print-color-adjust: economy;
   }
 
   /* Inner container — the `flex flex-col gap-10 px-8 py-10` — we reset. */
   #offer-print-document > div {
-    gap: 18pt !important;
+    gap: 20pt !important;
     padding: 0 !important;
   }
   #offer-print-document header {
-    gap: 16pt !important;
+    gap: 14pt !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
-  /* Flatten chrome — no shadows, no tinted backgrounds. */
+  /* Logos & brand marks — keep colors visible on paper/PDF. */
+  #offer-print-document img {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Flatten chrome — no shadows; drop tinted panel backgrounds only. */
   #offer-print-document *,
   #offer-print-document {
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  #offer-print-document [class*="bg-"] {
+  #offer-print-document [class*="bg-[var(--inkblot"],
+  #offer-print-document [class*="bg-background"],
+  #offer-print-document [class~="bg-accent"] {
     background: transparent !important;
   }
   #offer-print-document [data-selected] {
     background: transparent !important;
   }
 
-  /* Color palette for paper: black / grey / accent becomes soft olive. */
-  #offer-print-document .text-citrus-lemon,
-  #offer-print-document [class*="text-citrus"] {
-    color: #766200 !important;
+  /* Hairline rules use `h-px` + bg — restore after selective flatten. */
+  #offer-print-document .h-px.bg-foreground {
+    background: #0a0b0e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  #offer-print-document [class*="text-[var(--inkblot-semantic-color-text-tertiary"] {
-    color: #6b6f76 !important;
+  #offer-print-document .h-px.bg-border {
+    background: #c8ccd4 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  #offer-print-document [class*="text-[var(--inkblot-semantic-color-text-secondary"] {
-    color: #24262a !important;
-  }
-  #offer-print-document [class*="border-citrus"],
-  #offer-print-document [class*="border-accent"],
-  #offer-print-document [class*="border-border"] {
-    border-color: #d0d2d7 !important;
+  #offer-print-document span.rounded-full.bg-foreground {
+    background: #0a0b0e !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  /* Typographic tightening for paper. */
+  /* Match screen accent (brand sets --inkblot-semantic-color-status-warning on root). */
+  #offer-print-document .text-citrus-lemon,
+  #offer-print-document [class*="text-citrus"] {
+    color: var(--inkblot-semantic-color-status-warning, #766200) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #offer-print-document [class*="border-citrus"] {
+    border-color: var(--inkblot-semantic-color-status-warning, #766200) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #offer-print-document [class*="text-[var(--inkblot-semantic-color-text-tertiary"] {
+    color: #5c6068 !important;
+  }
+  #offer-print-document [class*="text-[var(--inkblot-semantic-color-text-secondary"] {
+    color: #2a2d33 !important;
+  }
+  #offer-print-document [class*="border-accent"],
+  #offer-print-document [class*="border-border"] {
+    border-color: #c8ccd4 !important;
+  }
+
+  /* Typographic scale — closer to on-screen editorial hierarchy. */
   #offer-print-document h1,
   #offer-print-document h2,
   #offer-print-document h3,
   #offer-print-document [class*="text-3xl"],
   #offer-print-document [class*="text-4xl"] {
-    font-size: 20pt !important;
-    line-height: 1.15 !important;
+    font-size: 21pt !important;
+    line-height: 1.12 !important;
   }
   #offer-print-document article [aria-hidden][class*="text-[40px]"],
   #offer-print-document article [aria-hidden][class*="text-[52px]"] {
-    font-size: 30pt !important;
+    font-size: 32pt !important;
+    line-height: 1 !important;
   }
   #offer-print-document [class*="text-[40px]"],
   #offer-print-document [class*="text-[32px]"] {
-    font-size: 22pt !important;
+    font-size: 24pt !important;
   }
   #offer-print-document [class*="text-xl"] {
-    font-size: 13pt !important;
+    font-size: 14pt !important;
   }
   #offer-print-document [class*="text-lg"] {
-    font-size: 12pt !important;
+    font-size: 12.5pt !important;
   }
   #offer-print-document [class*="text-[15px]"],
   #offer-print-document [class*="text-[14px]"],
@@ -209,27 +245,70 @@ body {
     font-size: 10.5pt !important;
   }
 
-  /* Vertical rhythm between blocks. */
-  #offer-print-document > div > div > * + * {
-    margin-top: 16pt !important;
+  /* Block list rhythm (wrapper around each block body). */
+  #offer-print-document .offer-doc-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    orphans: 3;
+    widows: 3;
   }
-  #offer-print-document article {
-    margin-top: 18pt !important;
+  #offer-print-document .offer-doc-block--flow {
+    break-inside: auto;
+    page-break-inside: auto;
+    orphans: 3;
+    widows: 3;
   }
 
-  /* Keep each block together across page breaks. */
-  #offer-print-document header,
-  #offer-print-document article,
-  #offer-print-document section,
-  #offer-print-document blockquote {
+  /* Vertical rhythm between blocks. */
+  #offer-print-document > div > div > * + * {
+    margin-top: 0 !important;
+  }
+  #offer-print-document > div > div.flex.flex-col > .offer-doc-block + .offer-doc-block {
+    margin-top: 18pt !important;
+    padding-top: 2pt;
+  }
+
+  /* Inner sections (pricing/plans) — avoid splitting mid-card when possible. */
+  #offer-print-document .offer-doc-block section {
     break-inside: avoid;
     page-break-inside: avoid;
   }
+  #offer-print-document .offer-doc-block--flow section {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  #offer-print-document article {
+    margin-top: 0 !important;
+  }
+
+  #offer-print-document article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  #offer-print-document .offer-doc-block--flow article {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  /* Long quotes should continue across pages. */
+  #offer-print-document blockquote {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  #offer-print-document footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-top: 8pt !important;
+    padding-top: 12pt !important;
+  }
+
+  /* Keep headings with the block that follows. */
   #offer-print-document h1,
   #offer-print-document h2,
-  #offer-print-document h3,
-  #offer-print-document [class*="uppercase"] {
-    break-after: avoid-page;
+  #offer-print-document h3 {
+    break-after: avoid;
     page-break-after: avoid;
   }
 
