@@ -3,6 +3,7 @@ import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { i as bgDocumentTypeById } from './accountingConstants-Cfl6rq38.js';
 
 const OFFER_CONFIG = {
+  defaultBrandProfileId: "inkblot-studio",
   documentNumberStart: 41,
   documentNumberPrefix: "",
   documentNumberPad: 0,
@@ -127,7 +128,7 @@ function emptyOfferDraft() {
   return {
     documentTypeId: "oferta",
     documentNumber: formatOfferNumber(OFFER_CONFIG.documentNumberStart),
-    brandProfileId: null,
+    brandProfileId: OFFER_CONFIG.defaultBrandProfileId,
     clientName: "",
     clientOrg: "",
     clientEmail: "",

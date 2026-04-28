@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, Copy, Palette, Printer, Trash2 } from 'lucide-react'
+import { AdvancedDropdown, type AdvancedDropdownOption } from '@citron-systems/citron-ui'
 import { useToast } from '@/lib/ToastContext'
 import OfferDocument from './OfferDocument'
 import { accountingPath } from './accountingConstants'
@@ -23,10 +24,10 @@ import { NEW_OFFER_ROUTE, useOfferStore } from './offerStore'
 import { useBrandingStore } from './brandingStore'
 
 const actionBtnClass =
-  'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] disabled:opacity-50'
+  'inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-1 focus-visible:ring-border disabled:opacity-50'
 
 const primaryActionBtnClass =
-  'inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]'
+  'inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-1 focus-visible:ring-border'
 
 export default function OfferBuilder() {
   const navigate = useNavigate()
@@ -63,6 +64,14 @@ export default function OfferBuilder() {
   const activeBrand = useMemo(
     () => resolveProfile(draft.brandProfileId),
     [draft.brandProfileId, resolveProfile],
+  )
+
+  const brandProfileOptions = useMemo(
+    (): AdvancedDropdownOption[] => [
+      { value: '', label: 'Default brand' },
+      ...profiles.map((p) => ({ value: p.id, label: p.name })),
+    ],
+    [profiles],
   )
 
   // Load from store when the working record changes.
@@ -170,23 +179,17 @@ export default function OfferBuilder() {
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <label className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/70 focus-within:ring-2 focus-within:ring-[var(--inkblot-semantic-color-border-focus)]">
-            <Palette className="h-3.5 w-3.5" aria-hidden />
-            <span className="sr-only">Brand</span>
-            <select
+          <div className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus-within:ring-1 focus-within:ring-border">
+            <Palette className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            <AdvancedDropdown
+              options={brandProfileOptions}
               value={draft.brandProfileId ?? ''}
-              onChange={(e) => setDraft((d) => ({ ...d, brandProfileId: e.target.value || null }))}
-              className="bg-transparent pr-1 text-xs text-foreground focus:outline-none"
+              onChange={(v) => setDraft((d) => ({ ...d, brandProfileId: v || null }))}
+              placeholder="Brand"
               aria-label="Brand profile"
-            >
-              <option value="">Default brand</option>
-              {profiles.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </label>
+              className="h-7 min-w-[9rem] border-0 bg-transparent px-0 text-xs text-foreground shadow-none focus-visible:ring-0"
+            />
+          </div>
           <button type="button" className={actionBtnClass} onClick={handlePrint} title="Print / export PDF">
             <Printer className="h-3.5 w-3.5" aria-hidden /> Print
           </button>

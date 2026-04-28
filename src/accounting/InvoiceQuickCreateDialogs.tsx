@@ -1,16 +1,9 @@
 import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from '@citron-systems/citron-ui'
+import { Dialog, DialogClose, DialogContent } from '@citron-systems/citron-ui'
 import type { InvoiceProduct } from '@citron-systems/citron-ui'
 import { Loader2 } from 'lucide-react'
 import type { TaxPresetEntry } from './accountingConstants'
+import { DRAGGABLE_DIALOG_SURFACE, DraggableDialogFrame } from './DraggableChrome'
 
 const inputClass = [
   'min-h-[var(--inkblot-size-touch-target-min)] w-full rounded-[var(--inkblot-radius-md)]',
@@ -75,47 +68,51 @@ export function ProductCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={(n) => { onOpenChange(n); if (!n) reset() }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>New product or service</DialogTitle>
-          <DialogDescription>Add a line item you can reuse on invoices.</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]">
-          <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
-            <label className={labelClass}>Name</label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Retainer — Q2"
-              className={`${inputClass} ${attempted && !name.trim() ? errorBorder : ''}`}
-            />
-            {attempted && !name.trim() && (
-              <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Required</span>
-            )}
+      <DialogContent showCloseButton={false} className={`sm:max-w-md ${DRAGGABLE_DIALOG_SURFACE}`}>
+        <DraggableDialogFrame
+          resetKey={open}
+          title="New product or service"
+          description="Add a line item you can reuse on invoices."
+          footer={
+            <>
+              <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
+              <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                Add product
+              </button>
+            </>
+          }
+        >
+          <div className="grid gap-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]">
+            <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
+              <label className={labelClass}>Name</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Retainer — Q2"
+                className={`${inputClass} ${attempted && !name.trim() ? errorBorder : ''}`}
+              />
+              {attempted && !name.trim() && (
+                <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Required</span>
+              )}
+            </div>
+            <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
+              <label className={labelClass}>Unit price (USD)</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={unitPrice}
+                onChange={(e) => setUnitPrice(e.target.value)}
+                placeholder="0.00"
+                className={`${inputClass} ${attempted && (Number.isNaN(priceNum) || priceNum < 0) ? errorBorder : ''}`}
+              />
+              {attempted && (Number.isNaN(priceNum) || priceNum < 0) && (
+                <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Enter a valid amount</span>
+              )}
+            </div>
           </div>
-          <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
-            <label className={labelClass}>Unit price (USD)</label>
-            <input
-              type="number"
-              min={0}
-              step="0.01"
-              value={unitPrice}
-              onChange={(e) => setUnitPrice(e.target.value)}
-              placeholder="0.00"
-              className={`${inputClass} ${attempted && (Number.isNaN(priceNum) || priceNum < 0) ? errorBorder : ''}`}
-            />
-            {attempted && (Number.isNaN(priceNum) || priceNum < 0) && (
-              <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Enter a valid amount</span>
-            )}
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
-          <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
-            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Add product
-          </button>
-        </DialogFooter>
+        </DraggableDialogFrame>
       </DialogContent>
     </Dialog>
   )
@@ -160,41 +157,45 @@ export function BankAccountCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={(n) => { onOpenChange(n); if (!n) reset() }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>New bank account</DialogTitle>
-          <DialogDescription>Shown on the invoice for payment instructions.</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]">
-          <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
-            <label className={labelClass}>Account label</label>
-            <input
-              value={bankName}
-              onChange={(e) => setBankName(e.target.value)}
-              placeholder="e.g. Operating — Chase"
-              className={`${inputClass} ${attempted && !bankName.trim() ? errorBorder : ''}`}
-            />
-            {attempted && !bankName.trim() && (
-              <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Required</span>
-            )}
+      <DialogContent showCloseButton={false} className={`sm:max-w-md ${DRAGGABLE_DIALOG_SURFACE}`}>
+        <DraggableDialogFrame
+          resetKey={open}
+          title="New bank account"
+          description="Shown on the invoice for payment instructions."
+          footer={
+            <>
+              <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
+              <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                Add account
+              </button>
+            </>
+          }
+        >
+          <div className="grid gap-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]">
+            <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
+              <label className={labelClass}>Account label</label>
+              <input
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+                placeholder="e.g. Operating — Chase"
+                className={`${inputClass} ${attempted && !bankName.trim() ? errorBorder : ''}`}
+              />
+              {attempted && !bankName.trim() && (
+                <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Required</span>
+              )}
+            </div>
+            <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
+              <label className={labelClass}>Last 4 digits (optional)</label>
+              <input
+                value={lastFour}
+                onChange={(e) => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                placeholder="4821"
+                className={inputClass}
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
-            <label className={labelClass}>Last 4 digits (optional)</label>
-            <input
-              value={lastFour}
-              onChange={(e) => setLastFour(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              placeholder="4821"
-              className={inputClass}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
-          <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
-            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Add account
-          </button>
-        </DialogFooter>
+        </DraggableDialogFrame>
       </DialogContent>
     </Dialog>
   )
@@ -233,30 +234,34 @@ export function PaymentMethodCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={(n) => { onOpenChange(n); if (!n) reset() }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>New payment method</DialogTitle>
-          <DialogDescription>Appears on the invoice (e.g. ACH, Wire, Wise).</DialogDescription>
-        </DialogHeader>
-        <div className="py-[var(--inkblot-spacing-2)]">
-          <label className={labelClass}>Method name</label>
-          <input
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            placeholder="e.g. ACH transfer"
-            className={`${inputClass} mt-[var(--inkblot-spacing-1)] ${attempted && !label.trim() ? errorBorder : ''}`}
-          />
-          {attempted && !label.trim() && (
-            <span className="text-xs text-[var(--inkblot-semantic-color-status-error)] mt-1 block">Required</span>
-          )}
-        </div>
-        <DialogFooter>
-          <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
-          <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
-            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Add method
-          </button>
-        </DialogFooter>
+      <DialogContent showCloseButton={false} className={`sm:max-w-md ${DRAGGABLE_DIALOG_SURFACE}`}>
+        <DraggableDialogFrame
+          resetKey={open}
+          title="New payment method"
+          description="Appears on the invoice (e.g. ACH, Wire, Wise)."
+          footer={
+            <>
+              <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
+              <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                Add method
+              </button>
+            </>
+          }
+        >
+          <div className="py-[var(--inkblot-spacing-2)]">
+            <label className={labelClass}>Method name</label>
+            <input
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="e.g. ACH transfer"
+              className={`${inputClass} mt-[var(--inkblot-spacing-1)] ${attempted && !label.trim() ? errorBorder : ''}`}
+            />
+            {attempted && !label.trim() && (
+              <span className="text-xs text-[var(--inkblot-semantic-color-status-error)] mt-1 block">Required</span>
+            )}
+          </div>
+        </DraggableDialogFrame>
       </DialogContent>
     </Dialog>
   )
@@ -300,45 +305,49 @@ export function TaxPresetCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={(n) => { onOpenChange(n); if (!n) reset() }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>New tax rate</DialogTitle>
-          <DialogDescription>Add a custom rate (e.g. state sales tax).</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]">
-          <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
-            <label className={labelClass}>Label</label>
-            <input
-              value={taxLabel}
-              onChange={(e) => setTaxLabel(e.target.value)}
-              placeholder="e.g. Sales tax 8.25%"
-              className={`${inputClass} ${attempted && !taxLabel.trim() ? errorBorder : ''}`}
-            />
+      <DialogContent showCloseButton={false} className={`sm:max-w-md ${DRAGGABLE_DIALOG_SURFACE}`}>
+        <DraggableDialogFrame
+          resetKey={open}
+          title="New tax rate"
+          description="Add a custom rate (e.g. state sales tax)."
+          footer={
+            <>
+              <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
+              <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                Add tax rate
+              </button>
+            </>
+          }
+        >
+          <div className="grid gap-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]">
+            <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
+              <label className={labelClass}>Label</label>
+              <input
+                value={taxLabel}
+                onChange={(e) => setTaxLabel(e.target.value)}
+                placeholder="e.g. Sales tax 8.25%"
+                className={`${inputClass} ${attempted && !taxLabel.trim() ? errorBorder : ''}`}
+              />
+            </div>
+            <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
+              <label className={labelClass}>Rate (%)</label>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                step="0.01"
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
+                placeholder="8.25"
+                className={`${inputClass} ${attempted && !valid && taxLabel.trim() ? errorBorder : ''}`}
+              />
+              {attempted && !valid && taxLabel.trim() && (
+                <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Enter 0–100</span>
+              )}
+            </div>
           </div>
-          <div className="flex flex-col gap-[var(--inkblot-spacing-1)]">
-            <label className={labelClass}>Rate (%)</label>
-            <input
-              type="number"
-              min={0}
-              max={100}
-              step="0.01"
-              value={rate}
-              onChange={(e) => setRate(e.target.value)}
-              placeholder="8.25"
-              className={`${inputClass} ${attempted && !valid && taxLabel.trim() ? errorBorder : ''}`}
-            />
-            {attempted && !valid && taxLabel.trim() && (
-              <span className="text-xs text-[var(--inkblot-semantic-color-status-error)]">Enter 0–100</span>
-            )}
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose className={footerCancelClass()}>Cancel</DialogClose>
-          <button type="button" disabled={saving} onClick={submit} className={footerPrimaryClass()}>
-            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-            Add tax rate
-          </button>
-        </DialogFooter>
+        </DraggableDialogFrame>
       </DialogContent>
     </Dialog>
   )

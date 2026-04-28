@@ -40,13 +40,6 @@ const seedProfiles = [
 	}
 ];
 
-function resolveBrandingLogoSrc(p) {
-  if (!p) return "";
-  const asset = typeof p.logoAssetPath === "string" ? p.logoAssetPath.trim() : "";
-  if (asset.startsWith("/")) return asset;
-  const url = typeof p.logoUrl === "string" ? p.logoUrl.trim() : "";
-  return url;
-}
 function emptyBrandingProfile() {
   return {
     id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `profile-${Date.now()}`,
@@ -102,12 +95,28 @@ function normalizeProfile(raw, fallbackId) {
 function seedFromJson() {
   return seedProfiles.map((p, i) => normalizeProfile(p, `seed-${i}`));
 }
+function pickDefaultProfileId(profiles) {
+  const ink = profiles.find((p) => p.id === "inkblot-studio");
+  if (ink) return ink.id;
+  return profiles[0]?.id ?? null;
+}
+function mergeProfilesWithSeed(persisted) {
+  const seeds = seedFromJson();
+  const seedMap = new Map(seeds.map((s) => [s.id, s]));
+  return persisted.map((p) => {
+    const s = seedMap.get(p.id);
+    if (!s) return p;
+    const logoAssetPath = p.logoAssetPath?.trim() ? p.logoAssetPath : s.logoAssetPath;
+    const logoUrl = p.logoUrl?.trim() ? p.logoUrl : s.logoUrl;
+    return { ...p, logoAssetPath, logoUrl };
+  });
+}
 function defaultPersisted() {
   const profiles = seedFromJson();
   return {
     version: 1,
     profiles,
-    defaultProfileId: profiles[0]?.id ?? null
+    defaultProfileId: pickDefaultProfileId(profiles)
   };
 }
 function loadPersisted() {
@@ -117,9 +126,12 @@ function loadPersisted() {
     if (!raw) return defaultPersisted();
     const parsed = JSON.parse(raw);
     const profilesRaw = Array.isArray(parsed.profiles) ? parsed.profiles : [];
-    const profiles = profilesRaw.map((p, i) => normalizeProfile(p, `rec-${i}`));
+    const profiles = mergeProfilesWithSeed(profilesRaw.map((p, i) => normalizeProfile(p, `rec-${i}`)));
     if (profiles.length === 0) return defaultPersisted();
-    const defaultProfileId = typeof parsed.defaultProfileId === "string" && profiles.some((p) => p.id === parsed.defaultProfileId) ? parsed.defaultProfileId : profiles[0]?.id ?? null;
+    let defaultProfileId = typeof parsed.defaultProfileId === "string" && profiles.some((p) => p.id === parsed.defaultProfileId) ? parsed.defaultProfileId : profiles[0]?.id ?? null;
+    if (defaultProfileId === "default" && profiles.some((p) => p.id === "inkblot-studio")) {
+      defaultProfileId = "inkblot-studio";
+    }
     return { version: 1, profiles, defaultProfileId };
   } catch {
     return defaultPersisted();
@@ -226,4 +238,4 @@ function useBrandingStore() {
   return ctx;
 }
 
-export { BrandingStoreProvider as B, emptyBrandingProfile as e, normalizeHex as n, resolveBrandingLogoSrc as r, useBrandingStore as u };
+export { BrandingStoreProvider as B, emptyBrandingProfile as e, normalizeHex as n, useBrandingStore as u };

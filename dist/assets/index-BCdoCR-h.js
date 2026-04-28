@@ -3,7 +3,7 @@ import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { r as requireReact } from './index-DhJIKhB5.js';
 import { r as requireReactDom } from './index-D35qpfyi.js';
 import { _ as __vitePreload } from './preload-helper-Dea3Szod.js';
-import { A as AccountingModuleSuspenseFallback } from './AccountingSkeletons-BBpJ38wk.js';
+import { A as AccountingModuleSuspenseFallback } from './AccountingSkeletons-tNleOS7F.js';
 
 var client = {exports: {}};
 
@@ -16448,7 +16448,7 @@ var clientExports = requireClient();
 const {Suspense,lazy} = await importShared('react');
 
 const {BrowserRouter,Routes,Route,Navigate} = await importShared('react-router-dom');
-const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-BQIlIV1m.js'),true              ?[]:void 0));
+const AccountingWithProvider = lazy(() => __vitePreload(() => import('./__federation_expose_Accounting-BbZRYNJb.js'),true              ?[]:void 0));
 function App() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(BrowserRouter, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Routes, { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(Route, { path: "/", element: /* @__PURE__ */ jsxRuntimeExports.jsx(Navigate, { to: "/invoices", replace: true }) }),

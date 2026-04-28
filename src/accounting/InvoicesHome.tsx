@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { AlertDialog, SearchBar, StatusBadge } from '@citron-systems/citron-ui'
+import { Dialog, DialogClose, DialogContent, SearchBar, StatusBadge } from '@citron-systems/citron-ui'
 import { MoreVertical } from 'lucide-react'
 import type { InvoiceStatus, InvoiceRecord } from './invoiceStore'
 import { useInvoiceStore } from './invoiceStore'
 import { formatUsd, invoiceGrandTotal } from './invoiceDraft'
 import { useToast } from '@/lib/ToastContext'
 import { INVOICE_STATUS_TABS, accountingPath, normalizeInvoiceListStatusParam } from './accountingConstants'
+import {
+  CRM_HEADER_BTN_SECONDARY,
+  CRM_PANEL_SURFACE,
+  CRM_TOOLBAR_SEARCH_WRAP,
+  crmFilterChip,
+} from './crmToolbarClasses'
+import { DraggableChrome, DRAGGABLE_DIALOG_SURFACE, DraggableDialogFrame } from './DraggableChrome'
 
 type SortKey = 'date' | 'amount'
 type SortDir = 'asc' | 'desc'
@@ -61,7 +68,7 @@ function actionMenuItemClass(destructive?: boolean) {
     'px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] text-left text-sm',
     '[font:var(--inkblot-semantic-typography-body-medium)]',
     'text-[var(--inkblot-semantic-color-text-primary)] hover:bg-[var(--inkblot-semantic-color-background-tertiary)]',
-    'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] focus-visible:ring-offset-0',
+    'transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0',
     destructive ? 'text-destructive hover:text-destructive hover:bg-destructive/10' : '',
   ]
     .filter(Boolean)
@@ -217,18 +224,11 @@ export default function InvoicesHome() {
     }
   }, [actionMenu])
 
-  const tabButtonClass = (active: boolean) =>
-    `px-2.5 py-2 sm:px-3 rounded-[var(--inkblot-radius-md)] text-[11px] sm:text-xs font-medium leading-tight transition-colors ${
-      active
-        ? 'bg-background text-foreground shadow-sm border border-border'
-        : 'text-muted-foreground border border-transparent hover:text-foreground hover:bg-background/60'
-    }`
-
   return (
     <div className="w-full max-w-full min-w-0 px-3 min-[400px]:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:pb-6 overflow-y-auto hide-scrollbar h-full box-border">
-      <div className="mb-5 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-3 sm:p-4 shadow-[var(--inkblot-shadow-sm)]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
-          <div className="w-full lg:flex-1 lg:min-w-0 lg:max-w-xl [&_label]:sr-only">
+      <div className="mb-4 flex flex-col gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+          <div className={`min-w-0 flex-1 [&_label]:sr-only ${CRM_TOOLBAR_SEARCH_WRAP}`}>
             <SearchBar
               label="Search"
               placeholder="Invoice #, client name or email…"
@@ -237,38 +237,37 @@ export default function InvoicesHome() {
               className="w-full"
             />
           </div>
-          <nav
-            className="flex flex-wrap items-center gap-1 sm:gap-1.5 lg:shrink-0"
-            aria-label="Filter by status"
-          >
-            {INVOICE_STATUS_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setStatusTabAndUrl(tab.id)}
-                className={tabButtonClass(statusTab === tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
+          <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+            <nav className="flex flex-wrap items-center gap-1" aria-label="Filter by status">
+              {INVOICE_STATUS_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setStatusTabAndUrl(tab.id)}
+                  className={crmFilterChip(statusTab === tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
 
       <p className="text-sm text-muted-foreground mb-3">Recent invoices</p>
 
-      <div className="glass rounded-xl overflow-hidden w-full min-w-0">
+      <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden w-full min-w-0 dark:bg-muted/5">
         <div className="overflow-x-auto touch-scroll-x touch-pan-x">
           <div className="min-w-[780px]">
-            <div className="grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 border-b border-border text-[10px] text-muted-foreground uppercase tracking-wider text-center">
+            <div className="grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 border-b border-border text-[10px] text-muted-foreground uppercase tracking-wider text-left">
               <div className="tabular-nums">#</div>
-              <div className="flex flex-col items-center justify-center gap-0.5">
+              <div className="flex flex-col items-start justify-center gap-0.5 min-w-0">
                 <span>Client</span>
               </div>
-              <div className="flex flex-col items-center justify-center gap-0.5">
+              <div className="flex flex-col items-start justify-center gap-0.5 min-w-0">
                 <span>Email</span>
               </div>
-              <div>
+              <div className="text-left">
                 <button
                   type="button"
                   className="w-full uppercase tracking-wider hover:text-foreground transition-colors"
@@ -277,8 +276,8 @@ export default function InvoicesHome() {
                   Amount
                 </button>
               </div>
-              <div>Status</div>
-              <div>
+              <div className="text-left">Status</div>
+              <div className="text-left">
                 <button
                   type="button"
                   className="w-full uppercase tracking-wider hover:text-foreground transition-colors"
@@ -316,15 +315,15 @@ export default function InvoicesHome() {
                         openInvoice(inv.recordId)
                       }
                     }}
-                    className="grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 min-h-[48px] sm:min-h-[52px] border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer text-center"
+                    className="grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 min-h-[48px] sm:min-h-[52px] border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer text-left"
                   >
                     <div className="text-xs font-mono text-citrus-lemon tabular-nums">{rowIndex}</div>
-                    <div className="flex flex-col items-center justify-center text-center min-w-0 px-0.5">
+                    <div className="flex flex-col items-start justify-center text-left min-w-0 px-0.5">
                       <span className="text-sm font-medium text-foreground leading-tight truncate max-w-full w-full">
                         {d.clientName}
                       </span>
                     </div>
-                    <div className="flex flex-col items-center justify-center text-center min-w-0 px-0.5">
+                    <div className="flex flex-col items-start justify-center text-left min-w-0 px-0.5">
                       <span
                         className="text-xs text-foreground/90 leading-tight truncate max-w-full w-full"
                         title={d.clientEmail || undefined}
@@ -332,12 +331,12 @@ export default function InvoicesHome() {
                         {d.clientEmail || '—'}
                       </span>
                     </div>
-                    <div className="text-sm font-mono text-foreground tabular-nums">{formatUsd(total)}</div>
-                    <div className="flex justify-center">
+                    <div className="text-sm font-mono text-foreground tabular-nums text-left">{formatUsd(total)}</div>
+                    <div className="flex justify-start">
                       <StatusBadge label={statusLabel(st)} variant={statusBadgeVariant(st)} />
                     </div>
-                    <div className="text-xs text-muted-foreground">{formatListDate(d.issueDate)}</div>
-                    <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="text-xs text-muted-foreground text-left">{formatListDate(d.issueDate)}</div>
+                    <div className="flex justify-start" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         data-invoice-row-actions={inv.recordId}
@@ -351,9 +350,9 @@ export default function InvoicesHome() {
                             m?.recordId === inv.recordId ? null : { recordId: inv.recordId, rect },
                           )
                         }}
-                        className="inline-flex items-center justify-center rounded-md p-1.5 bg-transparent border-0 shadow-none text-muted-foreground hover:text-citrus-lemon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] focus-visible:ring-offset-0 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+                        className={`${CRM_HEADER_BTN_SECONDARY} text-muted-foreground hover:text-accent focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus:ring-0`}
                       >
-                        <MoreVertical className="h-[18px] w-[18px]" strokeWidth={2.25} aria-hidden />
+                        <MoreVertical className="h-4 w-4" strokeWidth={2} aria-hidden />
                       </button>
                     </div>
                   </div>
@@ -371,7 +370,7 @@ export default function InvoicesHome() {
             ref={actionMenuRef}
             data-invoice-action-portal
             role="menu"
-            className="fixed z-[200] min-w-[160px] overflow-y-auto overscroll-contain rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-[var(--inkblot-spacing-2)] shadow-[var(--inkblot-shadow-md)]"
+            className="fixed z-[200]"
             style={{
               top: actionMenu.rect.bottom + ACTION_MENU_GAP,
               left: Math.max(
@@ -381,68 +380,97 @@ export default function InvoicesHome() {
                   window.innerWidth - ACTION_MENU_MIN_W - ACTION_MENU_GAP,
                 ),
               ),
-              maxHeight: Math.min(280, Math.max(120, window.innerHeight - actionMenu.rect.bottom - ACTION_MENU_GAP - 12)),
             }}
           >
-            <button
-              type="button"
-              role="menuitem"
-              className={actionMenuItemClass()}
-              onClick={() => {
-                setActionMenu(null)
-                openInvoice(actionMenuInvoice.recordId)
-              }}
-            >
-              View
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              className={actionMenuItemClass()}
-              onClick={() => {
-                setActionMenu(null)
-                handleDuplicate(actionMenuInvoice)
-              }}
-            >
-              Duplicate
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              className={actionMenuItemClass()}
-              onClick={() => {
-                setActionMenu(null)
-                void handleCopyNumber(actionMenuInvoice.draft.invoiceNumber)
-              }}
-            >
-              Copy invoice number
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              className={actionMenuItemClass(true)}
-              onClick={() => {
-                setActionMenu(null)
-                setDeleteTarget(actionMenuInvoice)
-              }}
-            >
-              Delete
-            </button>
+            <DraggableChrome resetKey={actionMenu.recordId}>
+              <div
+                className={`${CRM_PANEL_SURFACE} animate-popover-enter overflow-y-auto overscroll-contain shadow-xl`}
+                style={{
+                  minWidth: ACTION_MENU_MIN_W,
+                  maxHeight: Math.min(280, Math.max(120, window.innerHeight - actionMenu.rect.bottom - ACTION_MENU_GAP - 12)),
+                }}
+              >
+                <div className="flex flex-col gap-0.5 p-[var(--inkblot-spacing-2)]">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={actionMenuItemClass()}
+                    onClick={() => {
+                      setActionMenu(null)
+                      openInvoice(actionMenuInvoice.recordId)
+                    }}
+                  >
+                    View
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={actionMenuItemClass()}
+                    onClick={() => {
+                      setActionMenu(null)
+                      handleDuplicate(actionMenuInvoice)
+                    }}
+                  >
+                    Duplicate
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={actionMenuItemClass()}
+                    onClick={() => {
+                      setActionMenu(null)
+                      void handleCopyNumber(actionMenuInvoice.draft.invoiceNumber)
+                    }}
+                  >
+                    Copy invoice number
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={actionMenuItemClass(true)}
+                    onClick={() => {
+                      setActionMenu(null)
+                      setDeleteTarget(actionMenuInvoice)
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </DraggableChrome>
           </div>,
           document.body,
         )}
 
-      <AlertDialog
-        open={!!deleteTarget}
-        title="Delete invoice?"
-        description={deleteTarget ? `This will remove ${deleteTarget.draft.invoiceNumber} permanently.` : undefined}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
-        destructive
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-        onConfirm={confirmDelete}
-        onCancel={() => setDeleteTarget(null)}
-      />
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent showCloseButton={false} className={`sm:max-w-md ${DRAGGABLE_DIALOG_SURFACE}`}>
+          <DraggableDialogFrame
+            resetKey={deleteTarget?.recordId ?? 'closed'}
+            title="Delete invoice?"
+            description={
+              deleteTarget ? `This will remove ${deleteTarget.draft.invoiceNumber} permanently.` : undefined
+            }
+            footer={
+              <>
+                <DialogClose
+                  className="inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-primary)] transition-colors duration-[var(--inkblot-duration-fast)] hover:bg-[var(--inkblot-semantic-color-background-tertiary)]"
+                >
+                  Cancel
+                </DialogClose>
+                <button
+                  type="button"
+                  className="inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center rounded-[var(--inkblot-radius-lg)] bg-destructive px-[var(--inkblot-spacing-6)] py-[var(--inkblot-spacing-2)] text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  onClick={() => {
+                    confirmDelete()
+                  }}
+                >
+                  Delete
+                </button>
+              </>
+            }
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

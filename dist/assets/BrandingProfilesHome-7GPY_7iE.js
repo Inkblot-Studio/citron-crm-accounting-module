@@ -1,7 +1,8 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
-import { u as useBrandingStore } from './brandingStore-DiVKw_lr.js';
+import { f as CRM_PANEL_SURFACE } from './crmToolbarClasses-DO0dkTie.js';
+import { u as useBrandingStore } from './brandingStore-BbVRH_63.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 
 /**
@@ -55,7 +56,7 @@ function BrandingProfilesHome() {
     [setDefaultProfile, addToast]
   );
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "h-full w-full overflow-y-auto hide-scrollbar px-3 min-[400px]:px-4 sm:px-6 lg:px-8 py-4 sm:py-6", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-3 sm:p-4 shadow-[var(--inkblot-shadow-sm)]", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `mb-4 flex flex-wrap items-center justify-between gap-3 ${CRM_PANEL_SURFACE} px-3 py-2.5 sm:px-4 sm:py-3`, children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-sm font-semibold text-foreground", children: "Branding profiles" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 text-[11px] text-muted-foreground", children: "Logo, colors, sender and banking details applied to your offers and invoices." })
@@ -65,9 +66,9 @@ function BrandingProfilesHome() {
         {
           type: "button",
           onClick: handleNew,
-          className: "inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90",
+          className: "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent px-2.5 text-xs font-medium text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-3.5 w-3.5 shrink-0", "aria-hidden": true }),
             " New brand"
           ]
         }
@@ -78,7 +79,7 @@ function BrandingProfilesHome() {
       return /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "article",
         {
-          className: "group relative flex flex-col gap-3 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-4 shadow-[var(--inkblot-shadow-sm)]",
+          className: "group relative flex flex-col gap-3 rounded-xl border border-border/60 bg-background p-4 shadow-none dark:bg-card",
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex items-start justify-between gap-2", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 min-w-0", children: [

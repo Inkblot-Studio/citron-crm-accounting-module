@@ -11,8 +11,10 @@ import type { InvoiceProduct } from '@citron-systems/citron-ui'
 import { ArrowLeft, FileDown, Loader2, Plus, Trash2 } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
 import AutoGrowTextarea from './AutoGrowTextarea'
+import { CRM_HEADER_BTN_SECONDARY, CRM_PANEL_SURFACE } from './crmToolbarClasses'
 import ClientCreateDialog, { type NewClient } from './ClientCreateDialog'
 import InvoiceDocumentCard from './InvoiceDocumentCard'
+import { TokenDateField, INVOICE_DATE_TRIGGER_CLASS } from './TokenDateField'
 import {
   BankAccountCreateDialog,
   PaymentMethodCreateDialog,
@@ -52,17 +54,6 @@ function isoPlusDays(days: number): string {
   d.setDate(d.getDate() + days)
   return d.toISOString().slice(0, 10)
 }
-
-const dateInputClass = [
-  'min-h-[var(--inkblot-size-touch-target-min)] w-full rounded-[var(--inkblot-radius-md)]',
-  'border border-[var(--inkblot-semantic-color-border-default)]',
-  'bg-[var(--inkblot-semantic-color-background-primary)]',
-  'px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]',
-  '[font:var(--inkblot-semantic-typography-body-small)]',
-  'text-[var(--inkblot-semantic-color-text-primary)]',
-  'transition-colors duration-[var(--inkblot-duration-fast)]',
-  'focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)]',
-].join(' ')
 
 const labelClass = '[font:var(--inkblot-semantic-typography-body-small)] font-medium text-[var(--inkblot-semantic-color-text-secondary)]'
 
@@ -407,9 +398,9 @@ export default function SmartInvoiceBuilder() {
           <Link
             to={ACCOUNTING_BASE_PATH}
             aria-label="Back to invoices"
-            className="inline-flex items-center justify-center min-h-[var(--inkblot-size-touch-target-min,2.5rem)] min-w-[var(--inkblot-size-touch-target-min,2.5rem)] rounded-lg border border-border bg-background text-foreground hover:bg-secondary transition-colors shrink-0"
+            className={CRM_HEADER_BTN_SECONDARY}
           >
-            <ArrowLeft className="w-5 h-5" strokeWidth={2.25} />
+            <ArrowLeft className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
           </Link>
           <h1 className="text-lg min-[400px]:text-xl font-semibold tracking-tight text-foreground min-w-0 flex-1 basis-[12rem]">
             Create invoice
@@ -421,7 +412,9 @@ export default function SmartInvoiceBuilder() {
           className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(100%,380px)] gap-6 sm:gap-8 lg:gap-8 items-start"
         >
           <div className="space-y-5 sm:space-y-6 min-w-0">
-            <section className="rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)] space-y-[var(--inkblot-spacing-5)]">
+            <section
+              className={`${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] space-y-[var(--inkblot-spacing-5)]`}
+            >
               <div className="flex flex-col gap-[var(--inkblot-spacing-2)] max-w-md">
                 <Label htmlFor="create-client">Client</Label>
                 <AdvancedDropdown
@@ -453,7 +446,7 @@ export default function SmartInvoiceBuilder() {
                   </Button>
                 </div>
                 {addLinePickerOpen && (
-                  <div className="rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] p-[var(--inkblot-spacing-4)] space-y-[var(--inkblot-spacing-3)]">
+                  <div className="rounded-lg border border-border/50 bg-muted/15 p-[var(--inkblot-spacing-4)] space-y-[var(--inkblot-spacing-3)] dark:bg-muted/10">
                     <span className={labelClass}>Select a product</span>
                     <AdvancedDropdown
                       key={addLinePickerOpen ? 'picker-open' : 'picker-closed'}
@@ -484,7 +477,7 @@ export default function SmartInvoiceBuilder() {
                   {lines.map((row) => (
                     <div
                       key={row.id}
-                      className="rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] p-[var(--inkblot-spacing-4)] space-y-3"
+                      className="rounded-lg border border-border/50 bg-muted/10 p-[var(--inkblot-spacing-4)] space-y-3 dark:bg-muted/15"
                     >
                       <div className="flex items-center justify-end gap-2">
                         <button
@@ -601,33 +594,25 @@ export default function SmartInvoiceBuilder() {
               </div>
             </section>
 
-            <section className="rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)]">
+            <section className={`${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)]`}>
               <h2 className="text-sm font-semibold text-foreground mb-3">Dates & terms</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)] mb-[var(--inkblot-spacing-4)]">
-                <div className="flex flex-col gap-[var(--inkblot-spacing-2)]">
-                  <label className={labelClass} htmlFor="issue-date">
-                    Issue date
-                  </label>
-                  <input
-                    id="issue-date"
-                    type="date"
-                    value={issueDate}
-                    onChange={(e) => setIssueDate(e.target.value)}
-                    className={dateInputClass}
-                  />
-                </div>
-                <div className="flex flex-col gap-[var(--inkblot-spacing-2)]">
-                  <label className={labelClass} htmlFor="due-date">
-                    Due date
-                  </label>
-                  <input
-                    id="due-date"
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className={dateInputClass}
-                  />
-                </div>
+                <TokenDateField
+                  id="issue-date"
+                  label="Issue date"
+                  labelClassName={labelClass}
+                  value={issueDate}
+                  onChange={setIssueDate}
+                  triggerClassName={INVOICE_DATE_TRIGGER_CLASS}
+                />
+                <TokenDateField
+                  id="due-date"
+                  label="Due date"
+                  labelClassName={labelClass}
+                  value={dueDate}
+                  onChange={setDueDate}
+                  triggerClassName={INVOICE_DATE_TRIGGER_CLASS}
+                />
               </div>
               <div className="flex flex-col gap-[var(--inkblot-spacing-2)] max-w-md">
                 <label className={labelClass}>Payment terms</label>
@@ -663,7 +648,7 @@ export default function SmartInvoiceBuilder() {
           </div>
 
           <aside className="lg:sticky lg:top-4 w-full min-w-0 max-w-xl lg:max-w-none mx-auto lg:mx-0 space-y-3">
-            <div className="flex items-center justify-between gap-3 rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-3 py-2.5">
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/15 px-3 py-2 dark:bg-muted/10">
               <p className="font-mono text-xs text-citrus-lemon truncate min-w-0">{invoiceNumber}</p>
               <Button
                 type="button"

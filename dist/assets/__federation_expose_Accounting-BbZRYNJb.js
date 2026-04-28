@@ -2,13 +2,14 @@ import { _ as __vitePreload } from './preload-helper-Dea3Szod.js';
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, a as accountingPath, T as ToastProvider, u as useToast } from './accountingConstants-Cfl6rq38.js';
+import { C as CRM_SEGMENT_TRACK, c as crmSegmentTab, a as CRM_HEADER_BTN_PRIMARY } from './crmToolbarClasses-DO0dkTie.js';
 import { u as useInvoiceStore, I as InvoiceStoreProvider } from './invoiceStore-CH64SPmX.js';
-import { u as useOfferStore, N as NEW_OFFER_ROUTE, O as OfferStoreProvider } from './offerStore-B7nnp6gS.js';
+import { u as useOfferStore, N as NEW_OFFER_ROUTE, O as OfferStoreProvider } from './offerStore-DjzPSng9.js';
 import { S as Sparkles, F as FileText } from './sparkles-CZyhPppu.js';
 import { P as Palette } from './palette-W_Yxaw1i.js';
 import { P as Plus } from './plus-CRsttFmX.js';
-import { I as InvoicesHomeSkeleton, a as InvoiceFormPageSkeleton } from './AccountingSkeletons-BBpJ38wk.js';
-import { B as BrandingStoreProvider } from './brandingStore-DiVKw_lr.js';
+import { I as InvoicesHomeSkeleton, a as InvoiceFormPageSkeleton } from './AccountingSkeletons-tNleOS7F.js';
+import { B as BrandingStoreProvider } from './brandingStore-BbVRH_63.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -50,7 +51,6 @@ function AccountingLayout() {
     ];
     return parts.join(" · ");
   }, [invoices, offers]);
-  const tabCls = (active) => `inline-flex items-center gap-1.5 rounded px-2 py-1 text-[11px] font-medium transition-colors ${active ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`;
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-full flex min-h-0 w-full max-w-full overflow-hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1 flex flex-col min-w-0 max-w-full", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex shrink-0 flex-col gap-3 border-b border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 md:px-6 md:py-4 lg:px-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3", children: [
@@ -60,59 +60,52 @@ function AccountingLayout() {
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 truncate text-[10px] leading-snug text-muted-foreground", title: subtitle, children: subtitle })
         ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-wrap items-center justify-start gap-1.5 sm:justify-end", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "nav",
-          {
-            className: "inline-flex items-center gap-0.5 rounded-md border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-0.5",
-            "aria-label": "Accounting sections",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                Link,
-                {
-                  to: accountingPath(),
-                  className: tabCls(section === "invoices"),
-                  "aria-current": section === "invoices" ? "page" : void 0,
-                  children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(Receipt, { className: "h-3 w-3", "aria-hidden": true }),
-                    " Invoices"
-                  ]
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                Link,
-                {
-                  to: accountingPath("offers"),
-                  className: tabCls(section === "offers"),
-                  "aria-current": section === "offers" ? "page" : void 0,
-                  children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-3 w-3", "aria-hidden": true }),
-                    " Offers"
-                  ]
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                Link,
-                {
-                  to: accountingPath("brands"),
-                  className: tabCls(section === "brands"),
-                  "aria-current": section === "brands" ? "page" : void 0,
-                  children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(Palette, { className: "h-3 w-3", "aria-hidden": true }),
-                    " Branding"
-                  ]
-                }
-              )
-            ]
-          }
-        ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-wrap items-center justify-start gap-2 sm:justify-end", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("nav", { className: CRM_SEGMENT_TRACK, "aria-label": "Accounting sections", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            Link,
+            {
+              to: accountingPath(),
+              className: crmSegmentTab(section === "invoices"),
+              "aria-current": section === "invoices" ? "page" : void 0,
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Receipt, { className: "h-3 w-3 shrink-0", "aria-hidden": true }),
+                " Invoices"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            Link,
+            {
+              to: accountingPath("offers"),
+              className: crmSegmentTab(section === "offers"),
+              "aria-current": section === "offers" ? "page" : void 0,
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-3 w-3 shrink-0", "aria-hidden": true }),
+                " Offers"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            Link,
+            {
+              to: accountingPath("brands"),
+              className: crmSegmentTab(section === "brands"),
+              "aria-current": section === "brands" ? "page" : void 0,
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Palette, { className: "h-3 w-3 shrink-0", "aria-hidden": true }),
+                " Branding"
+              ]
+            }
+          )
+        ] }),
         section === "offers" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
           Link,
           {
             to: accountingPath(`offers/${NEW_OFFER_ROUTE}`),
             title: "New offer",
             "aria-label": "New offer",
-            className: "inline-flex h-8 items-center gap-1.5 rounded-lg bg-accent px-2.5 text-xs font-semibold text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95",
+            className: "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-accent px-2.5 text-xs font-medium text-accent-foreground transition-all duration-150 ease-out hover:bg-accent/90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0",
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-3.5 w-3.5 shrink-0", "aria-hidden": true }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: "New offer" }),
@@ -125,7 +118,7 @@ function AccountingLayout() {
             to: accountingPath("create"),
             title: "New invoice",
             "aria-label": "New invoice",
-            className: "inline-flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-all duration-150 hover:bg-accent/90 active:scale-95",
+            className: CRM_HEADER_BTN_PRIMARY,
             children: /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4 shrink-0", strokeWidth: 2, "aria-hidden": true })
           }
         )
@@ -139,13 +132,13 @@ const {lazy,Suspense} = await importShared('react');
 
 const {Routes,Route} = await importShared('react-router-dom');
 const {ModuleErrorBoundary,Toaster} = await importShared('@citron-systems/citron-ui');
-const InvoicesHome = lazy(() => __vitePreload(() => import('./InvoicesHome-DTvCcgpP.js'),true              ?[]:void 0));
-const SmartInvoiceBuilder = lazy(() => __vitePreload(() => import('./SmartInvoiceBuilder-BCTeV0l5.js'),true              ?[]:void 0));
-const InvoiceReviewPage = lazy(() => __vitePreload(() => import('./InvoiceReviewPage-BtWi2-8t.js'),true              ?[]:void 0));
-const OffersHome = lazy(() => __vitePreload(() => import('./OffersHome-qxSx_IaK.js'),true              ?[]:void 0));
-const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-CjsQ0eI3.js'),true              ?[]:void 0));
-const BrandingProfilesHome = lazy(() => __vitePreload(() => import('./BrandingProfilesHome-DFClfHQJ.js'),true              ?[]:void 0));
-const BrandingProfileEditor = lazy(() => __vitePreload(() => import('./BrandingProfileEditor-d4JJrptV.js'),true              ?[]:void 0));
+const InvoicesHome = lazy(() => __vitePreload(() => import('./InvoicesHome-wuR3exq_.js'),true              ?[]:void 0));
+const SmartInvoiceBuilder = lazy(() => __vitePreload(() => import('./SmartInvoiceBuilder-CUzcJnRI.js'),true              ?[]:void 0));
+const InvoiceReviewPage = lazy(() => __vitePreload(() => import('./InvoiceReviewPage-Cc2opRGY.js'),true              ?[]:void 0));
+const OffersHome = lazy(() => __vitePreload(() => import('./OffersHome-B_oyfudX.js'),true              ?[]:void 0));
+const OfferBuilder = lazy(() => __vitePreload(() => import('./OfferBuilder-C0q_lxJW.js'),true              ?[]:void 0));
+const BrandingProfilesHome = lazy(() => __vitePreload(() => import('./BrandingProfilesHome-7GPY_7iE.js'),true              ?[]:void 0));
+const BrandingProfileEditor = lazy(() => __vitePreload(() => import('./BrandingProfileEditor-CLrQ2WRm.js'),true              ?[]:void 0));
 function AccountingWithToaster() {
   const { toasts, dismissToast } = useToast();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [

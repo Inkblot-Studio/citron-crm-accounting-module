@@ -3,6 +3,8 @@
  * Uses project animate-shimmer (see index.css).
  */
 
+import { CRM_PANEL_SURFACE, CRM_TOOLBAR_SURFACE } from './crmToolbarClasses'
+
 /** Keep in sync with InvoicesHome table grid. */
 const INVOICE_LIST_GRID =
   'grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5'
@@ -22,6 +24,7 @@ export function AccountingLayoutHeaderSkeleton() {
         </div>
       </div>
       <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 sm:justify-end">
+        <Sk className="h-8 w-[11rem] max-w-[70vw] shrink rounded-lg" />
         <Sk className="h-8 w-8 shrink-0 rounded-lg" />
       </div>
     </header>
@@ -31,15 +34,15 @@ export function AccountingLayoutHeaderSkeleton() {
 export function InvoicesHomeSkeleton() {
   return (
     <div className="w-full max-w-full min-w-0 px-3 min-[400px]:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:pb-6 overflow-y-auto hide-scrollbar h-full box-border">
-      <div className="mb-5 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-3 sm:p-4 shadow-[var(--inkblot-shadow-sm)]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
-          <div className="w-full lg:flex-1 lg:min-w-0 lg:max-w-xl space-y-2">
-            <Sk className="h-4 w-16" />
-            <Sk className="h-10 w-full rounded-[var(--inkblot-radius-md)]" />
+      <div className={`mb-4 ${CRM_TOOLBAR_SURFACE}`}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+          <div className="min-h-[36px] flex-1 min-w-0">
+            <Sk className="h-9 w-full rounded-lg" />
           </div>
-          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 lg:shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Sk className="h-8 w-8 shrink-0 rounded-lg" />
             {Array.from({ length: 5 }).map((_, i) => (
-              <Sk key={i} className="h-8 w-[3.25rem] sm:w-14 rounded-[var(--inkblot-radius-md)]" />
+              <Sk key={i} className="h-7 w-11 shrink-0 rounded-md" />
             ))}
           </div>
         </div>
@@ -49,7 +52,7 @@ export function InvoicesHomeSkeleton() {
         <Sk className="h-4 w-36" />
       </div>
 
-      <div className="glass rounded-xl overflow-hidden w-full min-w-0">
+      <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden w-full min-w-0 dark:bg-muted/5">
         <div className="overflow-x-auto touch-scroll-x touch-pan-x">
           <div className="min-w-[780px]">
             <div
@@ -114,7 +117,7 @@ function FormFieldSkeleton() {
 
 function LineItemCardSkeleton() {
   return (
-    <div className="rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] p-[var(--inkblot-spacing-4)] space-y-3">
+    <div className={`rounded-lg border border-border/50 bg-muted/10 p-[var(--inkblot-spacing-4)] space-y-3 dark:bg-muted/15`}>
       <div className="flex justify-end">
         <Sk className="h-8 w-8 rounded-md" />
       </div>
@@ -131,7 +134,7 @@ function LineItemCardSkeleton() {
 
 function InvoiceDocumentCardSkeleton() {
   return (
-    <div className="min-w-0 max-w-full overflow-hidden rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)] space-y-0">
+    <div className={`min-w-0 max-w-full overflow-hidden ${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] space-y-0`}>
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between border-b border-[var(--inkblot-semantic-color-border-default)] pb-[var(--inkblot-spacing-4)]">
         <div className="space-y-2 min-w-0">
           <Sk className="h-3 w-14" />
@@ -184,13 +187,13 @@ export function InvoiceFormPageSkeleton({ variant }: { variant: InvoiceFormSkele
       <span className="sr-only">Loading invoice</span>
       <div className="max-w-[1280px] mx-auto w-full min-w-0 px-3 min-[400px]:px-4 sm:px-6 lg:px-8 py-5 sm:py-8 pb-8 sm:pb-12 box-border print:px-0 print:py-0 print:max-w-none">
         <header className="mb-5 sm:mb-6 flex flex-wrap items-start sm:items-center gap-2 sm:gap-3 min-w-0 print:hidden">
-          <Sk className="h-10 w-10 rounded-lg shrink-0" />
+          <Sk className="h-8 w-8 shrink-0 rounded-lg" />
           <Sk className="h-7 w-48 max-w-[60%] rounded-md" />
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(100%,380px)] gap-6 sm:gap-8 lg:gap-8 items-start print:block">
           <div className="space-y-5 sm:space-y-6 min-w-0 print:hidden">
-            <section className="rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)] space-y-[var(--inkblot-spacing-5)]">
+            <section className={`${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] space-y-[var(--inkblot-spacing-5)]`}>
               {variant === 'create' ? (
                 <div className="flex flex-col gap-[var(--inkblot-spacing-2)] max-w-md">
                   <FormFieldSkeleton />
@@ -227,7 +230,7 @@ export function InvoiceFormPageSkeleton({ variant }: { variant: InvoiceFormSkele
               </div>
             </section>
 
-            <section className="rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)]">
+            <section className={`${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)]`}>
               <Sk className="h-4 w-32 mb-3" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)] mb-[var(--inkblot-spacing-4)]">
                 <FormFieldSkeleton />
@@ -249,7 +252,7 @@ export function InvoiceFormPageSkeleton({ variant }: { variant: InvoiceFormSkele
           </div>
 
           <aside className="lg:sticky lg:top-4 w-full min-w-0 max-w-xl lg:max-w-none mx-auto lg:mx-0 space-y-3 print:max-w-none print:mx-0">
-            <div className="flex items-center justify-between gap-3 rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-3 py-2.5 print:hidden">
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/15 px-3 py-2 print:hidden dark:bg-muted/10">
               <Sk className="h-4 w-24 min-w-0 flex-1 max-w-[70%]" />
               <Sk className="h-8 w-12 rounded-md shrink-0" />
             </div>

@@ -11,6 +11,10 @@ import { SearchBar, StatusBadge } from '@citron-systems/citron-ui'
 import { FileText, Plus, Sparkles } from 'lucide-react'
 import { useToast } from '@/lib/ToastContext'
 import { accountingPath, bgDocumentTypeById } from './accountingConstants'
+import {
+  CRM_TOOLBAR_SEARCH_WRAP,
+  CRM_TOOLBAR_SURFACE,
+} from './crmToolbarClasses'
 import { draftCurrency, draftGrandTotal, formatMoney } from './offerDraft'
 import { NEW_OFFER_ROUTE, useOfferStore, type OfferRecord, type OfferStatus } from './offerStore'
 
@@ -87,9 +91,9 @@ export default function OffersHome() {
 
   return (
     <div className="w-full max-w-full min-w-0 px-3 min-[400px]:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:pb-6 overflow-y-auto hide-scrollbar h-full box-border">
-      <div className="mb-5 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-3 sm:p-4 shadow-[var(--inkblot-shadow-sm)]">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="flex-1 min-w-0 [&_label]:sr-only">
+      <div className={`mb-4 ${CRM_TOOLBAR_SURFACE}`}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+          <div className={`flex-1 min-w-0 [&_label]:sr-only ${CRM_TOOLBAR_SEARCH_WRAP}`}>
             <SearchBar
               label="Search offers"
               placeholder="Client, project, number or email…"
@@ -100,15 +104,15 @@ export default function OffersHome() {
           </div>
           <Link
             to={accountingPath(`offers/${NEW_OFFER_ROUTE}`)}
-            className="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-2 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 active:scale-[0.98]"
+            className="inline-flex h-8 shrink-0 items-center gap-1.5 self-start rounded-lg bg-accent px-2.5 text-xs font-medium text-accent-foreground transition-all duration-150 ease-out hover:bg-accent/90 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 sm:self-center"
           >
-            <Plus className="h-3.5 w-3.5" aria-hidden /> New offer
+            <Plus className="h-3.5 w-3.5 shrink-0" aria-hidden /> New offer
           </Link>
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--inkblot-semantic-color-background-secondary)] px-6 py-14 text-center">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/50 bg-muted/15 px-6 py-14 text-center dark:bg-muted/10">
           <Sparkles className="h-6 w-6 text-citrus-lemon" aria-hidden />
           <div>
             <p className="text-sm font-medium text-foreground">No offers yet</p>
@@ -140,7 +144,7 @@ export default function OffersHome() {
                     openOffer(rec.recordId)
                   }
                 }}
-                className="group relative flex cursor-pointer flex-col gap-3 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-4 text-left shadow-[var(--inkblot-shadow-sm)] transition-colors hover:bg-[var(--inkblot-semantic-color-background-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]"
+                className="group relative flex cursor-pointer flex-col gap-3 rounded-xl border border-border/60 bg-background p-4 text-left shadow-none transition-colors duration-150 hover:bg-muted/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 dark:bg-card"
               >
                 <header className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">

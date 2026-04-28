@@ -1,7 +1,8 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
-import { u as useBrandingStore, e as emptyBrandingProfile, r as resolveBrandingLogoSrc, n as normalizeHex } from './brandingStore-DiVKw_lr.js';
+import { u as useBrandingStore, e as emptyBrandingProfile, n as normalizeHex } from './brandingStore-BbVRH_63.js';
+import { r as resolveBrandingLogoSrc } from './brandingResolvedLogos-3CFoGr6N.js';
 import { A as ArrowLeft, T as Trash2 } from './trash-2-BhWtp_Kn.js';
 
 const {useCallback,useEffect,useMemo,useRef,useState} = await importShared('react');
@@ -129,7 +130,7 @@ function BrandingProfileEditor() {
               Field,
               {
                 label: "Logo file",
-                hint: "Path from the site root to a file in public/, e.g. /svg/inkblotstudio_logo.svg. Preferred over a remote URL.",
+                hint: "Path from the site root to a file in public/, e.g. /svg/inkblotstudio_logo.svg. Built-in paths for this module are bundled (Module Federation–safe). Others need the host to serve the same file or set VITE_ACCOUNTING_PUBLIC_ORIGIN.",
                 children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "input",
                   {

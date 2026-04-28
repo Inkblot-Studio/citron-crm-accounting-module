@@ -30,6 +30,7 @@ import {
   type ReactNode,
 } from 'react'
 import { ArrowDown, ArrowUp, Copy, Plus, Trash2, X } from 'lucide-react'
+import { AdvancedDropdown, type AdvancedDropdownOption } from '@citron-systems/citron-ui'
 import { bgDocumentTypeById } from './accountingConstants'
 import { resolveBrandingLogoSrc } from './brandingResolvedLogos'
 import type { BrandingProfile } from './brandingProfile.types'
@@ -53,6 +54,18 @@ import {
   type PlansBlock,
   type PricingBlock,
 } from './offerDraft'
+
+const HEADING_LEVEL_OPTS: AdvancedDropdownOption[] = [
+  { value: '1', label: 'H1' },
+  { value: '2', label: 'H2' },
+  { value: '3', label: 'H3' },
+]
+
+const PRICING_CURRENCY_OPTS: AdvancedDropdownOption[] = [
+  { value: 'EUR', label: 'EUR' },
+  { value: 'BGN', label: 'BGN' },
+  { value: 'USD', label: 'USD' },
+]
 
 /* ─── Public API ─────────────────────────────────────────────────────────── */
 
@@ -679,22 +692,21 @@ function HeadingBody({ block, editMode, onPatch }: { block: HeadingBlock; editMo
 
 function HeadingLevelSelect({ block, onPatch }: { block: HeadingBlock; onPatch: BlockPatch }) {
   return (
-    <select
-      value={block.level}
-      onChange={(e) =>
-        onPatch<HeadingBlock>(block.id, (b) => ({
-          ...b,
-          level: Number(e.target.value) === 1 ? 1 : Number(e.target.value) === 3 ? 3 : 2,
-        }))
-      }
-      className="mt-1 hidden h-6 shrink-0 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 text-[10px] text-muted-foreground group-data-[selected]/blk:inline-block"
-      title="Heading level"
-      aria-label="Heading level"
-    >
-      <option value={1}>H1</option>
-      <option value={2}>H2</option>
-      <option value={3}>H3</option>
-    </select>
+    <span title="Heading level">
+      <AdvancedDropdown
+        options={HEADING_LEVEL_OPTS}
+        value={String(block.level)}
+        onChange={(v) => {
+          if (!v) return
+          const n = Number(v)
+          const level = n === 1 ? 1 : n === 3 ? 3 : 2
+          onPatch<HeadingBlock>(block.id, (b) => ({ ...b, level }))
+        }}
+        placeholder="Level"
+        aria-label="Heading level"
+        className="mt-1 hidden h-6 min-w-[4.25rem] shrink-0 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 text-[10px] text-muted-foreground group-data-[selected]/blk:inline-flex"
+      />
+    </span>
   )
 }
 
@@ -885,16 +897,15 @@ function PricingBody({
           </span>
           {editing ? (
             <div className="flex items-baseline gap-1.5">
-              <select
+              <AdvancedDropdown
+                options={PRICING_CURRENCY_OPTS}
                 value={block.currency}
-                onChange={(e) => patchP((b) => ({ ...b, currency: e.target.value as OfferCurrency }))}
+                onChange={(v) => {
+                  if (v) patchP((b) => ({ ...b, currency: v as OfferCurrency }))
+                }}
                 aria-label="Currency"
-                className="rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1 py-0.5 text-[10px] text-muted-foreground"
-              >
-                <option value="EUR">EUR</option>
-                <option value="BGN">BGN</option>
-                <option value="USD">USD</option>
-              </select>
+                className="min-h-6 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1 py-0.5 text-[10px] text-muted-foreground"
+              />
               <InlineNumber
                 value={block.price}
                 onCommit={(v) => patchP((b) => ({ ...b, price: v ?? 0 }))}

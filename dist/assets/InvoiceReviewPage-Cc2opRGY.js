@@ -1,9 +1,10 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { u as useInvoiceStore, n as normalizeInvoiceDraft, a as newEmptyLineItem, d as draftSubtotal, c as computeTax, b as computeTotal, f as formatUsd, e as computeLineTotal, N as NEW_RECORD_ROUTE } from './invoiceStore-CH64SPmX.js';
-import { e as exportInvoiceDraftToPdf, A as AutoGrowTextarea, L as LoaderCircle, F as FileDown, I as InvoiceDocumentCard } from './exportInvoicePdf-D9x8QC29.js';
+import { e as exportInvoiceDraftToPdf, A as AutoGrowTextarea, T as TokenDateField, I as INVOICE_DATE_TRIGGER_CLASS, L as LoaderCircle, F as FileDown, a as InvoiceDocumentCard } from './exportInvoicePdf-D5QuGSlA.js';
+import { e as CRM_HEADER_BTN_SECONDARY, f as CRM_PANEL_SURFACE } from './crmToolbarClasses-DO0dkTie.js';
 import { c as createLucideIcon, u as useToast, a as accountingPath, A as ACCOUNTING_BASE_PATH, F as FORM_BANK_ACCOUNTS, d as FORM_PAYMENT_METHODS, e as FORM_TAX_TYPES, g as bankLabelFromFormLabel, f as FORM_INVOICE_TYPES, r as resolveTaxRate, D as DUE_TERMS } from './accountingConstants-Cfl6rq38.js';
-import { a as InvoiceFormPageSkeleton } from './AccountingSkeletons-BBpJ38wk.js';
+import { a as InvoiceFormPageSkeleton } from './AccountingSkeletons-tNleOS7F.js';
 import { A as ArrowLeft, T as Trash2 } from './trash-2-BhWtp_Kn.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 import { P as Printer, C as Copy } from './printer-B7dMZUzk.js';
@@ -33,16 +34,6 @@ const {useCallback,useEffect,useMemo,useState} = await importShared('react');
 const {Link,useLocation,useNavigate,useParams} = await importShared('react-router-dom');
 
 const {AdvancedDropdown,Button,Input,Label} = await importShared('@citron-systems/citron-ui');
-const dateInputClass = [
-  "min-h-[var(--inkblot-size-touch-target-min)] w-full rounded-[var(--inkblot-radius-md)]",
-  "border border-[var(--inkblot-semantic-color-border-default)]",
-  "bg-[var(--inkblot-semantic-color-background-primary)]",
-  "px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)]",
-  "[font:var(--inkblot-semantic-typography-body-small)]",
-  "text-[var(--inkblot-semantic-color-text-primary)]",
-  "transition-colors duration-[var(--inkblot-duration-fast)]",
-  "focus:outline-none focus:ring-2 focus:ring-[var(--inkblot-semantic-color-border-focus)]"
-].join(" ");
 const labelClass = "[font:var(--inkblot-semantic-typography-body-small)] font-medium text-[var(--inkblot-semantic-color-text-secondary)]";
 function InvoiceReviewPage() {
   const { recordId } = useParams();
@@ -279,205 +270,207 @@ function InvoiceReviewPage() {
         {
           to: ACCOUNTING_BASE_PATH,
           "aria-label": "Back to invoices",
-          className: "inline-flex items-center justify-center min-h-[var(--inkblot-size-touch-target-min,2.5rem)] min-w-[var(--inkblot-size-touch-target-min,2.5rem)] rounded-lg border border-border bg-background text-foreground hover:bg-secondary transition-colors shrink-0",
-          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "w-5 h-5", strokeWidth: 2.25 })
+          className: CRM_HEADER_BTN_SECONDARY,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4 shrink-0", strokeWidth: 2, "aria-hidden": true })
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "text-lg min-[400px]:text-xl font-semibold tracking-tight text-foreground min-w-0 flex-1 basis-[12rem]", children: "Edit invoice" })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(100%,380px)] gap-6 sm:gap-8 lg:gap-8 items-start print:block", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-5 sm:space-y-6 min-w-0 print:hidden", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)] space-y-[var(--inkblot-spacing-5)]", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)]", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] sm:max-w-md", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "edit-client-name", children: "Client" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Input,
-                {
-                  id: "edit-client-name",
-                  value: form.clientName,
-                  onChange: (e) => update("clientName", e.target.value)
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] sm:max-w-md", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "edit-client-email", children: "Email" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Input,
-                {
-                  id: "edit-client-email",
-                  type: "email",
-                  value: form.clientEmail,
-                  onChange: (e) => update("clientEmail", e.target.value)
-                }
-              )
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Line items" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", variant: "secondary", className: "h-8 w-8 p-0 shrink-0", onClick: addLine, "aria-label": "Add line item", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": true }) })
-            ] }),
-            form.lineItems.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: "No line items yet. Use + to add one." }) : null,
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-4", children: form.lineItems.map((li) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "div",
-              {
-                className: "rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] p-[var(--inkblot-spacing-4)] space-y-3",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "button",
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "section",
+          {
+            className: `${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] space-y-[var(--inkblot-spacing-5)]`,
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)]", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] sm:max-w-md", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "edit-client-name", children: "Client" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Input,
                     {
-                      type: "button",
-                      className: "text-[var(--inkblot-semantic-color-text-tertiary)] hover:text-[var(--inkblot-semantic-color-status-error)] p-1",
-                      "aria-label": "Remove line",
-                      onClick: () => removeLine(li.id),
-                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4" })
+                      id: "edit-client-name",
+                      value: form.clientName,
+                      onChange: (e) => update("clientName", e.target.value)
                     }
-                  ) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-[var(--inkblot-spacing-3)]", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] md:col-span-2", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: `desc-${li.id}`, children: "Description" }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        Input,
-                        {
-                          id: `desc-${li.id}`,
-                          value: li.productLabel,
-                          onChange: (e) => updateLine(li.id, { productLabel: e.target.value })
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: `qty-${li.id}`, children: "Quantity" }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        Input,
-                        {
-                          id: `qty-${li.id}`,
-                          type: "number",
-                          min: 0,
-                          value: li.quantity,
-                          onChange: (e) => updateLine(li.id, { quantity: Math.max(0, Number(e.target.value) || 0) })
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: `unit-${li.id}`, children: "Unit price (USD)" }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        Input,
-                        {
-                          id: `unit-${li.id}`,
-                          type: "number",
-                          min: 0,
-                          step: "0.01",
-                          value: li.unitPrice,
-                          onChange: (e) => updateLine(li.id, { unitPrice: Math.max(0, Number(e.target.value) || 0) })
-                        }
-                      )
-                    ] })
-                  ] })
-                ]
-              },
-              li.id
-            )) })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)]", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Invoice type" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                AdvancedDropdown,
-                {
-                  options: invoiceTypeOptions,
-                  value: form.invoiceTypeLabel,
-                  onChange: (v) => update("invoiceTypeLabel", v ?? "Standard"),
-                  placeholder: "Type…"
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Payment method" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                AdvancedDropdown,
-                {
-                  options: paymentOptions,
-                  value: form.paymentMethodLabel,
-                  onChange: (v) => update("paymentMethodLabel", v ?? ""),
-                  placeholder: "Select…"
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Tax" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                AdvancedDropdown,
-                {
-                  options: taxOptions,
-                  value: form.taxTypeLabel,
-                  onChange: (v) => setTaxType(v ?? ""),
-                  placeholder: "Select…"
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Bank account" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                AdvancedDropdown,
-                {
-                  options: bankOptions,
-                  value: bankDropdownValue,
-                  onChange: (v) => {
-                    const next = v ?? "";
-                    if (mergedBankLabels.includes(next)) {
-                      update("bankAccountLabel", bankLabelFromFormLabel(next));
-                    } else {
-                      update("bankAccountLabel", next);
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] sm:max-w-md", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "edit-client-email", children: "Email" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Input,
+                    {
+                      id: "edit-client-email",
+                      type: "email",
+                      value: form.clientEmail,
+                      onChange: (e) => update("clientEmail", e.target.value)
                     }
+                  )
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Line items" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", variant: "secondary", className: "h-8 w-8 p-0 shrink-0", onClick: addLine, "aria-label": "Add line item", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": true }) })
+                ] }),
+                form.lineItems.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-[var(--inkblot-semantic-color-text-tertiary)]", children: "No line items yet. Use + to add one." }) : null,
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-4", children: form.lineItems.map((li) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "div",
+                  {
+                    className: "rounded-lg border border-border/50 bg-muted/10 p-[var(--inkblot-spacing-4)] space-y-3 dark:bg-muted/15",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "button",
+                        {
+                          type: "button",
+                          className: "text-[var(--inkblot-semantic-color-text-tertiary)] hover:text-[var(--inkblot-semantic-color-status-error)] p-1",
+                          "aria-label": "Remove line",
+                          onClick: () => removeLine(li.id),
+                          children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4" })
+                        }
+                      ) }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-[var(--inkblot-spacing-3)]", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] md:col-span-2", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: `desc-${li.id}`, children: "Description" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            Input,
+                            {
+                              id: `desc-${li.id}`,
+                              value: li.productLabel,
+                              onChange: (e) => updateLine(li.id, { productLabel: e.target.value })
+                            }
+                          )
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: `qty-${li.id}`, children: "Quantity" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            Input,
+                            {
+                              id: `qty-${li.id}`,
+                              type: "number",
+                              min: 0,
+                              value: li.quantity,
+                              onChange: (e) => updateLine(li.id, { quantity: Math.max(0, Number(e.target.value) || 0) })
+                            }
+                          )
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: `unit-${li.id}`, children: "Unit price (USD)" }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            Input,
+                            {
+                              id: `unit-${li.id}`,
+                              type: "number",
+                              min: 0,
+                              step: "0.01",
+                              value: li.unitPrice,
+                              onChange: (e) => updateLine(li.id, { unitPrice: Math.max(0, Number(e.target.value) || 0) })
+                            }
+                          )
+                        ] })
+                      ] })
+                    ]
                   },
-                  placeholder: "Select…"
-                }
-              )
-            ] })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "edit-notes", children: "Notes (optional)" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              AutoGrowTextarea,
-              {
-                id: "edit-notes",
-                value: form.notes,
-                onChange: (e) => update("notes", e.target.value),
-                placeholder: "Internal note or message to the client…"
-              }
-            )
-          ] })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "rounded-[var(--inkblot-radius-xl)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)] shadow-[var(--inkblot-shadow-sm)]", children: [
+                  li.id
+                )) })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)]", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Invoice type" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    AdvancedDropdown,
+                    {
+                      options: invoiceTypeOptions,
+                      value: form.invoiceTypeLabel,
+                      onChange: (v) => update("invoiceTypeLabel", v ?? "Standard"),
+                      placeholder: "Type…"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Payment method" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    AdvancedDropdown,
+                    {
+                      options: paymentOptions,
+                      value: form.paymentMethodLabel,
+                      onChange: (v) => update("paymentMethodLabel", v ?? ""),
+                      placeholder: "Select…"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Tax" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    AdvancedDropdown,
+                    {
+                      options: taxOptions,
+                      value: form.taxTypeLabel,
+                      onChange: (v) => setTaxType(v ?? ""),
+                      placeholder: "Select…"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { children: "Bank account" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    AdvancedDropdown,
+                    {
+                      options: bankOptions,
+                      value: bankDropdownValue,
+                      onChange: (v) => {
+                        const next = v ?? "";
+                        if (mergedBankLabels.includes(next)) {
+                          update("bankAccountLabel", bankLabelFromFormLabel(next));
+                        } else {
+                          update("bankAccountLabel", next);
+                        }
+                      },
+                      placeholder: "Select…"
+                    }
+                  )
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Label, { htmlFor: "edit-notes", children: "Notes (optional)" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  AutoGrowTextarea,
+                  {
+                    id: "edit-notes",
+                    value: form.notes,
+                    onChange: (e) => update("notes", e.target.value),
+                    placeholder: "Internal note or message to the client…"
+                  }
+                )
+              ] })
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: `${CRM_PANEL_SURFACE} p-4 sm:p-5 md:p-[var(--inkblot-spacing-6)]`, children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-sm font-semibold text-foreground mb-3", children: "Dates & terms" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-[var(--inkblot-spacing-4)] mb-[var(--inkblot-spacing-4)]", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: labelClass, htmlFor: "edit-issue-date", children: "Issue date" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "input",
-                {
-                  id: "edit-issue-date",
-                  type: "date",
-                  value: form.issueDate ?? "",
-                  onChange: (e) => update("issueDate", e.target.value),
-                  className: dateInputClass
-                }
-              )
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)]", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: labelClass, htmlFor: "edit-due-date", children: "Due date" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "input",
-                {
-                  id: "edit-due-date",
-                  type: "date",
-                  value: form.dueDate ?? "",
-                  onChange: (e) => update("dueDate", e.target.value),
-                  className: dateInputClass
-                }
-              )
-            ] })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TokenDateField,
+              {
+                id: "edit-issue-date",
+                label: "Issue date",
+                labelClassName: labelClass,
+                value: form.issueDate ?? "",
+                onChange: (iso) => update("issueDate", iso),
+                triggerClassName: INVOICE_DATE_TRIGGER_CLASS
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TokenDateField,
+              {
+                id: "edit-due-date",
+                label: "Due date",
+                labelClassName: labelClass,
+                value: form.dueDate ?? "",
+                onChange: (iso) => update("dueDate", iso),
+                triggerClassName: INVOICE_DATE_TRIGGER_CLASS
+              }
+            )
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-[var(--inkblot-spacing-2)] max-w-md", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: labelClass, children: "Payment terms" }),
@@ -532,7 +525,7 @@ function InvoiceReviewPage() {
         ] })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("aside", { className: "lg:sticky lg:top-4 w-full min-w-0 max-w-xl lg:max-w-none mx-auto lg:mx-0 space-y-3 print:max-w-none print:mx-0", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-3 rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-secondary)] px-3 py-2.5 print:hidden", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/15 px-3 py-2 dark:bg-muted/10 print:hidden", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-xs text-citrus-lemon truncate min-w-0", children: form.invoiceNumber }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "button", variant: "secondary", className: "shrink-0 h-8 px-3", disabled: pdfBusy, onClick: downloadPdf, children: pdfBusy ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(FileDown, { className: "h-4 w-4" }) })
         ] }),

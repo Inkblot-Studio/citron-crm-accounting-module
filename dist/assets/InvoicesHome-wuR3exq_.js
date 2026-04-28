@@ -2,6 +2,8 @@ import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { u as useInvoiceStore, i as invoiceGrandTotal, f as formatUsd } from './invoiceStore-CH64SPmX.js';
 import { c as createLucideIcon, u as useToast, n as normalizeInvoiceListStatusParam, a as accountingPath, I as INVOICE_STATUS_TABS } from './accountingConstants-Cfl6rq38.js';
+import { b as CRM_TOOLBAR_SEARCH_WRAP, d as crmFilterChip, e as CRM_HEADER_BTN_SECONDARY, f as CRM_PANEL_SURFACE } from './crmToolbarClasses-DO0dkTie.js';
+import { D as DraggableChrome, a as DRAGGABLE_DIALOG_SURFACE, b as DraggableDialogFrame } from './DraggableChrome-Bbk5jmT_.js';
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -24,7 +26,7 @@ const {createPortal} = await importShared('react-dom');
 
 const {useNavigate,useSearchParams} = await importShared('react-router-dom');
 
-const {AlertDialog,SearchBar,StatusBadge} = await importShared('@citron-systems/citron-ui');
+const {Dialog,DialogClose,DialogContent,SearchBar,StatusBadge} = await importShared('@citron-systems/citron-ui');
 function statusBadgeVariant(s) {
   switch (s) {
     case "paid":
@@ -67,7 +69,7 @@ function actionMenuItemClass(destructive) {
     "px-[var(--inkblot-spacing-3)] py-[var(--inkblot-spacing-2)] text-left text-sm",
     "[font:var(--inkblot-semantic-typography-body-medium)]",
     "text-[var(--inkblot-semantic-color-text-primary)] hover:bg-[var(--inkblot-semantic-color-background-tertiary)]",
-    "transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] focus-visible:ring-offset-0",
+    "transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-0",
     destructive ? "text-destructive hover:text-destructive hover:bg-destructive/10" : ""
   ].filter(Boolean).join(" ");
 }
@@ -202,10 +204,9 @@ function InvoicesHome() {
       window.removeEventListener("scroll", onScroll, true);
     };
   }, [actionMenu]);
-  const tabButtonClass = (active) => `px-2.5 py-2 sm:px-3 rounded-[var(--inkblot-radius-md)] text-[11px] sm:text-xs font-medium leading-tight transition-colors ${active ? "bg-background text-foreground shadow-sm border border-border" : "text-muted-foreground border border-transparent hover:text-foreground hover:bg-background/60"}`;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full max-w-full min-w-0 px-3 min-[400px]:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:pb-6 overflow-y-auto hide-scrollbar h-full box-border", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-5 rounded-[var(--inkblot-radius-xl)] border border-border bg-[var(--inkblot-semantic-color-background-secondary)] p-3 sm:p-4 shadow-[var(--inkblot-shadow-sm)]", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full lg:flex-1 lg:min-w-0 lg:max-w-xl [&_label]:sr-only", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 flex flex-col gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `min-w-0 flex-1 [&_label]:sr-only ${CRM_TOOLBAR_SEARCH_WRAP}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         SearchBar,
         {
           label: "Search",
@@ -215,31 +216,24 @@ function InvoicesHome() {
           className: "w-full"
         }
       ) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "nav",
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap items-center gap-1.5 sm:justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsx("nav", { className: "flex flex-wrap items-center gap-1", "aria-label": "Filter by status", children: INVOICE_STATUS_TABS.map((tab) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
         {
-          className: "flex flex-wrap items-center gap-1 sm:gap-1.5 lg:shrink-0",
-          "aria-label": "Filter by status",
-          children: INVOICE_STATUS_TABS.map((tab) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "button",
-            {
-              type: "button",
-              onClick: () => setStatusTabAndUrl(tab.id),
-              className: tabButtonClass(statusTab === tab.id),
-              children: tab.label
-            },
-            tab.id
-          ))
-        }
-      )
+          type: "button",
+          onClick: () => setStatusTabAndUrl(tab.id),
+          className: crmFilterChip(statusTab === tab.id),
+          children: tab.label
+        },
+        tab.id
+      )) }) })
     ] }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground mb-3", children: "Recent invoices" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "glass rounded-xl overflow-hidden w-full min-w-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "overflow-x-auto touch-scroll-x touch-pan-x", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-[780px]", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 border-b border-border text-[10px] text-muted-foreground uppercase tracking-wider text-center", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "rounded-xl border border-border/50 bg-muted/10 overflow-hidden w-full min-w-0 dark:bg-muted/5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "overflow-x-auto touch-scroll-x touch-pan-x", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-[780px]", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 border-b border-border text-[10px] text-muted-foreground uppercase tracking-wider text-left", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "tabular-nums", children: "#" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-center justify-center gap-0.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Client" }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-center justify-center gap-0.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Email" }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-start justify-center gap-0.5 min-w-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Client" }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-start justify-center gap-0.5 min-w-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Email" }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-left", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
           {
             type: "button",
@@ -248,8 +242,8 @@ function InvoicesHome() {
             children: "Amount"
           }
         ) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: "Status" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-left", children: "Status" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-left", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           "button",
           {
             type: "button",
@@ -279,11 +273,11 @@ function InvoicesHome() {
                 openInvoice(inv.recordId);
               }
             },
-            className: "grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 min-h-[48px] sm:min-h-[52px] border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer text-center",
+            className: "grid grid-cols-[2.5rem_minmax(5rem,0.9fr)_minmax(8rem,1.1fr)_5.5rem_6.5rem_5.75rem_2.5rem] gap-2 sm:gap-3 items-center px-3 sm:px-5 py-2.5 sm:py-3 min-h-[48px] sm:min-h-[52px] border-b border-border/50 hover:bg-secondary/30 transition-colors cursor-pointer text-left",
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs font-mono text-citrus-lemon tabular-nums", children: rowIndex }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-center justify-center text-center min-w-0 px-0.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-foreground leading-tight truncate max-w-full w-full", children: d.clientName }) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-center justify-center text-center min-w-0 px-0.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-start justify-center text-left min-w-0 px-0.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-foreground leading-tight truncate max-w-full w-full", children: d.clientName }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col items-start justify-center text-left min-w-0 px-0.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "span",
                 {
                   className: "text-xs text-foreground/90 leading-tight truncate max-w-full w-full",
@@ -291,10 +285,10 @@ function InvoicesHome() {
                   children: d.clientEmail || "—"
                 }
               ) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-mono text-foreground tabular-nums", children: formatUsd(total) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { label: statusLabel(st), variant: statusBadgeVariant(st) }) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-muted-foreground", children: formatListDate(d.issueDate) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-mono text-foreground tabular-nums text-left", children: formatUsd(total) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-start", children: /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { label: statusLabel(st), variant: statusBadgeVariant(st) }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-muted-foreground text-left", children: formatListDate(d.issueDate) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-start", onClick: (e) => e.stopPropagation(), children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "button",
                 {
                   type: "button",
@@ -309,8 +303,8 @@ function InvoicesHome() {
                       (m) => m?.recordId === inv.recordId ? null : { recordId: inv.recordId, rect }
                     );
                   },
-                  className: "inline-flex items-center justify-center rounded-md p-1.5 bg-transparent border-0 shadow-none text-muted-foreground hover:text-citrus-lemon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] focus-visible:ring-offset-0 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(EllipsisVertical, { className: "h-[18px] w-[18px]", strokeWidth: 2.25, "aria-hidden": true })
+                  className: `${CRM_HEADER_BTN_SECONDARY} text-muted-foreground hover:text-accent focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus:ring-0`,
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(EllipsisVertical, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": true })
                 }
               ) })
             ]
@@ -320,13 +314,13 @@ function InvoicesHome() {
       })
     ] }) }) }),
     actionMenu && actionMenuInvoice && createPortal(
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
         {
           ref: actionMenuRef,
           "data-invoice-action-portal": true,
           role: "menu",
-          className: "fixed z-[200] min-w-[160px] overflow-y-auto overscroll-contain rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] bg-[var(--inkblot-semantic-color-background-primary)] p-[var(--inkblot-spacing-2)] shadow-[var(--inkblot-shadow-md)]",
+          className: "fixed z-[200]",
           style: {
             top: actionMenu.rect.bottom + ACTION_MENU_GAP,
             left: Math.max(
@@ -335,81 +329,104 @@ function InvoicesHome() {
                 actionMenu.rect.right - ACTION_MENU_MIN_W,
                 window.innerWidth - ACTION_MENU_MIN_W - ACTION_MENU_GAP
               )
-            ),
-            maxHeight: Math.min(280, Math.max(120, window.innerHeight - actionMenu.rect.bottom - ACTION_MENU_GAP - 12))
-          },
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                role: "menuitem",
-                className: actionMenuItemClass(),
-                onClick: () => {
-                  setActionMenu(null);
-                  openInvoice(actionMenuInvoice.recordId);
-                },
-                children: "View"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                role: "menuitem",
-                className: actionMenuItemClass(),
-                onClick: () => {
-                  setActionMenu(null);
-                  handleDuplicate(actionMenuInvoice);
-                },
-                children: "Duplicate"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                role: "menuitem",
-                className: actionMenuItemClass(),
-                onClick: () => {
-                  setActionMenu(null);
-                  void handleCopyNumber(actionMenuInvoice.draft.invoiceNumber);
-                },
-                children: "Copy invoice number"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "button",
-              {
-                type: "button",
-                role: "menuitem",
-                className: actionMenuItemClass(true),
-                onClick: () => {
-                  setActionMenu(null);
-                  setDeleteTarget(actionMenuInvoice);
-                },
-                children: "Delete"
-              }
             )
-          ]
+          },
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(DraggableChrome, { resetKey: actionMenu.recordId, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: `${CRM_PANEL_SURFACE} animate-popover-enter overflow-y-auto overscroll-contain shadow-xl`,
+              style: {
+                minWidth: ACTION_MENU_MIN_W,
+                maxHeight: Math.min(280, Math.max(120, window.innerHeight - actionMenu.rect.bottom - ACTION_MENU_GAP - 12))
+              },
+              children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-0.5 p-[var(--inkblot-spacing-2)]", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    role: "menuitem",
+                    className: actionMenuItemClass(),
+                    onClick: () => {
+                      setActionMenu(null);
+                      openInvoice(actionMenuInvoice.recordId);
+                    },
+                    children: "View"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    role: "menuitem",
+                    className: actionMenuItemClass(),
+                    onClick: () => {
+                      setActionMenu(null);
+                      handleDuplicate(actionMenuInvoice);
+                    },
+                    children: "Duplicate"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    role: "menuitem",
+                    className: actionMenuItemClass(),
+                    onClick: () => {
+                      setActionMenu(null);
+                      void handleCopyNumber(actionMenuInvoice.draft.invoiceNumber);
+                    },
+                    children: "Copy invoice number"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    role: "menuitem",
+                    className: actionMenuItemClass(true),
+                    onClick: () => {
+                      setActionMenu(null);
+                      setDeleteTarget(actionMenuInvoice);
+                    },
+                    children: "Delete"
+                  }
+                )
+              ] })
+            }
+          ) })
         }
       ),
       document.body
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      AlertDialog,
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open: !!deleteTarget, onOpenChange: (open) => !open && setDeleteTarget(null), children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContent, { showCloseButton: false, className: `sm:max-w-md ${DRAGGABLE_DIALOG_SURFACE}`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DraggableDialogFrame,
       {
-        open: !!deleteTarget,
+        resetKey: deleteTarget?.recordId ?? "closed",
         title: "Delete invoice?",
         description: deleteTarget ? `This will remove ${deleteTarget.draft.invoiceNumber} permanently.` : void 0,
-        confirmLabel: "Delete",
-        cancelLabel: "Cancel",
-        destructive: true,
-        onOpenChange: (open) => !open && setDeleteTarget(null),
-        onConfirm: confirmDelete,
-        onCancel: () => setDeleteTarget(null)
+        footer: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            DialogClose,
+            {
+              className: "inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center rounded-[var(--inkblot-radius-lg)] border border-[var(--inkblot-semantic-color-border-default)] px-[var(--inkblot-spacing-4)] py-[var(--inkblot-spacing-2)] [font:var(--inkblot-semantic-typography-body-small)] text-[var(--inkblot-semantic-color-text-primary)] transition-colors duration-[var(--inkblot-duration-fast)] hover:bg-[var(--inkblot-semantic-color-background-tertiary)]",
+              children: "Cancel"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              className: "inline-flex min-h-[var(--inkblot-size-touch-target-min)] items-center justify-center rounded-[var(--inkblot-radius-lg)] bg-destructive px-[var(--inkblot-spacing-6)] py-[var(--inkblot-spacing-2)] text-sm font-medium text-destructive-foreground transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              onClick: () => {
+                confirmDelete();
+              },
+              children: "Delete"
+            }
+          )
+        ] })
       }
-    )
+    ) }) })
   ] });
 }
 

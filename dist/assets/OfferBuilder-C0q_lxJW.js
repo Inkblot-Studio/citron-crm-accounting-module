@@ -1,11 +1,13 @@
 import { importShared } from './__federation_fn_import-BF-AfqT6.js';
 import { j as jsxRuntimeExports } from './jsx-runtime-XI9uIe3W.js';
 import { c as createLucideIcon, i as bgDocumentTypeById, u as useToast, a as accountingPath } from './accountingConstants-Cfl6rq38.js';
-import { r as resolveBrandingLogoSrc, u as useBrandingStore } from './brandingStore-DiVKw_lr.js';
-import { c as cloneBlock, b as createBlock, B as BLOCK_KIND_LABEL, e as formatMoneyRange, o as offerVatAmount, g as offerGrandTotal, f as formatMoney, n as newSupportPlan, u as useOfferStore, N as NEW_OFFER_ROUTE, h as emptyOfferDraft } from './offerStore-B7nnp6gS.js';
+import { r as resolveBrandingLogoSrc } from './brandingResolvedLogos-3CFoGr6N.js';
+import { c as cloneBlock, b as createBlock, B as BLOCK_KIND_LABEL, e as formatMoneyRange, o as offerVatAmount, g as offerGrandTotal, f as formatMoney, n as newSupportPlan, u as useOfferStore, N as NEW_OFFER_ROUTE, h as emptyOfferDraft } from './offerStore-DjzPSng9.js';
 import { P as Plus } from './plus-CRsttFmX.js';
 import { C as Copy, P as Printer } from './printer-B7dMZUzk.js';
 import { T as Trash2, A as ArrowLeft } from './trash-2-BhWtp_Kn.js';
+import { X } from './x-T6cgYTg0.js';
+import { u as useBrandingStore } from './brandingStore-BbVRH_63.js';
 import { P as Palette } from './palette-W_Yxaw1i.js';
 
 /**
@@ -16,25 +18,11 @@ import { P as Palette } from './palette-W_Yxaw1i.js';
  */
 
 
-const __iconNode$3 = [
+const __iconNode$2 = [
   ["path", { d: "M12 5v14", key: "s699le" }],
   ["path", { d: "m19 12-7 7-7-7", key: "1idqje" }]
 ];
-const ArrowDown = createLucideIcon("arrow-down", __iconNode$3);
-
-/**
- * @license lucide-react v0.575.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-
-
-const __iconNode$2 = [
-  ["path", { d: "m5 12 7-7 7 7", key: "hav0vg" }],
-  ["path", { d: "M12 19V5", key: "x0mq9r" }]
-];
-const ArrowUp = createLucideIcon("arrow-up", __iconNode$2);
+const ArrowDown = createLucideIcon("arrow-down", __iconNode$2);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -45,10 +33,10 @@ const ArrowUp = createLucideIcon("arrow-up", __iconNode$2);
 
 
 const __iconNode$1 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "m5 12 7-7 7 7", key: "hav0vg" }],
+  ["path", { d: "M12 19V5", key: "x0mq9r" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$1);
+const ArrowUp = createLucideIcon("arrow-up", __iconNode$1);
 
 /**
  * @license lucide-react v0.575.0 - ISC
@@ -59,12 +47,23 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$1);
 
 
 const __iconNode = [
-  ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
-  ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const X = createLucideIcon("x", __iconNode);
+const CircleCheck = createLucideIcon("circle-check", __iconNode);
 
 const {useCallback: useCallback$1,useEffect: useEffect$1,useLayoutEffect,useRef: useRef$1,useState: useState$1} = await importShared('react');
+const {AdvancedDropdown: AdvancedDropdown$1} = await importShared('@citron-systems/citron-ui');
+const HEADING_LEVEL_OPTS = [
+  { value: "1", label: "H1" },
+  { value: "2", label: "H2" },
+  { value: "3", label: "H3" }
+];
+const PRICING_CURRENCY_OPTS = [
+  { value: "EUR", label: "EUR" },
+  { value: "BGN", label: "BGN" },
+  { value: "USD", label: "USD" }
+];
 function OfferDocument({
   draft,
   brand,
@@ -187,10 +186,7 @@ function OfferDocument({
                 {
                   src: logoSrc,
                   alt: brandName || "Brand logo",
-                  className: "mb-3 block h-10 w-auto max-w-[140px] object-contain",
-                  onError: (e) => {
-                    e.currentTarget.style.display = "none";
-                  }
+                  className: "mb-3 block h-10 w-auto max-w-[140px] object-contain"
                 }
               ) : null,
               /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--inkblot-semantic-color-text-tertiary)]", children: [
@@ -349,6 +345,7 @@ function OfferDocument({
   );
 }
 function BlockFrame({
+  block,
   editMode,
   isFirst,
   isLast,
@@ -364,7 +361,9 @@ function BlockFrame({
   onPickAdd,
   children
 }) {
-  if (!editMode) return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children });
+  const flowPrint = block.kind === "paragraph" || block.kind === "bullets" || block.kind === "quote";
+  const wrapped = /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: flowPrint ? "offer-doc-block offer-doc-block--flow" : "offer-doc-block", children });
+  if (!editMode) return wrapped;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "section",
     {
@@ -390,7 +389,7 @@ function BlockFrame({
           }
         ) : null,
         isSelected && isAddMenuOpen ? /* @__PURE__ */ jsxRuntimeExports.jsx(AddBlockMenu, { onPick: onPickAdd, onClose: onCloseAddMenu }) : null,
-        children
+        wrapped
       ]
     }
   );
@@ -585,24 +584,22 @@ function HeadingBody({ block, editMode, onPatch }) {
   ] });
 }
 function HeadingLevelSelect({ block, onPatch }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    "select",
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { title: "Heading level", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+    AdvancedDropdown$1,
     {
-      value: block.level,
-      onChange: (e) => onPatch(block.id, (b) => ({
-        ...b,
-        level: Number(e.target.value) === 1 ? 1 : Number(e.target.value) === 3 ? 3 : 2
-      })),
-      className: "mt-1 hidden h-6 shrink-0 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 text-[10px] text-muted-foreground group-data-[selected]/blk:inline-block",
-      title: "Heading level",
+      options: HEADING_LEVEL_OPTS,
+      value: String(block.level),
+      onChange: (v) => {
+        if (!v) return;
+        const n = Number(v);
+        const level = n === 1 ? 1 : n === 3 ? 3 : 2;
+        onPatch(block.id, (b) => ({ ...b, level }));
+      },
+      placeholder: "Level",
       "aria-label": "Heading level",
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 1, children: "H1" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 2, children: "H2" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: 3, children: "H3" })
-      ]
+      className: "mt-1 hidden h-6 min-w-[4.25rem] shrink-0 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1.5 text-[10px] text-muted-foreground group-data-[selected]/blk:inline-flex"
     }
-  );
+  ) });
 }
 function ParagraphBody({
   block,
@@ -770,18 +767,16 @@ function PricingBody({
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-start gap-1 sm:items-end sm:text-right", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--inkblot-semantic-color-text-tertiary)]", children: "Proposed price" }),
         editing ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-baseline gap-1.5", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "select",
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            AdvancedDropdown$1,
             {
+              options: PRICING_CURRENCY_OPTS,
               value: block.currency,
-              onChange: (e) => patchP((b) => ({ ...b, currency: e.target.value })),
+              onChange: (v) => {
+                if (v) patchP((b) => ({ ...b, currency: v }));
+              },
               "aria-label": "Currency",
-              className: "rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1 py-0.5 text-[10px] text-muted-foreground",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "EUR", children: "EUR" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "BGN", children: "BGN" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "USD", children: "USD" })
-              ]
+              className: "min-h-6 rounded border border-border bg-[var(--inkblot-semantic-color-background-primary)] px-1 py-0.5 text-[10px] text-muted-foreground"
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -1098,8 +1093,9 @@ const {useCallback,useEffect,useMemo,useRef,useState} = await importShared('reac
 const {createPortal} = await importShared('react-dom');
 
 const {Link,useNavigate,useParams} = await importShared('react-router-dom');
-const actionBtnClass = "inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)] disabled:opacity-50";
-const primaryActionBtnClass = "inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--inkblot-semantic-color-border-focus)]";
+const {AdvancedDropdown} = await importShared('@citron-systems/citron-ui');
+const actionBtnClass = "inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-3 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus:outline-none focus-visible:ring-1 focus-visible:ring-border disabled:opacity-50";
+const primaryActionBtnClass = "inline-flex h-8 items-center gap-1.5 rounded-md bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-1 focus-visible:ring-border";
 function OfferBuilder() {
   const navigate = useNavigate();
   const { recordId: routeRecordId } = useParams();
@@ -1127,6 +1123,13 @@ function OfferBuilder() {
   const activeBrand = useMemo(
     () => resolveProfile(draft.brandProfileId),
     [draft.brandProfileId, resolveProfile]
+  );
+  const brandProfileOptions = useMemo(
+    () => [
+      { value: "", label: "Default brand" },
+      ...profiles.map((p) => ({ value: p.id, label: p.name }))
+    ],
+    [profiles]
   );
   const hydratedForRef = useRef(null);
   useEffect(() => {
@@ -1210,20 +1213,17 @@ function OfferBuilder() {
         ] })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-1.5", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/70 focus-within:ring-2 focus-within:ring-[var(--inkblot-semantic-color-border-focus)]", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Palette, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Brand" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "select",
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-transparent px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-background/70 focus-within:ring-1 focus-within:ring-border", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Palette, { className: "h-3.5 w-3.5 shrink-0", "aria-hidden": true }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            AdvancedDropdown,
             {
+              options: brandProfileOptions,
               value: draft.brandProfileId ?? "",
-              onChange: (e) => setDraft((d) => ({ ...d, brandProfileId: e.target.value || null })),
-              className: "bg-transparent pr-1 text-xs text-foreground focus:outline-none",
+              onChange: (v) => setDraft((d) => ({ ...d, brandProfileId: v || null })),
+              placeholder: "Brand",
               "aria-label": "Brand profile",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Default brand" }),
-                profiles.map((p) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: p.id, children: p.name }, p.id))
-              ]
+              className: "h-7 min-w-[9rem] border-0 bg-transparent px-0 text-xs text-foreground shadow-none focus-visible:ring-0"
             }
           )
         ] }),

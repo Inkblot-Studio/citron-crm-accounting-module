@@ -82,11 +82,33 @@ export default {
           from: { backgroundPosition: '200% 0' },
           to: { backgroundPosition: '-200% 0' },
         },
+        'pop-scale-in': {
+          from: { opacity: '0', transform: 'translateY(10px) scale(0.97)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'menu-pop-in': {
+          from: { opacity: '0', transform: 'translateY(-4px) scale(0.98)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        /** Opacity only — safe alongside inline drag `transform` on the same node */
+        'dialog-enter': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'popover-enter': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.3s ease-out both',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         shimmer: 'shimmer 1.5s ease-in-out infinite',
+        'pop-scale-in': 'pop-scale-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'menu-pop-in': 'menu-pop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) both',
+        /** Use on draggable overlays so entrance animation does not fight drag translate */
+        'dialog-enter': 'dialog-enter 0.2s ease-out both',
+        'popover-enter': 'popover-enter 0.18s ease-out both',
       },
     },
   },
